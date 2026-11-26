@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.13</title>
+<title>Расположение рабочего места — 0.0.14</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -82,6 +82,12 @@
 .local-wall{stroke:#788c9f;stroke-width:2.1;stroke-linecap:square;fill:none}.local-wall-top{stroke:#dbe4ec;stroke-width:.7;fill:none;stroke-linecap:square}
 .local-door{stroke:#9aabb8;stroke-width:.65;fill:none}.fixture{fill:#fff;stroke:#9baebb;stroke-width:.65}.fixture-detail{fill:#e2ebef;stroke:#a8b8c5;stroke-width:.45}
 .lift-car{fill:#c4dbe3;stroke:#668a9e;stroke-width:1.2}.lift-car-inner{fill:#e6f0f3;stroke:#91afbd;stroke-width:.65}.lift-label{font-size:4.7px;font-weight:700;fill:#3e6175;text-anchor:middle;dominant-baseline:middle}.stair-step{stroke:#a1b0bd;stroke-width:.8}.local-room-label{font-weight:600;fill:#344a5f;pointer-events:none;text-anchor:middle;dominant-baseline:middle}
+
+@media(min-width:651px){.panel:not(.expanded-panel) .frame{width:100%;max-width:1180px;align-self:center}.panel:not(.expanded-panel) .map{height:clamp(350px,48vh,510px)}}
+.panel.expanded-panel{position:fixed;inset:0;z-index:1000;border:0;border-radius:0;padding:12px;display:flex;flex-direction:column;overflow:auto;background:white}
+.expanded-panel .layout{flex:1;min-height:0;align-items:start}.expanded-panel .map{height:calc(100vh - 112px);height:calc(100dvh - 112px);min-height:220px}.expanded-panel .map-column{width:100%}.expanded-panel .frame{width:100%;max-width:none}.expanded-panel .floors{max-height:calc(100dvh - 62px);overflow-y:auto}
+@media(max-width:650px) and (orientation:portrait){.expanded-panel{padding:7px}.expanded-panel .map{height:calc(100dvh - 170px)}}
+body.map-expanded{overflow:hidden}
 </style>
 </head>
 <body>
@@ -140,8 +146,8 @@
 <g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
-<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.13</span></div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">Открыть во весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.14</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -227,6 +233,7 @@ function focusTarget(){
  // The selected half includes the central lift core and the complete target wing.
  const left=s.x<(localModel&&floor===localModel.floor?localModel.wingBoundary:540);
  let x=left?18:450,y=left?12:70,w=left?620:610,hh=left?480:365;
+ if(localModel&&floor===localModel.floor){const m=localModel,core=m.rooms.find(r=>r.type==='lifts'),boundary=m.wingBoundary;const minX=Math.min(...m.outline.map(p=>p[0])),maxX=Math.max(...m.outline.map(p=>p[0]));x=left?Math.max(0,minX-14):Math.max(0,(core?.x??boundary)-20);const right=left?Math.max(boundary+65,(core?.x??boundary)+(core?.w??0)+20):Math.min(1080,maxX+14);w=right-x;const ps=m.outline.filter(p=>p[0]>=x-1&&p[0]<=right+1);y=Math.max(0,Math.min(s.y,...ps.map(p=>p[1]))-22);hh=Math.min(500,Math.max(s.y,...ps.map(p=>p[1]))+22)-y;}
  if(flipped){x=1080-x-w;y=500-y-hh}
  view={x,y,w,h:hh};apply();selectedCode=null;cardOpen=true;paintSelection();showCard();return true;
 }
@@ -738,29 +745,49 @@ function validateFloorModel(m){
  return m;
 }
 function localWallPath(d,g){for(const cls of ['local-wall-depth','local-wall','local-wall-top'])el('path',{d,class:cls},g)}
+function roomDoor(r){
+ const x=r.x,y=r.y,w=r.w,h=r.h,top=r.doorSide==='top'||r.type==='wardrobe'||y+h/2>205;
+ const door=Math.min(9,w*.25),a=x+w*.58-door/2;
+ return {top,door,a,z:a+door,edge:top?y:y+h};
+}
 function localRoomWalls(r,g){
  const x=r.x,y=r.y,w=r.w,h=r.h,rr=x+w,b=y+h;
- // Schematic opening faces the circulation zone. Not an as-built door drawing.
- const top=y+h/2>205,door=Math.min(9,w*.25),a=x+w*.58-door/2,z=a+door;
+ if(r.type==='lifts'){localWallPath('M'+x+' '+y+' H'+rr+' V'+b+' H'+x+' Z',g);return}
+ const {top,door,a,z,edge}=roomDoor(r);
  const path=top?'M'+a+' '+y+' H'+x+' V'+b+' H'+rr+' V'+y+' H'+z:'M'+a+' '+b+' H'+x+' V'+y+' H'+rr+' V'+b+' H'+z;
  localWallPath(path,g);
- if(r.type!=='lifts'){const dy=top?door:-door,edge=top?y:b;el('path',{d:'M'+a+' '+edge+' v'+dy+' M'+z+' '+edge+' Q'+z+' '+(edge+dy*.65)+' '+a+' '+(edge+dy),class:'local-door'},g)}
+ const dy=top?door:-door;
+ el('path',{d:'M'+a+' '+edge+' v'+dy+' M'+z+' '+edge+' Q'+z+' '+(edge+dy*.65)+' '+a+' '+(edge+dy),class:'local-door'},g);
 }
 function localRoomText(r,g,m){
- let lines=r.type==='office'&&r.name==='Кабинет руководства'?['Кабинет','руководства']:r.name.split(' ');
- if(r.type!=='office'&&r.name.length<17)lines=[r.name];
- if(lines.length>4)lines=[lines.slice(0,2).join(' '),lines.slice(2).join(' ')];
- let y=r.y+r.h*.5,availableH=r.h*.45;
- if(r.type==='office'){
-  const desk=m.desks.find(d=>d.roomId===r.id)||m.desks.find(d=>d.kind==='office'&&d.x>r.x&&d.x<r.x+r.w&&d.y>r.y&&d.y<r.y+r.h);
-  if(desk&&desk.y<r.y+r.h*.45){y=r.y+r.h*.77;availableH=r.h*.35}else{y=r.y+r.h*.17;availableH=r.h*.28}
- }else if(['meeting','wc','food','wardrobe','stairs'].includes(r.type)){y=r.y+r.h*.83;availableH=r.h*.23}
+ const {top,door,a,z,edge}=roomDoor(r),pad=3.5;
+ const lines=r.name==='Кабинет руководства'?['Кабинет','руководства']:r.name==='Технические помещения'?['Технические','помещения']:r.name.length<17?[r.name]:r.name.split(' ');
  const maxChars=Math.max(1,...lines.map(s=>s.length));
- const size=Math.max(1.7,Math.min(5.5,(r.w-5)/(maxChars*.64),availableH/(lines.length*1.12)));
+ const size=Math.max(1.7,Math.min(r.type==='office'?4.4:5.0,(r.w-2*pad)/(maxChars*.68),r.h*.34/(lines.length*1.16)));
+ const tw=maxChars*size*.68,th=lines.length*size*1.16;
+ const x0=r.x+pad,x1=r.x+r.w-pad-tw,y0=r.y+pad,y1=r.y+r.h-pad-th;
+ const candidates=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]];
+ const obstacles=[[a-1,top?edge-1:edge-door-1,z+1,top?edge+door+1:edge+1]];
+ for(const d of m.desks.filter(d=>d.x>=r.x&&d.x<=r.x+r.w&&d.y>=r.y&&d.y<=r.y+r.h)){
+  const ww=d.angle%180===0?d.w:d.h,hh=d.angle%180===0?d.h:d.w;obstacles.push([d.x-ww/2-5,d.y-hh/2-5,d.x+ww/2+5,d.y+hh/2+5]);
+ }
+ for(const p of m.plants.filter(p=>p[0]>=r.x&&p[0]<=r.x+r.w&&p[1]>=r.y&&p[1]<=r.y+r.h))obstacles.push([p[0]-5,p[1]-5,p[0]+5,p[1]+5]);
+ if(['meeting','wc','food','wardrobe','stairs'].includes(r.type))obstacles.push([r.x+3,r.y+3,r.x+r.w-3,r.y+r.h*(r.type==='wardrobe'?.75:.68)]);
+ const score=([x,y])=>obstacles.reduce((n,[a,b,c,d])=>n+Math.max(0,Math.min(x+tw,c)-Math.max(x,a))*Math.max(0,Math.min(y+th,d)-Math.max(y,b)),0);
+ candidates.sort((a,b)=>score(a)-score(b)||(top?b[1]-a[1]:a[1]-b[1]));
+ let [x,y]=candidates[0];x=Math.max(x0,Math.min(x,x1));y=Math.max(y0,Math.min(y,y1));
  const defs=el('defs',{},g),clipId='local-room-label-'+r.id.replace(/[^A-Za-z0-9_-]/g,'_'),clip=el('clipPath',{id:clipId},defs);
- el('rect',{x:r.x+2,y:r.y+2,width:r.w-4,height:r.h-4},clip);
+ el('rect',{x:r.x+pad,y:r.y+pad,width:Math.max(0,r.w-2*pad),height:Math.max(0,r.h-2*pad)},clip);
  const layer=el('g',{'clip-path':'url(#'+clipId+')'},g);
- lines.forEach((s,i)=>{const t=el('text',{x:r.x+r.w/2,y:y+(i-(lines.length-1)/2)*size*1.12,class:'local-room-label','font-size':size},layer);t.textContent=s;});
+ lines.forEach((s,i)=>{const t=el('text',{x:x+tw/2,y:y+(i+.5)*size*1.16,class:'local-room-label','font-size':size},layer);t.textContent=s;});
+}
+function localLiftLobby(r){
+ const x=r.x,y=r.y,w=r.w,top=y-22,bottom=y-2,g=el('g',{'data-lift-lobby':'true'});
+ for(const [xx,dir] of [[x,1],[x+w,-1]]){
+  const a=top+3,z=Math.min(bottom-2,a+10);
+  localWallPath('M'+xx+' '+top+' V'+a+' M'+xx+' '+z+' V'+bottom,g);
+  const width=z-a;el('path',{d:'M'+xx+' '+z+' h'+(dir*width)+' M'+xx+' '+a+' Q'+(xx+dir*width*.7)+' '+a+' '+(xx+dir*width)+' '+z,class:'local-door'},g);
+ }
 }
 function localRoomFurniture(r,g){
  const x=r.x,y=r.y,w=r.w,h=r.h;
@@ -775,7 +802,8 @@ function localRoomFurniture(r,g){
   for(let i=0;i<count;i++){const xx=x+4+i*cw,yy=y+3;rect(xx+1,yy,cw-2,Math.min(8,h*.28),'fixture',g);el('ellipse',{cx:xx+cw/2,cy:yy+Math.min(11,h*.38),rx:Math.min(3.2,cw*.22),ry:Math.min(4.5,h*.12),class:'fixture'},g);if(i)el('line',{x1:xx,y1:yy,x2:xx,y2:y+h*.58,class:'local-wall-top'},g)}
   rect(x+w*.16,y+h*.54,w*.68,Math.min(4,h*.12),'fixture',g);for(const k of [.33,.67])el('ellipse',{cx:x+w*k,cy:y+h*.54+1.6,rx:2,ry:1.2,class:'fixture-detail'},g)
  }else if(r.type==='wardrobe'){
-  const n=Math.max(2,Math.floor(w/9));for(let i=0;i<n;i++)rect(x+3+(w-6)*i/n,y+3,(w-6)/n-1,Math.min(8,h*.26),'room-table',g)
+  const startY=y+Math.min(13,h*.27),endY=y+h*.76,depth=Math.min(9,w*.23),n=Math.max(2,Math.floor((endY-startY)/6)),unit=(endY-startY)/n;
+  for(const k of [.31,.69])for(let i=0;i<n;i++){rect(x+w*k-depth/2,startY+i*unit,depth,Math.max(1,unit-.55),'room-table',g);el('line',{x1:x+w*k+depth*.22,y1:startY+i*unit+unit*.34,x2:x+w*k+depth*.22,y2:startY+i*unit+unit*.66,stroke:'#8797a0','stroke-width':.55},g)}
  }else if(r.type==='stairs'){
   const xx=x+w*.22,yy=y+4,ww=w*.56,hh=h*.61;rect(xx,yy,ww,hh,'fixture',g);
   for(let i=1;i<10;i++)el('line',{x1:xx,y1:yy+hh*i/10,x2:xx+ww,y2:yy+hh*i/10,class:'stair-step'},g);
@@ -792,7 +820,7 @@ function renderLocalFloor(m){
  label(m.wingBoundary*.5,22,'ЛЕВОЕ КРЫЛО','wing');label((1080+m.wingBoundary)*.5,22,'ПРАВОЕ КРЫЛО','wing');
  for(const r of m.rooms){
   const g=el('g',{'data-room-id':r.id});rect(r.x,r.y,r.w,r.h,'local-room-floor'+(r.type==='lifts'?' lift-floor':r.type==='stairs'?' stair-floor':['wc','plain','wardrobe'].includes(r.type)?' utility':''),g);
-  localRoomWalls(r,g);localRoomFurniture(r,g);if(r.type!=='lifts')localRoomText(r,g,m);
+  localRoomWalls(r,g);localRoomFurniture(r,g);if(r.type==='lifts')localLiftLobby(r);else localRoomText(r,g,m);
  }
  for(const w of m.walls)wall(...w);
  for(const p of m.plants)plant(p[0],p[1],3.7);
@@ -822,7 +850,7 @@ $('saveLocalHtml').onclick=()=>{
  const json=JSON.stringify(localModel).replace(/</g,'\\u003c');
  const output=SOURCE_HTML.replace(/^const EMBEDDED_LOCAL_MODEL = .*;$/m,()=> 'const EMBEDDED_LOCAL_MODEL = '+json+';');
  if(output===SOURCE_HTML){message('Не удалось создать автономный HTML.');return}
- const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.13.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.14.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
 $('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
 
@@ -836,17 +864,15 @@ if(location.protocol==='file:'){
 }
 
 $('minus').onclick=()=>zoomAt(1.25);$('plus').onclick=()=>zoomAt(.8);$('reset').onclick=fit;
-$('full').onclick=()=>{
-  const frame=$('frame');
-  if(frame.classList.contains('expanded'))return;
-  frame.classList.add('expanded');
-  frame.style.cssText='position:fixed;inset:0;z-index:1000;background:#fff';
-  svg.style.height='100dvh';invalidateViewport();
-  const b=document.createElement('button');b.id='closeFull';b.textContent='Закрыть';b.className='control';
-  b.style.cssText='position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;z-index:1001';
-  b.onclick=()=>{b.remove();frame.classList.remove('expanded');frame.style.cssText='';svg.style.height='';invalidateViewport()};
-  frame.append(b);
-};
+function toggleExpanded(force){
+ const panel=$('mapPanel'),expanded=panel.classList.contains('expanded-panel'),next=force??!expanded;
+ if(next===expanded)return;
+ panel.classList.toggle('expanded-panel',next);document.body.classList.toggle('map-expanded',next);
+ $('full').textContent=next?'Закрыть полный экран':'Открыть во весь экран';$('full').setAttribute('aria-pressed',String(next));invalidateViewport();
+ requestAnimationFrame(()=>{measureViewport();apply()});
+}
+$('full').onclick=()=>toggleExpanded();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleExpanded(false)});
 renderQuickPeople();
 const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL)}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else selectEmployee(employees[0]);
 </script>
