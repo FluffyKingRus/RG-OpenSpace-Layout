@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.8</title>
+<title>Расположение рабочего места — 0.0.10</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -59,6 +59,20 @@
  .quick-people .quick-person small{font-size:10px}
  .export-row{justify-content:flex-start}
 }
+
+/* Local demonstration admin panel, deliberately separate from portal module. */
+.admin-panel{margin:0 0 12px;padding:14px;border:1px solid #e1e7ef;border-radius:12px;background:#fff;display:grid;gap:12px}
+.admin-panel[hidden],.import-preview[hidden],.admin-edit[hidden]{display:none}
+.admin-top,.admin-actions,.admin-list-head,.admin-edit-actions{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap}
+.admin-title{font-size:17px;margin:0}.admin-note{font-size:11px;line-height:1.4;color:#728399;margin:0}
+.admin-actions{justify-content:flex-start}.admin-primary{background:#0757bd!important;color:#fff!important;border-color:#0757bd!important}
+.admin-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.admin-metric{min-width:0;background:#f4f7fc;padding:10px;border-radius:9px;display:grid;gap:5px}
+.admin-metric small{font-size:11px;color:#65788e}.admin-metric strong{font-size:23px;color:#173357}
+.admin-field{min-width:0;display:grid;gap:4px;font-size:11px;color:#65788e}.admin-field input,.admin-field select,.admin-select,.admin-search{min-width:0;border:1px solid #dce4ee;border-radius:7px;background:white;padding:7px;color:#173357;font:inherit}
+.admin-search{flex:1;font-size:13px}.admin-table-wrap{overflow:auto;max-height:330px;border:1px solid #e7ecf3;border-radius:8px}.admin-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;min-width:440px}.admin-table th,.admin-table td{padding:8px;border-bottom:1px solid #e7ecf3;vertical-align:middle;overflow-wrap:anywhere}.admin-table th{position:sticky;top:0;background:#f3f6fa;color:#52677f}.admin-table td:last-child{white-space:nowrap}.admin-table small{display:block;color:#728399;margin-top:3px}
+.admin-edit,.import-preview{border:1px solid #dce7f4;padding:10px;border-radius:8px;display:grid;gap:8px;background:#f8fbff}.admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.import-errors{max-height:180px;overflow:auto;font-size:12px;margin:0;padding-left:22px;color:#a33232}.import-summary{font-size:13px;line-height:1.5;white-space:pre-wrap}.admin-message{font-size:12px;color:#456783;min-height:0;white-space:pre-wrap}.admin-progress{height:7px;background:#e2ebf4;border-radius:7px;overflow:hidden}.admin-progress div{background:#1676d3;height:100%;width:0}
+@media(max-width:650px){.admin-panel{padding:9px;gap:9px}.admin-metric{padding:7px}.admin-metric small{font-size:9px}.admin-metric strong{font-size:17px}.admin-field input{font-size:16px}.admin-actions .control{font-size:11px}.admin-table th,.admin-table td{padding:6px}.admin-title{font-size:15px}}
 </style>
 </head>
 <body>
@@ -66,7 +80,7 @@
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
 <form id="searchForm" class="search-form" role="search"><input type="search" id="employeeSearch" placeholder="ФИО или электронная почта" autocomplete="off" aria-label="Поиск сотрудника"><button type="submit">Найти</button></form>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
-<div class="export-row"><button class="control export-button" id="exportEmployees" type="button">↓ Выгрузить сотрудников XLSX</button></div>
+<div class="export-row"><button class="control export-button" id="exportEmployees" type="button">↓ XLSX</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
 <div class="search-results" id="searchResults" hidden></div>
 <div class="status" id="status" role="status" hidden></div>
 <section class="employee-card" id="employeeCard" aria-label="Карточка сотрудника" hidden>
@@ -75,6 +89,24 @@
 <dl class="person-info" id="personInfo"></dl>
 </section>
 <details class="local-tools" id="localTools" hidden><summary>Локальные данные сотрудников (JSON)</summary><input id="employeeFile" type="file" accept=".json,application/json"><div>Данные остаются в памяти открытого файла. Для постоянного хранения сохраните исходный JSON.</div></details>
+</section>
+<section class="admin-panel" id="adminPanel" aria-label="Панель администратора" hidden>
+<div class="admin-top"><h2 class="admin-title">Управление рассадкой</h2><button class="control" id="closeAdmin">Закрыть</button></div>
+<p class="admin-note">Демонстрационный режим. На публичном сайте используйте только вымышленные данные. Изменения хранятся в памяти вкладки; для сохранения выгрузите XLSX. Права доступа будут проверяться корпоративным сервером.</p>
+<div class="admin-list-head"><strong>Статистика</strong><select id="adminFloor" class="admin-select" aria-label="Этаж для статистики"><option value="all">Все доступные этажи</option></select></div>
+<div class="admin-metrics">
+<div class="admin-metric"><small>Рабочие места</small><strong id="statTotal">0</strong></div>
+<div class="admin-metric"><small>Занято</small><strong id="statOccupied">0</strong></div>
+<div class="admin-metric"><small>Свободно</small><strong id="statFree">0</strong></div>
+<div class="admin-metric"><small>Заполняемость</small><strong id="statRate">0%</strong></div>
+</div><div class="admin-progress"><div id="statBar"></div></div><div id="adminExtra" class="admin-note"></div>
+<div class="admin-actions"><button class="control admin-primary" id="importEmployees">↑ Загрузить XLSX</button><button class="control" id="adminExport">↓ Выгрузить XLSX</button><button class="control" id="downloadTemplate">Пустой шаблон</button><input id="xlsxFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></div>
+<div class="import-preview" id="importPreview" hidden><strong>Проверка файла</strong><div id="importSummary" class="import-summary"></div><ul id="importErrors" class="import-errors"></ul><div class="admin-actions"><button class="control admin-primary" id="applyImport" disabled>Применить изменения</button><button class="control" id="cancelImport">Отмена</button></div></div>
+<div class="admin-list-head"><strong>Сотрудники</strong><button class="control" id="addEmployee">+ Добавить</button><input class="admin-search" id="adminSearch" type="search" placeholder="ФИО, email или код места" aria-label="Фильтр сотрудников"></div>
+<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Сотрудник</th><th>Место</th><th>Действия</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+<form class="admin-edit" id="adminEdit" hidden><strong id="adminEditTitle">Редактирование сотрудника</strong><div class="admin-fields" id="adminFields"></div><div class="admin-edit-actions"><button class="control admin-primary" type="submit">Сохранить</button><button class="control" id="chooseSeat" type="button">Выбрать стол на схеме</button><button class="control" id="cancelEdit" type="button">Отмена</button></div><div class="admin-note" id="chooseSeatHint"></div></form>
+<div class="admin-message" id="adminMessage" role="status"></div>
+<div class="admin-actions"><button class="control" type="button" disabled>Редактор планировок · Скоро</button><button class="control" type="button" disabled>Резервные копии · Скоро</button></div>
 </section>
 <section class="panel" aria-label="Схема этажа">
 <h1 class="module-title">Схема размещения</h1>
@@ -99,7 +131,7 @@
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.8</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.10</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -136,13 +168,13 @@ function setEmployees(records){
   if(!p||typeof p!=='object')throw Error('Некорректная запись '+(i+1));
   const email=normalizeEmail(p.email),seat_code=normalizeCode(p.seat_code);
   if(p.seat_code&&!seat_code)throw Error('Некорректный код: строка '+(i+1));
-  if(email&&(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||emails.has(email)))throw Error('Некорректная или повторная почта: строка '+(i+1));
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||emails.has(email))throw Error('Некорректная или повторная почта: строка '+(i+1));
   if(seat_code&&codes.has(seat_code))throw Error('Повторное место: '+seat_code);
   if(email)emails.add(email);if(seat_code)codes.add(seat_code);
-  const obj={email,seat_code};for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
+  const obj={email,seat_code,seat_code_source:seat_code?String(p.seat_code_source??p.seat_code).trim():''};if(normalizeCode(obj.seat_code_source)!==seat_code)obj.seat_code_source=seat_code;for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
   return obj;
  });
- employees=next;selectedCode=null;targetCode=null;profile=null;cardOpen=false;message('');paintSelection();showCard();renderQuickPeople();clearResults();return next.length;
+ employees=next;selectedCode=null;targetCode=null;profile=null;cardOpen=false;message('');paintSelection();showCard();renderQuickPeople();clearResults();if(adminReady)refreshAdmin();return next.length;
 }
 function paintSelection(){
  for(const s of seats){const code=s.code.textContent;const sel=code===selectedCode||(!selectedCode&&code===targetCode);s.desk.classList.toggle('assigned',!!findPerson(code));s.desk.classList.toggle('selected',sel);s.code.classList.toggle('selected',sel)}
@@ -165,6 +197,7 @@ function showCard(){
 }
 function pick(code){
  if(!findSeat(code))return;
+ if(assigningSeat){const occupied=findPerson(code);if(occupied&&occupied.email!==editingEmail){adminMessage('Место '+code+' уже занято. Выберите свободный стол.');$('chooseSeatHint').textContent='Место занято. Выберите другой стол.';return}adminInputs.seat_code.value=code;assigningSeat=false;$('chooseSeatHint').textContent='Выбрано место '+code+'. Нажмите «Сохранить».';$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});return}
  const p=findPerson(code);
  if(p){selectEmployee(p);return}
  profile=null;targetCode=null;selectedCode=code;cardOpen=true;message('');paintSelection();showCard();updateQuickSelection();
@@ -447,7 +480,7 @@ function zipStore(files){
  return [...locals,...centrals,end.a];
 }
 function employeeWorkbook(records=employees){
- const rows=[EMPLOYEE_COLUMNS.map(c=>c[0]),...records.map(p=>EMPLOYEE_COLUMNS.map(c=>p[c[1]]??''))];
+ const rows=[EMPLOYEE_COLUMNS.map(c=>c[0]),...records.map(p=>EMPLOYEE_COLUMNS.map(c=>c[1]==='seat_code'?(p.seat_code_source??p.seat_code??''):(p[c[1]]??'')))];
  const cells=rows.map((r,i)=>'<row r="'+(i+1)+'"'+(i===0?' ht="24" customHeight="1"':'')+'>'+r.map((v,j)=>'<c r="'+String.fromCharCode(65+j)+(i+1)+'" t="inlineStr" s="'+(i===0?1:2)+'"><is><t xml:space="preserve">'+xmlText(v)+'</t></is></c>').join('')+'</row>').join('');
  const cols=EMPLOYEE_COLUMNS.map((c,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c[2]+'" customWidth="1"/>').join('');
  const range='A1:H'+rows.length;
@@ -460,12 +493,183 @@ function employeeWorkbook(records=employees){
  ['xl/worksheets/sheet1.xml',XML_HEAD+'<worksheet xmlns="'+MAIN_NS+'"><dimension ref="'+range+'"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="17"/><cols>'+cols+'</cols><sheetData>'+cells+'</sheetData><autoFilter ref="'+range+'"/></worksheet>']
  ]);
 }
-function exportEmployees(){
- const parts=employeeWorkbook(),blob=new Blob(parts,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+function downloadWorkbook(records,name){
+ const parts=employeeWorkbook(records),blob=new Blob(parts,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
  const url=URL.createObjectURL(blob),link=document.createElement('a');
- link.href=url;link.download='employees_'+new Date().toISOString().slice(0,10)+'.xlsx';
+ link.href=url;link.download=name;
  document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
+function exportEmployees(){downloadWorkbook(employees,'employees_'+new Date().toISOString().slice(0,10)+'.xlsx')}
+
+
+/* XLSX reader: ZIP central directory + stored/deflated entries, no external requests. */
+const XLSX_MAX=15*1024*1024,XLSX_XML_MAX=32*1024*1024;
+async function readZip(buffer){
+ const bytes=new Uint8Array(buffer),d=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+ if(bytes.length<22||bytes.length>XLSX_MAX)throw Error('Файл должен быть XLSX размером до 15 МБ.');
+ let end=-1;
+ for(let p=bytes.length-22;p>=Math.max(0,bytes.length-65557);p--)if(d.getUint32(p,true)===0x06054b50&&p+22+d.getUint16(p+20,true)===bytes.length){end=p;break}
+ if(end<0)throw Error('Некорректный XLSX: не найден ZIP-каталог.');
+ const count=d.getUint16(end+10,true),start=d.getUint32(end+16,true),cdSize=d.getUint32(end+12,true);
+ if(d.getUint16(end+4,true)||d.getUint16(end+6,true)||count>1000||start+cdSize>end)throw Error('Неподдерживаемый ZIP-каталог.');
+ const files=new Map(),decoder=new TextDecoder('utf-8');let p=start,total=0;
+ for(let i=0;i<count;i++){
+  if(p+46>end||d.getUint32(p,true)!==0x02014b50)throw Error('Повреждённый ZIP-каталог.');
+  const flags=d.getUint16(p+8,true),method=d.getUint16(p+10,true),crc=d.getUint32(p+16,true),compressed=d.getUint32(p+20,true),size=d.getUint32(p+24,true),nl=d.getUint16(p+28,true),extra=d.getUint16(p+30,true),comment=d.getUint16(p+32,true),offset=d.getUint32(p+42,true);
+  if(p+46+nl+extra+comment>end||offset+30>start||flags&1||size>XLSX_XML_MAX)throw Error('Защищённый или слишком большой XLSX.');
+  const name=decoder.decode(bytes.subarray(p+46,p+46+nl));p+=46+nl+extra+comment;
+  if(!name.endsWith('.xml')&&!name.endsWith('.rels'))continue;
+  total+=size;if(total>64*1024*1024)throw Error('Слишком большой объём данных XLSX.');
+  if(d.getUint32(offset,true)!==0x04034b50)throw Error('Повреждённая запись XLSX.');
+  const dataStart=offset+30+d.getUint16(offset+26,true)+d.getUint16(offset+28,true);
+  if(dataStart+compressed>start)throw Error('Повреждённый XLSX.');
+  let data=bytes.subarray(dataStart,dataStart+compressed);
+  if(method===8){
+   if(typeof DecompressionStream==='undefined')throw Error('Этот браузер не поддерживает распаковку XLSX. Откройте файл в актуальном Chrome или Edge.');
+   let stream;try{stream=new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))}catch{throw Error('Распаковка XLSX недоступна в этом браузере. Используйте актуальный Chrome или Edge.')}
+   const reader=stream.getReader(),chunks=[];let length=0;
+   try{while(true){const {done,value}=await reader.read();if(done)break;length+=value.length;if(length>size||length>XLSX_XML_MAX){await reader.cancel();throw Error('Превышен размер распакованного XLSX.')}chunks.push(value)}}finally{reader.releaseLock()}
+   data=new Uint8Array(length);let pos=0;for(const c of chunks){data.set(c,pos);pos+=c.length}
+  }else if(method!==0)throw Error('Неподдерживаемый метод сжатия XLSX.');
+  if(data.length!==size||crc32(data)!==crc)throw Error('Ошибка контрольной суммы XLSX.');
+  files.set(name,decoder.decode(data));
+ }
+ return files;
+}
+function parseXml(text){
+ if(!text||/<!DOCTYPE|<!ENTITY/i.test(text))throw Error('Некорректный XML в XLSX.');
+ const d=new DOMParser().parseFromString(text,'application/xml');
+ if(d.getElementsByTagName('parsererror').length)throw Error('Ошибка чтения XML в XLSX.');
+ return d;
+}
+const tags=(node,name)=>Array.from(node.getElementsByTagNameNS('*',name));
+function textRuns(node){return tags(node,'t').map(n=>n.textContent).join('')}
+function resolveWorkbookPath(path){const parts=(path.startsWith('/')?path.slice(1):'xl/'+path).split('/'),out=[];for(const p of parts){if(p==='..')out.pop();else if(p&&p!=='.')out.push(p)}return out.join('/')}
+async function readEmployeeWorkbook(buffer){
+ const files=await readZip(buffer),wb=parseXml(files.get('xl/workbook.xml')),rels=parseXml(files.get('xl/_rels/workbook.xml.rels'));
+ const sheet=tags(wb,'sheet').find(n=>n.getAttribute('name')==='Сотрудники')||tags(wb,'sheet')[0];
+ if(!sheet)throw Error('В файле нет листа сотрудников.');
+ const rid=sheet.getAttributeNS(REL_NS,'id')||sheet.getAttribute('r:id');
+ const rel=tags(rels,'Relationship').find(n=>n.getAttribute('Id')===rid);
+ if(!rel||rel.getAttribute('TargetMode')==='External')throw Error('Лист сотрудников не найден.');
+ const doc=parseXml(files.get(resolveWorkbookPath(rel.getAttribute('Target'))));
+ const shared=files.has('xl/sharedStrings.xml')?tags(parseXml(files.get('xl/sharedStrings.xml')),'si').map(textRuns):[];
+ const rows=tags(doc,'row');if(!rows.length)throw Error('Нет заголовков таблицы.');
+ const readRow=row=>{
+  const out=new Map();let col=0;
+  for(const c of tags(row,'c')){
+   const ref=c.getAttribute('r')||'',m=ref.match(/^([A-Z]+)\d+$/);if(m)col=[...m[1]].reduce((n,x)=>n*26+x.charCodeAt(0)-64,0)-1;
+   const type=c.getAttribute('t')||'n',v=tags(c,'v')[0]?.textContent??'';
+   let value=type==='s'?(shared[Number(v)]??''):type==='inlineStr'?textRuns(c):v;
+   out.set(col++,{value:String(value),type,formula:tags(c,'f').length>0});
+  }return out;
+ };
+ const header=readRow(rows[0]),norm=s=>String(s).trim().toLowerCase().replace(/ё/g,'е');
+ const alias={'электронная почта':'email','эл. почта':'email','e-mail':'email','номер телефона':'phone'};
+ const mapping=new Map();
+ for(const [i,c] of header){const name=norm(c.value),key=EMPLOYEE_COLUMNS.find(x=>norm(x[0])===name||x[1]===name)?.[1]||alias[name];if(key){if([...mapping.values()].includes(key))throw Error('Повторная колонка: '+c.value);mapping.set(i,key)}}
+ const missing=EMPLOYEE_COLUMNS.filter(c=>![...mapping.values()].includes(c[1]));
+ if(missing.length)throw Error('Не хватает колонок: '+missing.map(c=>c[0]).join(', ')+'. Используйте шаблон выгрузки.');
+ const result=[],errors=[];
+ if(rows.length>10001)throw Error('Поддерживается до 10 000 строк сотрудников.');
+ for(let i=1;i<rows.length;i++){
+  const row=rows[i],cells=readRow(row),line=Number(row.getAttribute('r'))||i+1,p={};
+  if(![...mapping.keys()].some(k=>String(cells.get(k)?.value??'').trim()))continue;
+  for(const [col,key] of mapping){
+   const c=cells.get(col),value=String(c?.value??'').trim();p[key]=value;
+   if(c?.formula)errors.push('Строка '+line+': формула в поле «'+EMPLOYEE_COLUMNS.find(x=>x[1]===key)[0]+'». Вставьте значение.');
+   if(value&&['seat_code','phone','birthday'].includes(key)&&c?.type==='n')errors.push('Строка '+line+': «'+EMPLOYEE_COLUMNS.find(x=>x[1]===key)[0]+'» должен быть текстом. Проверьте исходное значение.');
+  }
+  result.push({line,p});
+ }
+ return {rows:result,errors};
+}
+function seatCapacity(f){return f>=4&&f<=9?200:f===3?80:0}
+function validMappedSeat(code){if(!code)return true;const n=Number(code.split('.')[1]);return n>=1&&n<=seatCapacity(seatFloor(code))}
+function normalizeRecord(p){
+ const email=normalizeEmail(p.email),raw=String(p.seat_code_source??p.seat_code??'').trim(),code=normalizeCode(p.seat_code??raw);
+ if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Некорректный email.');
+ if(!String(p.full_name??'').trim())throw Error('Не заполнено ФИО.');
+ if(raw&&(!code||normalizeCode(raw)!==code))throw Error('Некорректный код рабочего места.');
+ if(code&&!validMappedSeat(code))throw Error('Место '+raw+' не нанесено на доступную схему.');
+ const birthday=String(p.birthday??'').trim();
+ if(birthday){const m=birthday.match(/^(\d{2})\.(\d{2})$/),day=m?Number(m[1]):0,month=m?Number(m[2]):0;const max=[31,29,31,30,31,30,31,31,30,31,30,31][month-1]||0;if(day<1||day>max)throw Error('День рождения должен быть в формате ДД.ММ.')}
+ const obj={email,seat_code:code,seat_code_source:raw};for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'').trim();return obj;
+}
+function checkImport(data,base=employees){
+ const errors=data.errors.slice(),seen=new Set(),existing=new Map(base.map(p=>[p.email,p])),next=new Map(existing),lineByEmail=new Map();
+ let added=0,updated=0,unchanged=0;
+ for(const {line,p} of data.rows){
+  try{const obj=normalizeRecord(p);if(seen.has(obj.email))throw Error('Повторный email '+obj.email);seen.add(obj.email);lineByEmail.set(obj.email,line);
+   const old=existing.get(obj.email);
+   if(!old)added++;else if(EMPLOYEE_COLUMNS.every(([,key])=>String(old[key]??'')===String(obj[key]??''))&&String(old.seat_code_source??old.seat_code??'')===obj.seat_code_source)unchanged++;else updated++;
+   next.set(obj.email,obj);
+  }catch(err){errors.push('Строка '+line+': '+err.message)}
+ }
+ const occupied=new Map();for(const p of next.values()){if(!p.seat_code)continue;const old=occupied.get(p.seat_code);if(old){errors.push('Конфликт места '+p.seat_code+': '+old.email+' и '+p.email+(lineByEmail.has(p.email)?' (строка '+lineByEmail.get(p.email)+')':''));}else occupied.set(p.seat_code,p)}
+ return {records:[...next.values()],errors,added,updated,unchanged,kept:base.filter(p=>!seen.has(p.email)).length,read:data.rows.length};
+}
+let adminReady=false,adminOpen=false,editingEmail=null,assigningSeat=false,pendingImport=null,importToken=0,adminInputs={};
+function adminMessage(text){$('adminMessage').textContent=text||''}
+function setAdmin(open){adminOpen=open;$('adminPanel').hidden=!open;$('toggleAdmin').setAttribute('aria-expanded',String(open));if(open)refreshAdmin();else{cancelEdit();cancelImport()}invalidateViewport()}
+function refreshAdmin(){
+ const f=$('adminFloor').value||'all',floors=f==='all'?[2,3,4,5,6,7,8,9,10]:[Number(f)],total=floors.reduce((n,x)=>n+seatCapacity(x),0);
+ const assigned=employees.filter(p=>p.seat_code&&validMappedSeat(p.seat_code)&&floors.includes(seatFloor(p.seat_code)));
+ const occupied=new Set(assigned.map(p=>p.seat_code)).size,rate=total?occupied/total*100:0;
+ $('statTotal').textContent=total;$('statOccupied').textContent=occupied;$('statFree').textContent=total-occupied;$('statRate').textContent=rate.toLocaleString('ru-RU',{maximumFractionDigits:1})+'%';$('statBar').style.width=rate+'%';
+ $('adminExtra').textContent='Всего сотрудников: '+employees.length+' · Без места: '+employees.filter(p=>!p.seat_code).length+' · Место вне схемы: '+employees.filter(p=>p.seat_code&&!validMappedSeat(p.seat_code)).length;
+ const q=normalizeEmail($('adminSearch').value),body=$('adminRows');body.replaceChildren();
+ const filtered=employees.filter(p=>(f==='all'||(p.seat_code&&seatFloor(p.seat_code)===Number(f)))&&(!q||normalizeEmail([p.full_name,p.email,p.seat_code,p.seat_code_source].join(' ')).includes(q)));
+ for(const p of filtered.slice(0,200)){
+  const tr=document.createElement('tr'),name=document.createElement('td'),seat=document.createElement('td'),actions=document.createElement('td'),small=document.createElement('small');
+  name.textContent=p.full_name||'Без имени';small.textContent=p.email;name.append(small);seat.textContent=(p.seat_code_source??p.seat_code)||'—';
+  const edit=document.createElement('button');edit.type='button';edit.className='control';edit.textContent='Изменить';edit.onclick=()=>editEmployee(p);
+  const show=document.createElement('button');show.type='button';show.className='control';show.textContent='На схеме';show.disabled=!p.seat_code;show.onclick=()=>selectEmployee(p);actions.append(edit,show);tr.append(name,seat,actions);body.append(tr);
+ }
+ if(!filtered.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='Сотрудники не найдены';tr.append(td);body.append(tr)}
+ if(filtered.length>200){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='Первые 200 из '+filtered.length+'. Уточните поиск.';tr.append(td);body.append(tr)}
+}
+function editEmployee(p){
+ cancelImport();editingEmail=p?.email||null;assigningSeat=false;$('adminEdit').hidden=false;$('adminEditTitle').textContent=p?'Редактирование сотрудника':'Новый сотрудник';$('chooseSeatHint').textContent='';
+ for(const [,key] of EMPLOYEE_COLUMNS)adminInputs[key].value=key==='seat_code'?(p?.seat_code_source??p?.seat_code??''):(p?.[key]??'');
+ adminMessage('');$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function cancelEdit(){assigningSeat=false;editingEmail=null;$('adminEdit').hidden=true;$('chooseSeatHint').textContent=''}
+function saveEdit(){
+ try{const raw={};for(const [,key] of EMPLOYEE_COLUMNS)raw[key]=adminInputs[key].value;
+ const p=normalizeRecord(raw),base=employees.filter(x=>x.email!==editingEmail);
+ if(base.some(x=>x.email===p.email))throw Error('Такой email уже существует.');
+ if(p.seat_code&&base.some(x=>x.seat_code===p.seat_code))throw Error('Рабочее место уже занято.');
+ const index=employees.findIndex(x=>x.email===editingEmail),next=employees.slice();if(index>=0)next[index]=p;else next.push(p);
+ setEmployees(next);cancelEdit();cancelImport();selectEmployee(employees.find(x=>x.email===p.email));adminMessage('Сотрудник сохранён. Выгрузите XLSX для резервной копии.');
+ }catch(err){adminMessage(err.message)}
+}
+function cancelImport(){importToken++;pendingImport=null;$('importPreview').hidden=true;$('applyImport').disabled=true;$('xlsxFile').value=''}
+function showImport(result){
+ pendingImport=result;$('importPreview').hidden=false;$('applyImport').disabled=!!result.errors.length||!result.read;
+ $('importSummary').textContent='Строк: '+result.read+' · Новых: '+result.added+' · Обновлений: '+result.updated+' · Без изменений: '+result.unchanged+'\nНе затронуто: '+result.kept+' · Ошибок: '+result.errors.length+(result.errors.length?'\nИсправьте ошибки и загрузите файл повторно.':'\nЗаписи, отсутствующие в файле, не удаляются.');
+ const ul=$('importErrors');ul.replaceChildren();for(const error of result.errors.slice(0,100)){const li=document.createElement('li');li.textContent=error;ul.append(li)}
+ if(result.errors.length>100){const li=document.createElement('li');li.textContent='И ещё '+(result.errors.length-100)+' ошибок';ul.append(li)}
+}
+async function importFile(file){
+ if(!file)return;cancelEdit();cancelImport();const token=importToken;adminMessage('Проверка XLSX…');
+ try{if(file.size>XLSX_MAX)throw Error('Максимальный размер файла 15 МБ.');const data=await readEmployeeWorkbook(await file.arrayBuffer());if(token!==importToken)return;showImport(checkImport(data));adminMessage('')}catch(err){if(token!==importToken)return;adminMessage('Импорт не выполнен: '+err.message)}
+}
+function initAdmin(){
+ for(const f of [2,3,4,5,6,7,8,9,10]){const option=document.createElement('option');option.value=String(f);option.textContent=f+' этаж';$('adminFloor').append(option)}
+ for(const [title,key] of EMPLOYEE_COLUMNS){const field=document.createElement('label');field.className='admin-field';field.textContent=title;const input=document.createElement('input');input.type='text';input.name=key;if(key==='email')input.type='email';if(key==='email'||key==='full_name')input.required=true;if(key==='birthday')input.placeholder='ДД.ММ';if(key==='seat_code')input.placeholder='6.082 или пусто';field.append(input);$('adminFields').append(field);adminInputs[key]=input}
+ $('toggleAdmin').onclick=()=>setAdmin(!adminOpen);$('closeAdmin').onclick=()=>setAdmin(false);
+ $('adminFloor').addEventListener('change',refreshAdmin);$('adminSearch').addEventListener('input',refreshAdmin);
+ $('adminExport').onclick=exportEmployees;$('downloadTemplate').onclick=()=>downloadWorkbook([],'employees_template.xlsx');
+ $('importEmployees').onclick=()=>$('xlsxFile').click();$('xlsxFile').addEventListener('change',e=>importFile(e.target.files[0]));
+ $('cancelImport').onclick=()=>{cancelImport();adminMessage('Импорт отменён.')};
+ $('applyImport').onclick=()=>{if(!pendingImport||pendingImport.errors.length||!pendingImport.read)return;const r=pendingImport;try{setEmployees(r.records);cancelImport();adminMessage('Импорт выполнен. Добавлено: '+r.added+', обновлено: '+r.updated+'. Выгрузите XLSX для сохранения.')}catch(err){adminMessage(err.message)}};
+ $('addEmployee').onclick=()=>editEmployee(null);$('cancelEdit').onclick=cancelEdit;
+ $('adminEdit').addEventListener('submit',e=>{e.preventDefault();saveEdit()});
+ $('chooseSeat').onclick=()=>{assigningSeat=true;$('chooseSeatHint').textContent='Выберите свободный стол на схеме ниже.';$('frame').scrollIntoView({block:'center',behavior:'smooth'})};
+ adminReady=true;refreshAdmin();
+}
+initAdmin();
 
 $('exportEmployees').onclick=exportEmployees;
 window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,exportEmployees};
