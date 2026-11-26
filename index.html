@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.7</title>
+<title>Расположение рабочего места — 0.0.8</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -37,6 +37,28 @@
 .shell-shadow{fill:#b8c7d6;fill-opacity:.42;stroke:#b8c7d6;stroke-opacity:.24;stroke-width:8;stroke-linejoin:round;pointer-events:none}
 .desk,.chair,.room,.room-table,.plant-pot,.elevator{stroke-linejoin:round}
 .map{contain:paint}
+
+/* Portrait: the map reaches the right edge of the module, controls remain above it. */
+.quick-people{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.quick-people .quick-person{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.quick-people .quick-person span{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.2}
+.quick-people .quick-person small{white-space:nowrap}
+.export-row{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.export-button{display:inline-flex;align-items:center;gap:6px}
+.map{overflow:hidden}
+@media(max-width:650px) and (orientation:portrait){
+ .layout{grid-template-columns:41px minmax(0,1fr);grid-template-rows:auto auto;gap:5px}
+ .floors{grid-column:1;grid-row:1/3;max-height:440px;overflow-y:auto;scrollbar-width:thin}
+ .side-controls{grid-column:2;grid-row:1;flex-direction:row;justify-content:flex-end;gap:5px}
+ .side-button,.codes-toggle{flex-direction:row;min-height:35px;padding:4px 7px;font-size:10px;gap:5px}
+ .side-button svg{width:19px;height:19px}
+ .codes-toggle br{display:none}
+ .map-column{grid-column:2;grid-row:2;width:100%}
+ .map{height:clamp(260px,88vw,420px)}
+ .quick-people .quick-person{font-size:11px;padding:7px 6px;min-height:47px}
+ .quick-people .quick-person small{font-size:10px}
+ .export-row{justify-content:flex-start}
+}
 </style>
 </head>
 <body>
@@ -44,6 +66,7 @@
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
 <form id="searchForm" class="search-form" role="search"><input type="search" id="employeeSearch" placeholder="ФИО или электронная почта" autocomplete="off" aria-label="Поиск сотрудника"><button type="submit">Найти</button></form>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
+<div class="export-row"><button class="control export-button" id="exportEmployees" type="button">↓ Выгрузить сотрудников XLSX</button></div>
 <div class="search-results" id="searchResults" hidden></div>
 <div class="status" id="status" role="status" hidden></div>
 <section class="employee-card" id="employeeCard" aria-label="Карточка сотрудника" hidden>
@@ -72,11 +95,11 @@
 <filter id="smallShadow" x="-35%" y="-35%" width="180%" height="180%"><feDropShadow dx=".5" dy="1.6" stdDeviation="1" flood-color="#485a67" flood-opacity=".23"/></filter>
 <filter id="windowGlow" x="-20%" y="-50%" width="140%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="1.3" flood-color="#a7d7ff" flood-opacity=".9"/></filter>
 </defs>
-<defs><clipPath id="visibleMapArea"><rect id="mapCrop" x="0" y="0" width="1080" height="500"/></clipPath></defs><rect width="1080" height="500" fill="#fff" pointer-events="none"/><g clip-path="url(#visibleMapArea)"><g id="drawing"></g></g></svg>
+<g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.7</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.8</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -126,6 +149,7 @@ function paintSelection(){
  $('focus').disabled=!targetCode||!active(seatFloor(targetCode));
 }
 function showCard(){
+ screenDirty=true;
  const code=selectedCode||targetCode,s=findSeat(code),p=profile||findPerson(code);
  $('employeeCard').hidden=!cardOpen||(!s&&!p);if(!cardOpen||(!s&&!p))return;
  $('cardCode').textContent=code?'Рабочее место '+code:'Рабочее место не назначено';
@@ -303,17 +327,16 @@ function special(f){
 function render(resetView=true){const rebuild=renderedFloor!==floor;if(rebuild){drawing.replaceChildren();seats=[];}$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full','flip'])$(id).disabled=!active(floor);if(rebuild){if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}renderedFloor=floor;applyOrientation()}$('showCodes').disabled=!active(floor);syncCodes();paintSelection();showCard();if(resetView)fit()}
 // Camera math is independent of DOM layout. Read viewport dimensions once per gesture.
 let screenBox=null,screenDirty=true,paintFrame=null,lastViewKey='',lastZoom='';
-function invalidateViewport(){screenDirty=true}
+function invalidateViewport(){screenDirty=true;queuePaint()}
 function measureViewport(){screenBox=svg.getBoundingClientRect();screenDirty=false;return screenBox}
 function viewport(){return screenDirty||!screenBox?measureViewport():screenBox}
 function fit(){view={...BASE};apply()}
 function paintView(){
- const key=[view.x,view.y,view.w,view.h].join(' ');
- if(key!==lastViewKey){
-  const crop=$('mapCrop');
-  crop.setAttribute('x',view.x);crop.setAttribute('y',view.y);crop.setAttribute('width',view.w);crop.setAttribute('height',view.h);
-  svg.setAttribute('viewBox',key);lastViewKey=key;
- }
+ // Expand the logical camera to the physical SVG aspect ratio. The browser clips only at its actual edge.
+ const r=viewport(),aspect=r.width>0&&r.height>0?r.width/r.height:view.w/view.h;
+ const w=Math.max(view.w,view.h*aspect),hh=Math.max(view.h,view.w/aspect);
+ const key=[view.x-(w-view.w)/2,view.y-(hh-view.h)/2,w,hh].join(' ');
+ if(key!==lastViewKey){svg.setAttribute('viewBox',key);lastViewKey=key;}
  const zoom=Math.round(BASE.w/view.w*100)+'%';
  if(zoom!==lastZoom){$('zoom').textContent=zoom;lastZoom=zoom}
 }
@@ -395,7 +418,57 @@ $('closeCard').onclick=()=>{cardOpen=false;selectedCode=null;paintSelection();sh
 $('searchForm').addEventListener('submit',e=>{e.preventDefault();searchPeople()});
 $('employeeSearch').addEventListener('input',clearResults);
 svg.addEventListener('keydown',e=>{const code=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code');if(code&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(code)}});
-window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget};
+
+/* Minimal OOXML workbook exporter. ZIP STORE, UTF-8, inline text cells.
+   No network, formulas, external links, or third-party runtime. */
+const EMPLOYEE_COLUMNS=[
+ ['ФИО','full_name',35],['Email','email',32],['Код рабочего места','seat_code',22],
+ ['Должность','position',32],['Департамент','department',36],['Управление','directorate',36],
+ ['Телефон','phone',24],['День рождения','birthday',18]
+];
+const XML_HEAD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+const MAIN_NS='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+const REL_NS='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const PACK_REL='http://schemas.openxmlformats.org/package/2006/relationships';
+const xmlText=v=>String(v??'').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+const crcTable=Array.from({length:256},(_,i)=>{let c=i;for(let j=0;j<8;j++)c=(c>>>1)^((c&1)?0xedb88320:0);return c>>>0});
+function crc32(bytes){let c=0xffffffff;for(const x of bytes)c=(c>>>8)^crcTable[(c^x)&255];return (c^0xffffffff)>>>0}
+function zipStore(files){
+ const encoder=new TextEncoder(),locals=[],centrals=[];let offset=0,centralSize=0;
+ const block=n=>{const a=new Uint8Array(n),d=new DataView(a.buffer);return {a,u16:(p,v)=>d.setUint16(p,v,true),u32:(p,v)=>d.setUint32(p,v,true)}};
+ for(const [path,text] of files){
+  const name=encoder.encode(path),data=encoder.encode(text),crc=crc32(data);
+  const l=block(30);l.u32(0,0x04034b50);l.u16(4,20);l.u16(6,0x800);l.u16(12,33);l.u32(14,crc);l.u32(18,data.length);l.u32(22,data.length);l.u16(26,name.length);
+  locals.push(l.a,name,data);
+  const c=block(46);c.u32(0,0x02014b50);c.u16(4,20);c.u16(6,20);c.u16(8,0x800);c.u16(14,33);c.u32(16,crc);c.u32(20,data.length);c.u32(24,data.length);c.u16(28,name.length);c.u32(42,offset);
+  centrals.push(c.a,name);centralSize+=46+name.length;offset+=30+name.length+data.length;
+ }
+ const end=block(22);end.u32(0,0x06054b50);end.u16(8,files.length);end.u16(10,files.length);end.u32(12,centralSize);end.u32(16,offset);
+ return [...locals,...centrals,end.a];
+}
+function employeeWorkbook(records=employees){
+ const rows=[EMPLOYEE_COLUMNS.map(c=>c[0]),...records.map(p=>EMPLOYEE_COLUMNS.map(c=>p[c[1]]??''))];
+ const cells=rows.map((r,i)=>'<row r="'+(i+1)+'"'+(i===0?' ht="24" customHeight="1"':'')+'>'+r.map((v,j)=>'<c r="'+String.fromCharCode(65+j)+(i+1)+'" t="inlineStr" s="'+(i===0?1:2)+'"><is><t xml:space="preserve">'+xmlText(v)+'</t></is></c>').join('')+'</row>').join('');
+ const cols=EMPLOYEE_COLUMNS.map((c,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c[2]+'" customWidth="1"/>').join('');
+ const range='A1:H'+rows.length;
+ return zipStore([
+ ['[Content_Types].xml',XML_HEAD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+ ['_rels/.rels',XML_HEAD+'<Relationships xmlns="'+PACK_REL+'"><Relationship Id="rId1" Type="'+REL_NS+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+ ['xl/workbook.xml',XML_HEAD+'<workbook xmlns="'+MAIN_NS+'" xmlns:r="'+REL_NS+'"><sheets><sheet name="Сотрудники" sheetId="1" r:id="rId1"/></sheets></workbook>'],
+ ['xl/_rels/workbook.xml.rels',XML_HEAD+'<Relationships xmlns="'+PACK_REL+'"><Relationship Id="rId1" Type="'+REL_NS+'/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+REL_NS+'/styles" Target="styles.xml"/></Relationships>'],
+ ['xl/styles.xml',XML_HEAD+'<styleSheet xmlns="'+MAIN_NS+'"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0757BD"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="49" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyNumberFormat="1" applyAlignment="1"><alignment vertical="center"/></xf><xf numFmtId="49" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'],
+ ['xl/worksheets/sheet1.xml',XML_HEAD+'<worksheet xmlns="'+MAIN_NS+'"><dimension ref="'+range+'"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="17"/><cols>'+cols+'</cols><sheetData>'+cells+'</sheetData><autoFilter ref="'+range+'"/></worksheet>']
+ ]);
+}
+function exportEmployees(){
+ const parts=employeeWorkbook(),blob=new Blob(parts,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+ const url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='employees_'+new Date().toISOString().slice(0,10)+'.xlsx';
+ document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+
+$('exportEmployees').onclick=exportEmployees;
+window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,exportEmployees};
 if(location.protocol==='file:'){
  $('localTools').hidden=false;
  $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
