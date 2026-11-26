@@ -3,26 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.1</title>
+<title>Расположение рабочего места — 0.0.2</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#26374a;background:#f3f5f8;font-size:14px;--blue:#125a9f;--line:#dbe2e9}
 *{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #71b6ff;outline-offset:2px}.page{max-width:1500px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.brand{font-size:20px;font-weight:700;color:var(--blue)}.version{font-size:12px;color:#617387}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 3px 12px #243f5910}h1{font-size:21px;margin:0 0 5px}.sub{color:#66778a;font-size:13px;margin:0}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.tag{font-size:12px;border:1px solid #d9e5ef;background:#f5f9fc;color:#47647e;padding:7px 10px;border-radius:6px}.floors{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 14px}.floor{min-width:44px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#41546a}.floor[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}.floor.soon{color:#8794a2;background:#f5f7f9}.floor small{display:block;font-size:9px;margin-top:2px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.control{border:1px solid #d6dfe8;background:white;border-radius:6px;min-height:36px;padding:7px 12px;color:#31475e}.control:hover{background:#eef5fb}.number{min-width:52px;text-align:center;font-variant-numeric:tabular-nums;color:#60768a}.frame{position:relative;border:1px solid #d7e1e9;border-radius:8px;background:#f6f8fa;overflow:hidden}.map{display:block;width:100%;height:clamp(360px,57vh,650px);touch-action:none;cursor:grab;user-select:none}.map.drag{cursor:grabbing}.overlay{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;background:#f7f9fb}.overlay[hidden]{display:none}.overlay strong{font-size:24px}.overlay p{color:#64768a}.legend{display:flex;flex-wrap:wrap;gap:14px;color:#63778b;font-size:12px;margin-top:14px}.legend span{display:flex;align-items:center;gap:5px}.dot{width:12px;height:12px;border:1px solid #aebdca;border-radius:3px}.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px;font-size:12px;color:#718196}.room{fill:#e7eef4;stroke:#8a9cac;stroke-width:1.4}.label{font-size:10px;fill:#526578;text-anchor:middle;pointer-events:none}.wing{font-size:12px;fill:#64798b;letter-spacing:1.5px;text-anchor:middle}.desk{fill:#dbc7ac;stroke:#b5a084;stroke-width:.65}.chair{fill:#aab6c0;stroke:#8998a6;stroke-width:.5}.divider{fill:#8f9ca7}.shell{fill:#fff;stroke:#6f8496;stroke-width:2.5;stroke-linejoin:round}
 @media(max-width:600px){.page{padding:10px}.panel{padding:12px}h1{font-size:18px}.brand{font-size:16px}.floors{gap:5px}.floor{min-width:38px;padding:7px 8px}.map{height:55vh;min-height:300px}.control{padding:7px 9px}.tag{font-size:11px}.foot{font-size:11px}}
+
+/* Embedded, rectangular portal module. */
+html,body{background:#fff}
+.page{max-width:none;margin:0;padding:0}
+.panel{border:1px solid #dbe2e9;border-radius:3px;box-shadow:none;padding:12px}
+.layout{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:stretch}
+.floors{display:flex;flex-direction:column;flex-wrap:nowrap;gap:3px;margin:0;padding:2px 0;overflow-y:auto;min-height:0;max-height:610px}
+.floor{width:100%;min-width:0;flex:none;min-height:31px;padding:5px 2px;border-radius:4px;font-size:12px}
+.floor small{font-size:8px;margin-top:1px}
+.floor.soon{min-height:36px}
+.map-column{min-width:0;display:flex;flex-direction:column;gap:8px}
+.toolbar{margin:0;min-height:36px}
+.codes-toggle{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:#41546a;white-space:nowrap;cursor:pointer}
+.codes-toggle input{width:15px;height:15px;margin:0;accent-color:var(--blue)}
+.frame{flex:1;min-height:0;border-radius:3px}
+.map{height:clamp(380px,65vh,610px)}
+.seat-code{font:4.2px Arial,sans-serif;fill:#3d3a35;text-anchor:middle;dominant-baseline:middle;pointer-events:none;user-select:none}
+.hide-codes .seat-code{display:none}
+.group-wall{stroke:#83909c;stroke-width:1.7;stroke-linecap:square;fill:none}
+.legend{margin:0;gap:10px}
+.foot{margin:8px 0 0;font-size:11px}
+@media(max-width:600px){.panel{padding:6px}.layout{grid-template-columns:42px minmax(0,1fr);gap:6px}.floors{max-height:560px}.floor{min-height:29px;font-size:11px}.floor.soon{min-height:34px}.toolbar{gap:5px}.actions{gap:3px}.control{min-height:30px;padding:5px 7px;font-size:11px}.number{min-width:36px;font-size:11px}.map{height:clamp(350px,58vh,550px)}.legend{font-size:10px;gap:7px}.foot{font-size:10px}.codes-toggle{font-size:11px}.map-column{gap:6px}}
 </style>
 </head>
 <body>
 <main class="page">
-<header><div class="brand">Планировка офиса</div><div class="version">v0.0.1 · автономная демонстрация</div></header>
-<section class="panel">
-<div class="header"><div><h1>Расположение рабочего места</h1><p class="sub">Интерактивная схема · условное здание</p></div><span class="tag">Демонстрационные данные</span></div>
+<section class="panel" aria-label="Схема этажа">
+<div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
-<div class="toolbar"><strong id="floorTitle"></strong><div class="actions"><button class="control" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">Весь этаж</button><button class="control" id="full">Развернуть</button></div></div>
+<div class="map-column">
+<div class="toolbar"><strong id="floorTitle"></strong><label class="codes-toggle"><input type="checkbox" id="showCodes" checked>Показывать коды мест</label><div class="actions"><button class="control" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">Весь этаж</button><button class="control" id="full">Развернуть</button></div></div>
 <div class="frame" id="frame">
 <svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#e9eef3" stroke-width=".6"/></pattern></defs><rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)"/><g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="legend"><span><i class="dot" style="background:#dbc7ac"></i>Рабочие столы</span><span><i class="dot" style="background:#e7eef4"></i>Помещения</span><span><i class="dot" style="background:#fff"></i>Проходы</span></div>
-<div class="foot"><span>Колесо мыши или два пальца — масштаб · перетаскивание — перемещение</span><span>Не является фактическим планом здания</span></div>
+<div class="foot"><span>Колесо мыши или два пальца — масштаб · перетаскивание — перемещение</span><span>Условная схема · v0.0.2</span></div>
+</div>
+</div>
 </section>
 </main>
 <script>
@@ -31,18 +55,55 @@ const $=id=>document.getElementById(id);
 const svg=$('map'),drawing=$('drawing');
 const BASE={x:0,y:0,w:1080,h:500};
 let view={...BASE},floor=6;
-const allFloors=[-1,1,2,3,4,5,6,7,8,9,10,11,12,13];
+const allFloors=[13,12,11,10,9,8,7,6,5,4,3,2,1,-1];
+let seats=[];
 const active=f=>f>=2&&f<=10;
 const ns='http://www.w3.org/2000/svg';
 function el(tag,attrs={},parent=drawing){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));parent.append(n);return n}
 function rect(x,y,w,h,cls,parent=drawing){return el('rect',{x,y,width:w,height:h,class:cls,rx:1},parent)}
 function label(x,y,text,cls='label',parent=drawing){const n=el('text',{x,y,class:cls},parent);n.textContent=text;return n}
 function room(x,y,w,h,name){rect(x,y,w,h,'room');label(x+w/2,y+h/2+3,name)}
-function cluster(x,y,n=4,angle=0){const g=el('g',{transform:'translate('+x+' '+y+') rotate('+angle+')'});for(let i=0;i<n;i++){let a=i*16;rect(a,0,16,7.5,'desk',g);rect(a,8,16,7.5,'desk',g);rect(a+4,-6,8,5,'chair',g);rect(a+4,16.5,8,5,'chair',g)}rect(0,7.5,n*16,.5,'divider',g)}
+function cluster(x,y,n=4,angle=0){
+  const g=el('g',{transform:'translate('+x+' '+y+') rotate('+angle+')'});
+  const gap=.3, row=7.5+gap;
+  for(let i=0;i<n;i++){
+    const a=i*16;
+    for(const b of [0,row]){
+      const desk=rect(a,b,16,7.5,'desk',g);
+      const code=el('text',{x:a+8,y:b+3.75,class:'seat-code'},g);
+      const t=angle*Math.PI/180,dx=a+8,dy=b+3.75;
+      seats.push({desk,code,x:x+dx*Math.cos(t)-dy*Math.sin(t),y:y+dx*Math.sin(t)+dy*Math.cos(t)});
+    }
+    rect(a+4,-6,8,5,'chair',g);rect(a+4,row+8.5,8,5,'chair',g);
+  }
+  rect(0,7.5,n*16,gap,'divider',g);
+}
+function wall(x1,y1,x2,y2){el('line',{x1,y1,x2,y2,class:'group-wall'})}
+function assignCodes(){
+  // Clockwise sweep from the right wing; unique codes per demonstration floor.
+  const angle=s=>(Math.atan2(s.y-250,s.x-540)+Math.PI*2)%(Math.PI*2);
+  // Keep the full right wing before the left, with clockwise ordering within each wing.
+  seats.sort((a,b)=>{
+    const side=s=>s.x>=540?0:1;
+    const order=s=>(angle(s)+Math.PI/2)%(Math.PI*2);
+    return side(a)-side(b)||order(a)-order(b)||a.x-b.x||a.y-b.y;
+  });
+  seats.forEach((s,i)=>{const code=floor+'.'+String(i+1).padStart(3,'0');s.code.textContent=code;s.desk.setAttribute('data-seat-code',code);const tip=el('title',{},s.desk);tip.textContent=code});
+}
+function syncCodes(){svg.classList.toggle('hide-codes',!$('showCodes').checked)}
 function common(){el('path',{d:'M40 45 H1040 V415 H580 L40 455 Z',class:'shell'});rect(485,205,110,70,'room');for(let i=0;i<3;i++)rect(493+i*32,214,26,30,'room');label(540,263,'Лифты');room(505,105,70,42,'Лестница');label(280,32,'ЛЕВОЕ КРЫЛО','wing');label(800,32,'ПРАВОЕ КРЫЛО','wing')}
-function standard(){common();for(const offset of [0,510]){room(90+offset,175,95,55,'Переговорная 1');room(185+offset,175,95,55,'Переговорная 2');room(280+offset,175,75,55,'Малая переговорная');room(355+offset,175,80,55,'Кабинет');room(90+offset,235,110,55,'Приём пищи');room(200+offset,235,45,55,'WC');room(245+offset,235,45,55,'WC');room(290+offset,235,145,55,'Кабинеты');for(let i=0;i<3;i++){cluster(65+offset+i*115,85,4);cluster(65+offset+i*115,135,4);cluster(65+offset+i*115,330,4);cluster(65+offset+i*115,380,4)}cluster(410+offset,85,2)}label(540,290,'Общий проход')}
-function special(f){common();if(f===2){room(95,120,300,180,'Общественная зона');room(685,120,300,180,'Общие помещения');label(540,345,'Холл')}else if(f===3){room(85,90,350,290,'Служебные помещения');room(735,170,240,120,'Служебные помещения');for(let i=0;i<4;i++){cluster(630+i*87,95,4);cluster(630+i*87,345,4)}}else{for(let i=0;i<4;i++){room(85+i*88,100,85,90,'Кабинет');room(85+i*88,285,85,90,'Кабинет')}room(655,95,330,280,'Большой зал')}}
-function render(){drawing.replaceChildren();$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full'])$(id).disabled=!active(floor);if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor)}fit()}
+function standard(){common();for(const offset of [0,510]){room(90+offset,175,95,55,'Переговорная 1');room(185+offset,175,95,55,'Переговорная 2');room(280+offset,175,75,55,'Малая переговорная');room(355+offset,175,80,55,'Кабинет');room(90+offset,235,110,55,'Приём пищи');room(200+offset,235,45,55,'WC');room(245+offset,235,45,55,'WC');room(290+offset,235,145,55,'Кабинеты');for(let i=0;i<3;i++){cluster(65+offset+i*115,85,4);cluster(65+offset+i*115,135,4);cluster(65+offset+i*115,330,4);cluster(65+offset+i*115,380,4)}cluster(410+offset,85,2);
+  // Short, doorless partitions between adjacent work groups, keeping the corridor open.
+  for(const y of [85,135,330,380])for(let i=0;i<2;i++){
+    const x=65+offset+i*115+89.5;wall(x,y-8,x,y+24);
+  }
+  wall(400+offset,77,400+offset,109);
+  for(const y of [118,363])for(let i=0;i<3;i++){
+    const x=65+offset+i*115;wall(x,y,x+64,y);
+  }
+}label(540,290,'Общий проход')}
+function special(f){common();if(f===2){room(95,120,300,180,'Общественная зона');room(685,120,300,180,'Общие помещения');label(540,345,'Холл')}else if(f===3){room(85,90,350,290,'Служебные помещения');room(735,170,240,120,'Служебные помещения');for(let i=0;i<4;i++){cluster(630+i*87,95,4);cluster(630+i*87,345,4);if(i<3){wall(704+i*87,87,704+i*87,119);wall(704+i*87,337,704+i*87,369)}}}else{for(let i=0;i<4;i++){room(85+i*88,100,85,90,'Кабинет');room(85+i*88,285,85,90,'Кабинет')}room(655,95,330,280,'Большой зал')}}
+function render(){drawing.replaceChildren();seats=[];$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full'])$(id).disabled=!active(floor);if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}$('showCodes').disabled=!active(floor);syncCodes();fit()}
 function fit(){view={...BASE};apply()}
 function apply(){svg.setAttribute('viewBox',[view.x,view.y,view.w,view.h].join(' '));$('zoom').textContent=Math.round(BASE.w/view.w*100)+'%'}
 function world(x,y){const p=svg.createSVGPoint();p.x=x;p.y=y;const matrix=svg.getScreenCTM();return matrix?p.matrixTransform(matrix.inverse()):{x:view.x+view.w/2,y:view.y+view.h/2}}
@@ -55,9 +116,19 @@ svg.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;poin
 function end(e){pointers.delete(e.pointerId);last=gesture();if(!pointers.size)svg.classList.remove('drag')}
 for(const ev of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(ev,end);
 for(const f of allFloors){const b=document.createElement('button');b.className='floor'+(active(f)?'':' soon');b.dataset.floor=f;b.textContent=f;if(!active(f)){const s=document.createElement('small');s.textContent='Скоро';b.append(s)}b.onclick=()=>{floor=f;render()};$('floors').append(b)}
+$('showCodes').addEventListener('change',syncCodes);
 $('minus').onclick=()=>zoomAt(1.25);$('plus').onclick=()=>zoomAt(.8);$('reset').onclick=fit;
-$('full').onclick=async()=>{if(document.fullscreenElement){await document.exitFullscreen();return}if($('frame').requestFullscreen){try{await $('frame').requestFullscreen();return}catch{}}const expanded=$('frame').classList.toggle('expanded');$('frame').style.position=expanded?'fixed':'relative';$('frame').style.inset=expanded?'0':'';$('frame').style.zIndex=expanded?'1000':'';svg.style.height=expanded?'100dvh':'';if(expanded){const b=document.createElement('button');b.id='closeFull';b.textContent='Закрыть';b.className='control';b.style.cssText='position:absolute;top:12px;right:12px;z-index:1001';b.onclick=()=>{b.remove();$('frame').classList.remove('expanded');$('frame').style.position='relative';$('frame').style.inset='';$('frame').style.zIndex='';svg.style.height=''};$('frame').append(b)}};
-document.addEventListener('fullscreenchange',()=>{svg.style.height=document.fullscreenElement?'100vh':''});
+$('full').onclick=()=>{
+  const frame=$('frame');
+  if(frame.classList.contains('expanded'))return;
+  frame.classList.add('expanded');
+  frame.style.cssText='position:fixed;inset:0;z-index:1000;background:#fff';
+  svg.style.height='100dvh';
+  const b=document.createElement('button');b.id='closeFull';b.textContent='Закрыть';b.className='control';
+  b.style.cssText='position:absolute;top:max(12px,env(safe-area-inset-top));right:12px;z-index:1001';
+  b.onclick=()=>{b.remove();frame.classList.remove('expanded');frame.style.cssText='';svg.style.height=''};
+  frame.append(b);
+};
 render();
 </script>
 </body>
