@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.11</title>
+<title>Расположение рабочего места — 0.0.12</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -82,7 +82,7 @@
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
 <form id="searchForm" class="search-form" role="search"><input type="search" id="employeeSearch" placeholder="ФИО или электронная почта" autocomplete="off" aria-label="Поиск сотрудника"><button type="submit">Найти</button></form>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
-<div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
+<div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="loadFloorModel" type="button">Загрузить планировку</button><input id="floorModelFile" type="file" accept=".json,application/json" hidden><button class="control" id="unloadFloorModel" type="button" hidden>Вернуть демо</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
 <form id="adminLogin" class="login-panel" hidden><strong>Вход в панель администратора</strong><input id="adminPassword" type="password" placeholder="Пароль" autocomplete="current-password" aria-label="Пароль администратора" required><div class="admin-actions"><button class="control admin-primary" id="loginSubmit" type="submit">Войти</button><button class="control" id="loginCancel" type="button">Отмена</button></div><div class="login-error" id="loginError" role="status"></div><p class="admin-note">Временный вход для демонстрации. Не является защитой персональных данных.</p></form>
 <div class="search-results" id="searchResults" hidden></div>
 <div class="status" id="status" role="status" hidden></div>
@@ -134,7 +134,7 @@
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.11</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.12</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -163,8 +163,8 @@ const visibleLevel=p=>adminOpen?'full':(p?.visibility||'full');
 const publicPeople=()=>employees.filter(p=>visibleLevel(p)!=='hidden');
 const locationText=p=>visibleLevel(p)==='full'?(p.seat_code_source||p.seat_code||'Без места'):visibleLevel(p)==='floor'&&p.seat_code?seatFloor(p.seat_code)+' этаж':'Расположение скрыто';
 const normalizeEmail=v=>String(v??'').trim().toLowerCase();
-function normalizeCode(v){const m=String(v??'').trim().match(/^(-?\d+)\.(\d{1,3})$/);return m?Number(m[1])+'.'+String(Number(m[2])).padStart(3,'0'):''}
-const seatFloor=code=>Number(String(code).split('.')[0]);
+function normalizeCode(v){const m=String(v??'').trim().toUpperCase().match(/^(?:([LR])\.)?(-?\d+)\.(\d{1,3})$/);return m?(m[1]?m[1]+'.':'')+Number(m[2])+'.'+String(Number(m[3])).padStart(3,'0'):''}
+const seatFloor=code=>Number(String(code).split('.').slice(-2)[0]);
 const findSeat=code=>seats.find(s=>s.code.textContent===code);
 const findPerson=code=>employees.find(p=>p.seat_code===code);
 const wing=s=>s.x>=540?'Левое крыло':'Правое крыло';
@@ -216,7 +216,7 @@ function focusTarget(){
  const s=findSeat(targetCode);
  if(!s){message(active(floor)?'Рабочее место не нанесено на схему.':'Схема этого этажа пока недоступна.');return false}
  // The selected half includes the central lift core and the complete target wing.
- const left=s.x<540;
+ const left=s.x<(localModel&&floor===localModel.floor?localModel.wingBoundary:540);
  let x=left?18:450,y=left?12:70,w=left?620:610,hh=left?480:365;
  if(flipped){x=1080-x-w;y=500-y-hh}
  view={x,y,w,h:hh};apply();selectedCode=null;cardOpen=true;paintSelection();showCard();return true;
@@ -256,7 +256,7 @@ function applyOrientation(){
  drawing.setAttribute('transform',flipped?'rotate(180 540 250)':'');
  for(const t of drawing.querySelectorAll('text')){
   const x=t.getAttribute('x'),y=t.getAttribute('y');
-  const isSeat=t.getAttribute('class')==='seat-code';const turn=isSeat?0:(flipped?180:0);t.setAttribute('transform',turn?'rotate('+turn+' '+x+' '+y+')':'');
+  const isSeat=t.classList.contains('seat-code');const turn=isSeat?0:(flipped?180:0);t.setAttribute('transform',turn?'rotate('+turn+' '+x+' '+y+')':'');
  }
  $('flip').setAttribute('aria-pressed',String(flipped));
 }
@@ -369,7 +369,7 @@ function special(f){
  else if(f===3){room(97,91,296,210,'Служебные помещения');for(const z of [[488,329,112,78,'eight'],[683,109,112,94,'four'],[826,129,119,90,'eight'],[758,298,118,88,'four'],[886,298,120,80,'eight']])openSpace(...z);room(655,228,340,48,'Общие помещения');plant(409,328,6)}
  else{for(let i=0;i<3;i++){room(95+i*110,100,100,93,'Кабинет','office');room(95+i*110,285,100,93,'Кабинет','office')}room(649,143,350,218,'Большой зал');plant(624,350,7)}
 }
-function render(resetView=true){const rebuild=renderedFloor!==floor;if(rebuild){drawing.replaceChildren();seats=[];}$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full','flip'])$(id).disabled=!active(floor);if(rebuild){if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}renderedFloor=floor;applyOrientation()}$('showCodes').disabled=!active(floor);syncCodes();paintSelection();showCard();if(resetView)fit()}
+function render(resetView=true){const rebuild=renderedFloor!==floor;if(rebuild){drawing.replaceChildren();seats=[];}$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full','flip'])$(id).disabled=!active(floor);if(rebuild){if(active(floor)){if(localModel&&floor===localModel.floor){renderLocalFloor(localModel)}else{if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}}renderedFloor=floor;applyOrientation()}$('showCodes').disabled=!active(floor);syncCodes();paintSelection();showCard();if(resetView)fit()}
 // Camera math is independent of DOM layout. Read viewport dimensions once per gesture.
 let screenBox=null,screenDirty=true,paintFrame=null,lastViewKey='',lastZoom='';
 function invalidateViewport(){screenDirty=true;queuePaint()}
@@ -596,8 +596,8 @@ async function readEmployeeWorkbook(buffer){
  }
  return {rows:result,errors};
 }
-function seatCapacity(f){return f>=4&&f<=9?200:f===3?80:0}
-function validMappedSeat(code){if(!code)return true;const n=Number(code.split('.')[1]);return n>=1&&n<=seatCapacity(seatFloor(code))}
+function seatCapacity(f){return localModel&&f===localModel.floor?localModel.desks.length:f>=4&&f<=9?200:f===3?80:0}
+function validMappedSeat(code){if(!code)return true;const f=seatFloor(code);if(localModel&&f===localModel.floor)return localModel.desks.some(p=>p.code===code);if(/^[LR]\./.test(code))return false;const n=Number(code.split('.').at(-1));return n>=1&&n<=seatCapacity(f)}
 function normalizeRecord(p){
  const email=normalizeEmail(p.email),raw=String(p.seat_code_source??p.seat_code??'').trim(),code=normalizeCode(p.seat_code??raw);
  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Некорректный email.');
@@ -703,10 +703,62 @@ function initAdmin(){
  $('chooseSeat').onclick=()=>{if(!adminOpen)return;$('mapPanel').hidden=false;assigningSeat=true;$('chooseSeatHint').textContent='Выберите свободный стол на схеме ниже.';$('frame').scrollIntoView({block:'center',behavior:'smooth'})};
  adminReady=true;refreshAdmin();
 }
+
+/* Locally selected data-only model; the public HTML contains no real geometry.
+   Validation accepts only a bounded schema; no markup, scripts or external URLs. */
+let localModel=null,backupEmployees=null;
+function validateFloorModel(m){
+ const finite=(v,min,max)=>typeof v==='number'&&Number.isFinite(v)&&v>=min&&v<=max;
+ const point=p=>Array.isArray(p)&&p.length===2&&finite(p[0],0,1080)&&finite(p[1],0,500);
+ if(!m||m.schema!=='office-map-floor-v1'||!Number.isInteger(m.floor)||!active(m.floor)||!finite(m.wingBoundary,0,1080))throw Error('Неверный формат планировки.');
+ if(!Array.isArray(m.outline)||m.outline.length<3||m.outline.length>300||!m.outline.every(point))throw Error('Некорректный контур.');
+ for(const [k,max] of [['rooms',200],['walls',500],['desks',600],['plants',300]])if(!Array.isArray(m[k])||m[k].length>max)throw Error('Некорректный слой '+k);
+ const ids=new Set(),codes=new Set(),numbers=new Set();
+ for(const r of m.rooms){if(!r||typeof r.id!=='string'||ids.has(r.id)||!finite(r.x,0,1080)||!finite(r.y,0,500)||!finite(r.w,1,1080-r.x)||!finite(r.h,1,500-r.y)||typeof r.name!=='string'||r.name.length>100||!['plain','meeting','office','food'].includes(r.type))throw Error('Некорректное помещение.');ids.add(r.id)}
+ for(const d of m.desks){const number=String(d.code).split('.').at(-1);if(!d||typeof d.id!=='string'||ids.has(d.id)||!point([d.x,d.y])||!finite(d.w,2,100)||!finite(d.h,2,100)||!finite(d.angle,-360,360)||!['L','R'].includes(d.wing)||d.code!==normalizeCode(d.code)||!d.code.startsWith(d.wing+'.')||seatFloor(d.code)!==m.floor||codes.has(d.code)||numbers.has(number)||!['desk','office'].includes(d.kind)||![-1,1].includes(d.chair))throw Error('Некорректное или повторное место.');ids.add(d.id);codes.add(d.code);numbers.add(number)}
+ if(!m.walls.every(w=>Array.isArray(w)&&w.length===4&&point(w.slice(0,2))&&point(w.slice(2)))||!m.plants.every(point))throw Error('Некорректные координаты.');
+ return m;
+}
+function renderLocalFloor(m){
+ const outline='M'+m.outline.map(p=>p.join(' ')).join(' L')+' Z';
+ el('path',{d:outline,class:'shell-shadow',transform:'translate(2 5)'});el('path',{d:outline,class:'shell'});el('path',{d:outline,class:'shell-edge'});
+ for(let i=0;i<m.outline.length;i++){const a=m.outline[i],b=m.outline[(i+1)%m.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(len<30)continue;for(let j=12;j<len-10;j+=30){const t=j/len,u=Math.min((j+17)/len,1);windowLine(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u)}}
+ label(m.wingBoundary*.5,22,'ПРАВОЕ КРЫЛО','wing');label((1080+m.wingBoundary)*.5,22,'ЛЕВОЕ КРЫЛО','wing');
+ for(const r of m.rooms){
+  const g=el('g',{'data-room-id':r.id});rect(r.x,r.y,r.w,r.h,'room',g);
+  if(r.type==='meeting'){const w=Math.min(r.w*.55,45),h=Math.min(r.h*.45,22),x=r.x+(r.w-w)/2,y=r.y+(r.h-h)/2;rect(x,y,w,h,'room-table',g);for(let i=0;i<3;i++){rect(x+3+i*(w-6)/3,y-4,4,3,'room-chair',g);rect(x+3+i*(w-6)/3,y+h+1,4,3,'room-chair',g)}}
+  if(r.type==='food'){for(const k of [.3,.7])el('circle',{cx:r.x+r.w*k,cy:r.y+r.h*.35,r:Math.min(5,r.w*.13),class:'room-table'},g)}
+  const words=r.name.split(' '),lines=[];let line='';const max=Math.max(7,Math.floor(r.w/3));for(const word of words){if(line&&(line+' '+word).length>max){lines.push(line);line=word}else line+=(line?' ':'')+word}if(line)lines.push(line);const size=Math.min(6.5,r.h/(lines.length+1),r.w/Math.max(...lines.map(s=>s.length))*1.6);lines.forEach((s,i)=>{const t=label(r.x+r.w/2,r.y+(r.type==='office'?r.h*.19:r.type==='meeting'?r.h*.89:r.h*.55)+(i-(lines.length-1)/2)*size,s,'label',g);t.style.fontSize=Math.max(3.2,size)+'px'});
+ }
+ for(const w of m.walls)wall(...w);
+ for(const p of m.plants)plant(p[0],p[1],3.7);
+ for(const p of m.desks){
+  const g=el('g',{transform:'translate('+p.x+' '+p.y+') rotate('+p.angle+')','data-seat-id':p.id});
+  const desk=rect(-p.w/2,-p.h/2,p.w,p.h,'desk',g);rect(-p.w*.23,p.chair>0?p.h/2+1:-p.h/2-5.3,p.w*.46,4.3,'chair',g);
+  if(p.kind==='desk')rect(-p.w/2,p.chair>0?-p.h/2:p.h/2-.35,p.w,.35,'divider',g);
+  const code=el('text',{x:0,y:0,class:'seat-code','data-label-angle':p.angle},g);code.style.fontSize=Math.min(3.5,p.w/3.5)+'px';code.textContent=p.code;
+  desk.setAttribute('data-seat-code',p.code);desk.setAttribute('tabindex','0');desk.setAttribute('role','button');desk.setAttribute('aria-label','Рабочее место '+p.code);el('title',{},desk).textContent=p.code;
+  seats.push({desk,code,x:p.x,y:p.y,id:p.id});
+ }
+}
+function loadLocalFloor(m){
+ m=validateFloorModel(m);
+ if(!localModel)backupEmployees=employees.map(p=>({...p}));
+ localModel=m;renderedFloor=null;floor=m.floor;setEmployees([]);render();
+ $('unloadFloorModel').hidden=false;$('floorTitle').textContent=floor+' этаж · предварительная модель';
+ message('Локальная планировка: '+m.desks.length+' мест. Номера предварительные; тестовые назначения отключены.');
+}
+function unloadLocalFloor(){
+ localModel=null;renderedFloor=null;const restore=backupEmployees||[];backupEmployees=null;setEmployees(restore);floor=6;render();$('unloadFloorModel').hidden=true;if(employees.length)selectEmployee(employees[0]);
+}
+$('loadFloorModel').onclick=()=>$('floorModelFile').click();
+$('floorModelFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>2*1024*1024)throw Error('Файл слишком большой.');const model=JSON.parse(await file.text());if(!localModel&&employees.some(p=>!demoEmployees.some(d=>d.email===p.email))&&!confirm('Текущий реестр будет временно заменён пустым. Продолжить?'))return;loadLocalFloor(model)}catch(err){message('Планировка не загружена: '+err.message)}finally{e.target.value=''}});
+$('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
+
 initAdmin();
 
 $('exportEmployees').onclick=exportEmployees;
-window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,exportEmployees};
+window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,exportEmployees,loadLocalFloor,unloadLocalFloor};
 if(location.protocol==='file:'){
  $('localTools').hidden=true;
  $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file||!adminOpen)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
