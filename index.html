@@ -3,58 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.4</title>
+<title>Расположение рабочего места — 0.0.5</title>
 <style>
-:root{font-family:Arial,system-ui,sans-serif;color:#26374a;background:#f3f5f8;font-size:14px;--blue:#125a9f;--line:#dbe2e9}
-*{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #71b6ff;outline-offset:2px}.page{max-width:1500px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.brand{font-size:20px;font-weight:700;color:var(--blue)}.version{font-size:12px;color:#617387}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 3px 12px #243f5910}h1{font-size:21px;margin:0 0 5px}.sub{color:#66778a;font-size:13px;margin:0}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.tag{font-size:12px;border:1px solid #d9e5ef;background:#f5f9fc;color:#47647e;padding:7px 10px;border-radius:6px}.floors{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 14px}.floor{min-width:44px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#41546a}.floor[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}.floor.soon{color:#8794a2;background:#f5f7f9}.floor small{display:block;font-size:9px;margin-top:2px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.control{border:1px solid #d6dfe8;background:white;border-radius:6px;min-height:36px;padding:7px 12px;color:#31475e}.control:hover{background:#eef5fb}.number{min-width:52px;text-align:center;font-variant-numeric:tabular-nums;color:#60768a}.frame{position:relative;border:1px solid #d7e1e9;border-radius:8px;background:#f6f8fa;overflow:hidden}.map{display:block;width:100%;height:clamp(360px,57vh,650px);touch-action:none;cursor:grab;user-select:none}.map.drag{cursor:grabbing}.overlay{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;background:#f7f9fb}.overlay[hidden]{display:none}.overlay strong{font-size:24px}.overlay p{color:#64768a}.legend{display:flex;flex-wrap:wrap;gap:14px;color:#63778b;font-size:12px;margin-top:14px}.legend span{display:flex;align-items:center;gap:5px}.dot{width:12px;height:12px;border:1px solid #aebdca;border-radius:3px}.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px;font-size:12px;color:#718196}.room{fill:#e7eef4;stroke:#8a9cac;stroke-width:1.4}.label{font-size:10px;fill:#526578;text-anchor:middle;pointer-events:none}.wing{font-size:12px;fill:#64798b;letter-spacing:1.5px;text-anchor:middle}.desk{fill:#dbc7ac;stroke:#b5a084;stroke-width:.65}.chair{fill:#aab6c0;stroke:#8998a6;stroke-width:.5}.divider{fill:#8f9ca7}.shell{fill:#fff;stroke:#6f8496;stroke-width:2.5;stroke-linejoin:round}
-@media(max-width:600px){.page{padding:10px}.panel{padding:12px}h1{font-size:18px}.brand{font-size:16px}.floors{gap:5px}.floor{min-width:38px;padding:7px 8px}.map{height:55vh;min-height:300px}.control{padding:7px 9px}.tag{font-size:11px}.foot{font-size:11px}}
-
-/* Embedded, rectangular portal module. */
-html,body{background:#fff}
-.page{max-width:none;margin:0;padding:0}
-.panel{border:1px solid #dbe2e9;border-radius:3px;box-shadow:none;padding:12px}
-.layout{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:stretch}
-.floors{display:flex;flex-direction:column;flex-wrap:nowrap;gap:3px;margin:0;padding:2px 0;overflow-y:auto;min-height:0;max-height:610px}
-.floor{width:100%;min-width:0;flex:none;min-height:31px;padding:5px 2px;border-radius:4px;font-size:12px}
-.floor small{font-size:8px;margin-top:1px}
-.floor.soon{min-height:36px}
-.map-column{min-width:0;display:flex;flex-direction:column;gap:8px}
-.toolbar{margin:0;min-height:36px}
-.codes-toggle{display:inline-flex;gap:6px;align-items:center;font-size:12px;color:#41546a;white-space:nowrap;cursor:pointer}
-.codes-toggle input{width:15px;height:15px;margin:0;accent-color:var(--blue)}
-.frame{flex:1;min-height:0;border-radius:3px}
-.map{height:clamp(380px,65vh,610px)}
-.seat-code{font:4.2px Arial,sans-serif;fill:#3d3a35;text-anchor:middle;dominant-baseline:middle;pointer-events:none;user-select:none}
-.hide-codes .seat-code{display:none}
-.group-wall{stroke:#83909c;stroke-width:1.7;stroke-linecap:square;fill:none}
-.legend{margin:0;gap:10px}
-.foot{margin:8px 0 0;font-size:11px}
-@media(max-width:600px){.panel{padding:6px}.layout{grid-template-columns:42px minmax(0,1fr);gap:6px}.floors{max-height:560px}.floor{min-height:29px;font-size:11px}.floor.soon{min-height:34px}.toolbar{gap:5px}.actions{gap:3px}.control{min-height:30px;padding:5px 7px;font-size:11px}.number{min-width:36px;font-size:11px}.map{height:clamp(350px,58vh,550px)}.legend{font-size:10px;gap:7px}.foot{font-size:10px}.codes-toggle{font-size:11px}.map-column{gap:6px}}
-
-/* Keep browser zoom separate from the SVG viewport. */
-html,body{width:100%;max-width:100%;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}
-.frame,.map,.map *{touch-action:none;overscroll-behavior:contain}
-.map{-webkit-user-select:none;-webkit-touch-callout:none}
-
-.desk[data-seat-code]{cursor:pointer}.desk.assigned{fill:#c7d9e8;stroke:#8ba4bb}.desk.selected{fill:#df353d;stroke:#a81f28;stroke-width:1.5}.seat-code.selected{fill:#fff;font-weight:bold}
-.employee-card{border:1px solid var(--line);border-radius:5px;padding:12px;display:grid;gap:7px;background:white}
-.employee-card[hidden],.status[hidden],.local-tools[hidden]{display:none}
-.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.person{font-weight:700;font-size:16px}.meta{font-size:12px;color:#60768a}.person-info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:12px;overflow-wrap:anywhere}.person-info dt{color:#67798a}.person-info dd{margin:0}.status{font-size:12px;color:#47647e;background:#f3f7fb;padding:8px;border-radius:4px}
-.local-tools{font-size:12px;color:#566b80}.local-tools summary{cursor:pointer}.local-tools input{max-width:100%;margin:8px 0}
-@media(max-width:600px){.person{font-size:14px}.employee-card{padding:8px}.person-info{gap:4px 8px}}
+:root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
+*{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
+.page{width:100%;padding:8px}.panel{border:1px solid #e0e7f0;border-radius:14px;background:#fff;padding:14px;box-shadow:0 5px 18px #223e6410}
+.module-title{margin:0 0 10px;font-size:16px;font-weight:700;line-height:1.2}
+.layout{display:grid;grid-template-columns:66px minmax(0,1fr) 86px;gap:10px;align-items:start}
+.floors{display:flex;flex-direction:column;gap:4px;margin:0}.floor{display:flex;align-items:center;justify-content:center;gap:4px;min-height:28px;width:100%;padding:4px 3px;border:1px solid #e5eaf3;border-radius:9px;background:linear-gradient(150deg,#f9fbff,#e9eef5);box-shadow:0 1px 2px #253f6b0d;color:#173357;font-size:12px;font-weight:700}
+.floor[aria-pressed=true]{background:linear-gradient(155deg,#258aeb,#0757bd);color:#fff;border-color:#197bd6;box-shadow:0 3px 6px #1567cc35}
+.floor.soon{color:#8190a4;font-weight:500}.floor small{font-size:8px;font-weight:500}.floor:nth-child(3),.floor:nth-child(12){margin-bottom:4px}
+.map-column{min-width:0;display:flex;flex-direction:column;gap:8px}.frame{position:relative;overflow:hidden;border-radius:8px;background:#fff;min-width:0;isolation:isolate;touch-action:none;overscroll-behavior:contain}
+.map{display:block;width:100%;height:clamp(340px,48vw,535px);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}.map *{touch-action:none}.map.drag{cursor:grabbing}
+.side-controls{display:flex;flex-direction:column;gap:9px}.side-button,.codes-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:76px;padding:9px 4px;background:linear-gradient(150deg,#fff,#f1f5fb);border:1px solid #e1e7f0;border-radius:13px;box-shadow:0 4px 9px #293f6020;color:#173357;font-size:12px;font-weight:700;text-align:center;cursor:pointer}.side-button svg{width:25px;height:25px}.codes-toggle input{width:20px;height:20px;margin:0;accent-color:#286ed6}.side-button[aria-pressed=true]{background:#e8f2ff;border-color:#b0d0fa}.codes-toggle:has(input:disabled){opacity:.5}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:space-between}.actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#f9fbff;border:1px solid #e4eaf2;box-shadow:0 3px 9px #293f6012;border-radius:12px;padding:5px}.control{border:1px solid #e2e8f0;background:#fff;border-radius:8px;min-height:30px;padding:5px 9px;color:#173357;font-weight:600;font-size:12px}.control:hover{background:#eff6ff}.control.zoom-button{width:31px;padding:0;border-radius:50%;font-size:20px;line-height:1}.number{min-width:43px;text-align:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}.floor-title{font-size:12px;color:#728399;font-weight:600}.foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;color:#8190a3}
+.overlay{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;background:#f9fbfe}.overlay[hidden]{display:none}.overlay strong{font-size:24px}.overlay p{color:#64768a}
+.shell{fill:url(#floorMaterial);stroke:#657e98;stroke-width:6;stroke-linejoin:round;filter:url(#buildingShadow)}.shell-edge{fill:none;stroke:#b5c8db;stroke-width:2.4;stroke-linejoin:round;pointer-events:none}.zone-floor{fill:#ffffff;fill-opacity:.25;stroke:none}.wall-shadow{stroke:#657e98;stroke-opacity:.27;stroke-width:5;stroke-linecap:square;fill:none;transform:translate(1px,2px);pointer-events:none}.group-wall{stroke:#71869b;stroke-width:3.8;stroke-linecap:square;fill:none;pointer-events:none}.wall-top{stroke:#c4d2df;stroke-width:1.3;fill:none;stroke-linecap:square;pointer-events:none}.window{stroke:#f4fbff;stroke-width:3.8;stroke-linecap:round;filter:url(#windowGlow);pointer-events:none}
+.room{fill:url(#roomMaterial);stroke:#8095a9;stroke-width:2;filter:url(#smallShadow)}.room-table{fill:url(#wood);stroke:#a9967d;stroke-width:.7;filter:url(#smallShadow)}.room-chair{fill:url(#chairMaterial);stroke:#668399;stroke-width:.5}.label{font-size:8px;font-weight:600;fill:#25405c;text-anchor:middle;pointer-events:none}.wing{font-size:9px;font-weight:700;fill:#75879d;letter-spacing:1px;text-anchor:middle}.zone-label{font-size:7px;font-weight:600;fill:#7c8c9d;text-anchor:middle;pointer-events:none}
+.desk{fill:url(#wood);stroke:#a48d71;stroke-width:.55;filter:url(#smallShadow)}.desk[data-seat-code]{cursor:pointer}.desk.assigned{stroke:#5e91bb;stroke-width:1}.desk.selected{fill:url(#redDesk);stroke:#9f1c2b;stroke-width:1.6}.chair{fill:url(#chairMaterial);stroke:#506d85;stroke-width:.6;filter:url(#smallShadow)}.divider{fill:#8c9eab;stroke:#d8e3ec;stroke-width:.3}.seat-code{font:600 4.15px Arial,sans-serif;fill:#243b52;text-anchor:middle;dominant-baseline:middle;pointer-events:none;user-select:none;paint-order:stroke;stroke:#fff;stroke-width:.75;stroke-linejoin:round}.seat-code.selected{fill:#fff;stroke:#b8202c;stroke-width:.6;font-weight:700}.hide-codes .seat-code{display:none}
+.plant-pot{fill:#bdab91;stroke:#a08a70;stroke-width:.6;filter:url(#smallShadow)}.leaf{fill:url(#leafMaterial);stroke:#547d38;stroke-width:.35;pointer-events:none}.elevator{fill:url(#metal);stroke:#617b96;stroke-width:1.1;filter:url(#smallShadow)}.lift-arrow{fill:#f4fbff;pointer-events:none}
+.employee-card{border:1px solid var(--line);border-radius:12px;padding:11px;display:grid;gap:6px;background:#fff;box-shadow:0 4px 14px #253e6010}.employee-card[hidden],.status[hidden],.local-tools[hidden]{display:none}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.person{font-weight:700;font-size:15px}.meta{font-size:12px;color:#60768a}.person-info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:12px;overflow-wrap:anywhere}.person-info dt{color:#67798a}.person-info dd{margin:0}.status{font-size:12px;color:#47647e;background:#f3f7fb;padding:8px;border-radius:6px}.local-tools{font-size:12px;color:#566b80}.local-tools summary{cursor:pointer}.local-tools input{max-width:100%;margin:8px 0}
+@media(max-width:650px){.page{padding:3px}.panel{padding:8px;border-radius:10px}.module-title{font-size:14px;margin-bottom:8px}.layout{grid-template-columns:41px minmax(0,1fr) 51px;gap:5px}.floor{min-height:25px;border-radius:7px;font-size:11px;flex-direction:column;gap:0;padding:3px}.floor small{font-size:7px}.side-controls{gap:6px}.side-button,.codes-toggle{min-height:60px;border-radius:10px;font-size:9px;gap:4px}.side-button svg{width:21px;height:21px}.codes-toggle input{width:17px;height:17px}.map{height:clamp(285px,57vh,445px)}.actions{gap:3px;padding:3px}.control{font-size:10px;padding:4px 6px;min-height:27px}.control.zoom-button{width:26px;font-size:16px}.number{min-width:33px;font-size:10px}.floor-title{font-size:10px}.foot{font-size:9px}.person{font-size:13px}.employee-card{padding:8px}}
+@media(max-height:470px) and (orientation:landscape){.map{height:clamp(240px,78vh,380px)}.floors{max-height:82vh;overflow-y:auto}.floor{min-height:23px}}
 </style>
 </head>
 <body>
 <main class="page">
 <section class="panel" aria-label="Схема этажа">
+<h1 class="module-title">Схема размещения</h1>
 <div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
 <div class="map-column">
-<div class="toolbar"><strong id="floorTitle"></strong><label class="codes-toggle"><input type="checkbox" id="showCodes" checked>Показывать коды мест</label><div class="actions"><button class="control" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов">↻ 180°</button><button class="control" id="full">Развернуть</button></div></div>
 <div class="frame" id="frame">
-<svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#e9eef3" stroke-width=".6"/></pattern></defs><rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)"/><g id="drawing"></g></svg>
+<svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса">
+<defs>
+<pattern id="floorMaterial" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#f6f2ed"/><path d="M16 0H0V16" stroke="#eae4dc" stroke-width=".35" fill="none"/></pattern>
+<linearGradient id="roomMaterial" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fcfdff"/><stop offset="1" stop-color="#e2e9f0"/></linearGradient>
+<linearGradient id="wood" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0ce"/><stop offset=".5" stop-color="#e3bf8a"/><stop offset="1" stop-color="#c7a576"/></linearGradient>
+<linearGradient id="chairMaterial" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a5c4d8"/><stop offset="1" stop-color="#577a96"/></linearGradient>
+<linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce9f6"/><stop offset=".45" stop-color="#a4b9cf"/><stop offset="1" stop-color="#67839f"/></linearGradient>
+<linearGradient id="redDesk" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff6766"/><stop offset="1" stop-color="#d31e31"/></linearGradient>
+<radialGradient id="leafMaterial" cx=".3" cy=".25" r=".8"><stop stop-color="#b6cf64"/><stop offset=".5" stop-color="#79a747"/><stop offset="1" stop-color="#3f7736"/></radialGradient>
+<filter id="buildingShadow" x="-10%" y="-12%" width="120%" height="130%"><feDropShadow dx="2" dy="7" stdDeviation="5" flood-color="#436285" flood-opacity=".24"/></filter>
+<filter id="smallShadow" x="-35%" y="-35%" width="180%" height="180%"><feDropShadow dx=".5" dy="1.6" stdDeviation="1" flood-color="#485a67" flood-opacity=".23"/></filter>
+<filter id="windowGlow" x="-20%" y="-50%" width="140%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="1.3" flood-color="#a7d7ff" flood-opacity=".9"/></filter>
+</defs>
+<rect width="1080" height="500" fill="#fff" pointer-events="none"/><g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
 <div class="status" id="status" role="status" hidden></div>
 <section class="employee-card" id="employeeCard" aria-label="Карточка рабочего места" hidden>
 <div class="card-head"><strong id="cardCode"></strong><button class="control" id="closeCard" aria-label="Закрыть карточку">×</button></div>
@@ -62,9 +59,12 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;touch-action:manipulation;
 <dl class="person-info" id="personInfo"></dl>
 </section>
 <details class="local-tools" id="localTools" hidden><summary>Локальные данные сотрудников (JSON)</summary><input id="employeeFile" type="file" accept=".json,application/json"><div>Данные остаются в памяти открытого файла. Для постоянного хранения сохраните исходный JSON.</div></details>
-<div class="legend"><span><i class="dot" style="background:#dbc7ac"></i>Рабочие столы</span><span><i class="dot" style="background:#e7eef4"></i>Помещения</span><span><i class="dot" style="background:#c7d9e8"></i>Назначено</span><span><i class="dot" style="background:#df353d"></i>Выбрано</span></div>
-<div class="foot"><span>Колесо мыши или два пальца — масштаб · перетаскивание — перемещение</span><span>Условная схема · v0.0.4</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.5</span></div>
 </div>
+<aside class="side-controls" aria-label="Настройки карты">
+<button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
+<label class="codes-toggle"><input type="checkbox" id="showCodes" checked><span>Показывать<br>коды мест</span></label>
+</aside>
 </div>
 </section>
 </main>
@@ -77,7 +77,7 @@ let view={...BASE},floor=6;
 const allFloors=[13,12,11,10,9,8,7,6,5,4,3,2,1,-1];
 let seats=[],flipped=false,selectedCode=null,targetCode=null,cardOpen=false;
 const demoEmployees=[
- {email:'employee1@example.com',full_name:'Анна Иванова (демо)',seat_code:'6.069',position:'Главный специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12345',birthday:'29.10'},
+ {email:'employee1@example.com',full_name:'Анна Иванова (демо)',seat_code:'6.082',position:'Главный специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12345',birthday:'29.10'},
  {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист'},
  {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист'}
 ];
@@ -125,7 +125,7 @@ function focusTarget(){
  const s=findSeat(targetCode);
  if(!s){message(active(floor)?'Рабочее место не нанесено на схему.':'Схема этого этажа пока недоступна.');return false}
  const left=s.x<540;
- let x=left?15:465,y=14,w=600,hh=470;
+ let x=left?12:432,y=15,w=635,hh=465;
  if(flipped){x=1080-x-w;y=500-y-hh}
  view={x,y,w,h:hh};apply();selectedCode=null;cardOpen=true;paintSelection();showCard();return true;
 }
@@ -141,7 +141,7 @@ function applyOrientation(){
  drawing.setAttribute('transform',flipped?'rotate(180 540 250)':'');
  for(const t of drawing.querySelectorAll('text')){
   const x=t.getAttribute('x'),y=t.getAttribute('y');
-  t.setAttribute('transform',flipped?'rotate(180 '+x+' '+y+')':'');
+  const localAngle=Number(t.getAttribute('data-label-angle')||0);const turn=(flipped?180:0)-localAngle;t.setAttribute('transform',turn?'rotate('+turn+' '+x+' '+y+')':'');
  }
  $('flip').setAttribute('aria-pressed',String(flipped));
 }
@@ -153,52 +153,112 @@ const ns='http://www.w3.org/2000/svg';
 function el(tag,attrs={},parent=drawing){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));parent.append(n);return n}
 function rect(x,y,w,h,cls,parent=drawing){return el('rect',{x,y,width:w,height:h,class:cls,rx:1},parent)}
 function label(x,y,text,cls='label',parent=drawing){const n=el('text',{x,y,class:cls},parent);n.textContent=text;return n}
-function room(x,y,w,h,name){rect(x,y,w,h,'room');label(x+w/2,y+h/2+3,name)}
-function cluster(x,y,n=4,angle=0){
-  const g=el('g',{transform:'translate('+x+' '+y+') rotate('+angle+')'});
-  const gap=.3, row=7.5+gap;
-  for(let i=0;i<n;i++){
-    const a=i*16;
-    for(const b of [0,row]){
-      const desk=rect(a,b,16,7.5,'desk',g);
-      const code=el('text',{x:a+8,y:b+3.75,class:'seat-code'},g);
-      const t=angle*Math.PI/180,dx=a+8,dy=b+3.75;
-      seats.push({desk,code,x:x+dx*Math.cos(t)-dy*Math.sin(t),y:y+dx*Math.sin(t)+dy*Math.cos(t)});
-    }
-    rect(a+4,-6,8,5,'chair',g);rect(a+4,row+8.5,8,5,'chair',g);
-  }
-  rect(0,7.5,n*16,gap,'divider',g);
+function room(x,y,w,h,name,type='plain'){
+ const g=el('g');rect(x,y,w,h,'room',g);
+ // Furniture is decorative and deliberately simplified.
+ if(type==='meeting'){
+  const tw=Math.min(w*.58,50),th=Math.min(h*.34,19),cx=x+w/2,cy=y+h*.37;
+  rect(cx-tw/2,cy-th/2,tw,th,'room-table',g);
+  for(let i=0;i<4;i++){const px=cx-tw/2+4+i*(tw-8)/3;rect(px-2,cy-th/2-4,4,3.5,'room-chair',g);rect(px-2,cy+th/2+.5,4,3.5,'room-chair',g)}
+ }else if(type==='office'){
+  rect(x+w*.30,y+7,w*.40,12,'room-table',g);rect(x+w*.44,y+3,w*.12,5,'room-chair',g);
+ }else if(type==='food'){
+  for(const dx of [.30,.70]){el('circle',{cx:x+w*dx,cy:y+h*.32,r:Math.min(8,w*.12),class:'room-table'},g)}
+ }
+ const lines=name.split('|');lines.forEach((line,i)=>label(x+w/2,y+(type==='plain'?h/2:h*.74)+(i-(lines.length-1)/2)*9,line,'label',g));
 }
-function wall(x1,y1,x2,y2){el('line',{x1,y1,x2,y2,class:'group-wall'})}
+function plant(x,y,r=5){
+ const g=el('g',{transform:'translate('+x+' '+y+')','pointer-events':'none'});
+ el('circle',{cx:0,cy:0,r:r*.78,class:'plant-pot'},g);
+ for(let i=0;i<7;i++){const a=i*360/7;el('ellipse',{cx:r*.52,cy:0,rx:r*.80,ry:r*.37,transform:'rotate('+a+')',class:'leaf'},g)}
+ el('ellipse',{cx:-.4,cy:-.4,rx:r*.43,ry:r*.34,class:'leaf'},g);
+}
+function cluster(x,y,n=4,angle=90){
+ const g=el('g',{transform:'translate('+x+' '+y+') rotate('+angle+')'});
+ const length=16,depth=7.5,gap=.3,row=depth+gap;
+ for(let i=0;i<n;i++){
+  const a=i*length;
+  for(const b of [0,row]){
+   const desk=rect(a,b,length,depth,'desk',g);
+   // Counter-rotate labels within the rotated desk groups.
+   const dx=a+length/2,dy=b+depth/2;
+   const code=el('text',{x:dx,y:dy,class:'seat-code','data-label-angle':angle,transform:'rotate('+(-angle)+' '+dx+' '+dy+')'},g);
+   const t=angle*Math.PI/180;
+   seats.push({desk,code,x:x+dx*Math.cos(t)-dy*Math.sin(t),y:y+dx*Math.sin(t)+dy*Math.cos(t)});
+  }
+  rect(a+4,-5.7,8,5,'chair',g);rect(a+4,row+depth+.7,8,5,'chair',g);
+ }
+ rect(0,depth,n*length,gap,'divider',g);
+}
+function wall(x1,y1,x2,y2){const a={x1,y1,x2,y2};el('line',{...a,class:'wall-shadow'});el('line',{...a,class:'group-wall'});el('line',{...a,class:'wall-top'})}
+function windowLine(x1,y1,x2,y2){el('line',{x1,y1,x2,y2,class:'window'})}
+function openSpace(x,y,w,h,pattern='eight'){
+ const g=rect(x,y,w,h,'zone-floor');g.setAttribute('data-openspace','16');
+ // Partition the zone from adjacent zones but leave a continuous corridor at its open side.
+ const upper=y<220;const edge=upper?y:y+h;
+ wall(x,edge,x,upper?y+h-9:y+9);wall(x+w,edge,x+w,upper?y+h-9:y+9);
+ const c1=x+w*.29,c2=x+w*.74;
+ if(pattern==='eight'){const yy=y+(h-64)/2;cluster(c1+7.65,yy,4,90);cluster(c2+7.65,yy,4,90)}
+ else{const yy=y+(h-72)/2;for(const cx of [c1,c2])for(const dy of [0,40])cluster(cx+7.65,yy+dy,2,90)}
+ plant(x+8,upper?y+h-12:y+12,4.6);
+ plant(x+w-8,upper?y+9:y+h-9,4.2);
+}
 function assignCodes(){
   // Clockwise sweep from the right wing; unique codes per demonstration floor.
   const angle=s=>(Math.atan2(s.y-250,s.x-540)+Math.PI*2)%(Math.PI*2);
   // Keep the full right wing before the left, with clockwise ordering within each wing.
   seats.sort((a,b)=>{
-    const side=s=>s.x>=540?0:1;
+    const side=s=>s.x<540?0:1;
     const order=s=>(angle(s)+Math.PI/2)%(Math.PI*2);
     return side(a)-side(b)||order(a)-order(b)||a.x-b.x||a.y-b.y;
   });
   seats.forEach((s,i)=>{const code=floor+'.'+String(i+1).padStart(3,'0');s.code.textContent=code;s.desk.setAttribute('data-seat-code',code);s.desk.setAttribute('tabindex','0');s.desk.setAttribute('role','button');s.desk.setAttribute('aria-label','Рабочее место '+code);const tip=el('title',{},s.desk);tip.textContent=code});
 }
 function syncCodes(){svg.classList.toggle('hide-codes',!$('showCodes').checked)}
-function common(){el('path',{d:'M40 45 H1040 V415 H580 L40 455 Z',class:'shell'});rect(485,205,110,70,'room');for(let i=0;i<3;i++)rect(493+i*32,214,26,30,'room');label(540,263,'Лифты');room(505,105,70,42,'Лестница');label(280,32,'ПРАВОЕ КРЫЛО','wing');label(800,32,'ЛЕВОЕ КРЫЛО','wing')}
-function standard(){common();for(const offset of [0,510]){room(90+offset,175,95,55,'Переговорная 1');room(185+offset,175,95,55,'Переговорная 2');room(280+offset,175,75,55,'Малая переговорная');room(355+offset,175,80,55,'Кабинет');room(90+offset,235,110,55,'Приём пищи');room(200+offset,235,45,55,'WC');room(245+offset,235,45,55,'WC');room(290+offset,235,145,55,'Кабинеты');for(let i=0;i<3;i++){cluster(65+offset+i*115,85,4);cluster(65+offset+i*115,135,4);cluster(65+offset+i*115,330,4);cluster(65+offset+i*115,380,4)}cluster(410+offset,85,2);
-  // Short, doorless partitions between adjacent work groups, keeping the corridor open.
-  for(const y of [85,135,330,380])for(let i=0;i<2;i++){
-    const x=65+offset+i*115+89.5;wall(x,y-8,x,y+24);
-  }
-  wall(400+offset,77,400+offset,109);
-  for(const y of [118,363])for(let i=0;i<3;i++){
-    const x=65+offset+i*115;wall(x,y,x+64,y);
-  }
-}label(540,290,'Общий проход')}
-function special(f){common();if(f===2){room(95,120,300,180,'Общественная зона');room(685,120,300,180,'Общие помещения');label(540,345,'Холл')}else if(f===3){room(85,90,350,290,'Служебные помещения');room(735,170,240,120,'Служебные помещения');for(let i=0;i<4;i++){cluster(630+i*87,95,4);cluster(630+i*87,345,4);if(i<3){wall(704+i*87,87,704+i*87,119);wall(704+i*87,337,704+i*87,369)}}cluster(630,150,4);cluster(630,285,4)}else{for(let i=0;i<4;i++){room(85+i*88,100,85,90,'Кабинет');room(85+i*88,285,85,90,'Кабинет')}room(655,95,330,280,'Большой зал')}}
+// A fictional floor outline: asymmetrical tapered wing, stepped center and narrow wing.
+// No real employee locations or restricted-room floor plan are embedded in this public demo.
+const outline='M86 36 L430 52 L424 108 L478 113 L482 79 L670 79 L670 97 L813 97 L813 118 L1031 118 L1031 365 L1010 388 L809 388 L809 402 L615 402 L615 416 L478 416 L478 394 L412 404 L412 422 L76 473 L45 444 Z';
+function common(){
+ el('path',{d:outline,class:'shell'});el('path',{d:outline,class:'shell-edge'});
+ for(const [x1,y1,x2,y2] of [[102,38,153,40],[174,41,225,43],[247,44,298,46],[320,47,372,49],[486,79,535,79],[550,79,605,79],[685,97,738,97],[754,97,796,97],[829,118,880,118],[897,118,947,118],[964,118,1012,118],[1031,142,1031,182],[1031,239,1031,279],[1031,312,1031,349],[833,388,884,388],[898,388,949,388],[960,388,1005,388],[633,402,686,402],[700,402,752,402],[493,416,546,416],[558,416,602,416],[318,436,366,429],[250,446,298,439],[182,457,230,450],[105,469,160,461],[54,376,59,331],[65,265,70,218],[76,152,81,105]])windowLine(x1,y1,x2,y2);
+ label(255,20,'ПРАВОЕ КРЫЛО','wing');label(840,94,'ЛЕВОЕ КРЫЛО','wing');
+ const g=el('g');rect(480,241,134,79,'room',g);
+ for(let i=0;i<3;i++){const x=492+i*39;rect(x,254,31,39,'elevator',g);el('path',{d:'M'+(x+15.5)+' 260 l-5 8 h10 Z M'+(x+15.5)+' 286 l-5 -8 h10 Z',class:'lift-arrow'},g);el('line',{x1:x+15.5,y1:254,x2:x+15.5,y2:293,stroke:'#dbe7f2','stroke-width':.6},g)}
+ label(547,308,'Лифты','label',g);plant(486,311,4);plant(607,311,4);
+ const stair=el('g');rect(492,199,108,26,'room',stair);for(let i=0;i<11;i++)el('line',{x1:499+i*8.8,y1:202,x2:499+i*8.8,y2:222,stroke:'#93a7bb','stroke-width':.65},stair);label(546,214,'Лестница','label',stair);
+}
+function standard(){
+ common();
+ // Twelve 16-seat zones: six in the wide wing, six in the narrow wing including the zone behind lifts.
+ const zones=[
+ [91,54,103,95,'eight'],[204,58,103,95,'four'],[317,63,103,95,'eight'],
+ [77,318,103,126,'four'],[190,318,103,112,'eight'],[303,318,103,96,'four'],
+ [488,91,112,96,'eight'],[683,109,112,94,'four'],[826,129,119,90,'eight'],
+ [629,298,118,91,'four'],[758,298,118,88,'eight'],[886,298,120,80,'four']
+ ];
+ for(const z of zones)openSpace(...z);
+ // Fictional common-use rooms; retain broad open circulation.
+ room(88,179,90,54,'Переговорная|большая','meeting');room(184,179,90,54,'Переговорная|большая','meeting');
+ room(280,179,62,54,'Переговорная|малая','meeting');room(348,179,74,54,'Кабинет','office');
+ room(79,240,85,49,'Приём пищи','food');room(170,240,39,49,'WC');room(215,240,39,49,'WC');room(260,240,77,49,'Кабинет','office');room(343,240,79,49,'Кабинет','office');
+ room(615,117,58,75,'Кабинет','office');room(954,135,65,81,'Кабинет','office');
+ room(630,227,79,49,'Переговорная|большая','meeting');room(714,227,79,49,'Переговорная|большая','meeting');room(798,227,69,49,'Переговорная|малая','meeting');
+ room(873,227,71,49,'Приём пищи','food');room(949,227,32,49,'WC');room(986,227,32,49,'WC');
+ plant(455,176,5);plant(455,307,5);plant(618,209,4);plant(1015,292,5);
+ // Two small generic furniture groups make up the remaining eight demonstration seats.
+ cluster(449,55,2,90);cluster(449,331,2,90);
+}
+function special(f){
+ common();
+ if(f===2){room(100,92,302,260,'Общественная зона');room(648,145,350,192,'Общие помещения');plant(430,330,8);plant(628,344,8)}
+ else if(f===3){room(97,91,296,210,'Служебные помещения');for(const z of [[488,91,112,96,'eight'],[683,109,112,94,'four'],[826,129,119,90,'eight'],[758,298,118,88,'four'],[886,298,120,80,'eight']])openSpace(...z);room(655,228,340,48,'Общие помещения');plant(409,328,6)}
+ else{for(let i=0;i<3;i++){room(95+i*110,100,100,93,'Кабинет','office');room(95+i*110,285,100,93,'Кабинет','office')}room(649,143,350,218,'Большой зал');plant(624,350,7)}
+}
 function render(){drawing.replaceChildren();seats=[];$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full','flip'])$(id).disabled=!active(floor);if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}$('showCodes').disabled=!active(floor);syncCodes();applyOrientation();paintSelection();showCard();fit()}
 function fit(){view={...BASE};apply()}
 function apply(){svg.setAttribute('viewBox',[view.x,view.y,view.w,view.h].join(' '));$('zoom').textContent=Math.round(BASE.w/view.w*100)+'%'}
 function world(x,y){const p=svg.createSVGPoint();p.x=x;p.y=y;const matrix=svg.getScreenCTM();return matrix?p.matrixTransform(matrix.inverse()):{x:view.x+view.w/2,y:view.y+view.h/2}}
-function zoomAt(factor,cx,cy){if(!active(floor))return;const r=svg.getBoundingClientRect();const p=world(cx??r.left+r.width/2,cy??r.top+r.height/2);const nw=Math.max(BASE.w/7,Math.min(BASE.w*1.3,view.w*factor));const k=nw/view.w;view={x:p.x+(view.x-p.x)*k,y:p.y+(view.y-p.y)*k,w:nw,h:view.h*k};apply()}
+function zoomAt(factor,cx,cy){if(!active(floor))return;const r=svg.getBoundingClientRect();const p=world(cx??r.left+r.width/2,cy??r.top+r.height/2);if(!Number.isFinite(factor)||factor<=0)return;const nw=Math.max(BASE.w/12,Math.min(BASE.w*1.3,view.w*factor));const k=nw/view.w;view={x:p.x+(view.x-p.x)*k,y:p.y+(view.y-p.y)*k,w:nw,h:view.h*k};apply()}
 svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(e.deltaY*.0015),e.clientX,e.clientY)},{passive:false});
 const pointers=new Map();let last=null,mouseSeat=null,mouseStart=null,mouseMoved=false;
 function gesture(){const a=[...pointers.values()];if(a.length===0)return null;if(a.length===1)return {x:a[0].x,y:a[0].y,d:0};return {x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}}
@@ -215,14 +275,19 @@ function touchGesture(list){
   return b?{x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2,d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)}:{x:a.clientX,y:a.clientY,d:0};
 }
 function cancelNative(e){if(e.cancelable)e.preventDefault()}
+// targetTouches only includes touches with the same originating SVG element.
+const mapTouchIds=new Set();
+const mapTouches=e=>Array.from(e.touches).filter(t=>mapTouchIds.has(t.identifier));
 svg.addEventListener('touchstart',e=>{
-  touchLast=touchGesture(e.targetTouches);
-  if(e.targetTouches.length===1){touchStart=touchLast;touchMoved=false;touchSeat=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code')||null}
+  for(const t of e.changedTouches)mapTouchIds.add(t.identifier);
+  const list=mapTouches(e);
+  touchLast=touchGesture(list);
+  if(list.length===1){touchStart=touchLast;touchMoved=false;touchSeat=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code')||null}
   else{touchMoved=true;cancelNative(e)}
 },{passive:false});
 svg.addEventListener('touchmove',e=>{
   cancelNative(e);
-  const next=touchGesture(e.targetTouches);
+  const next=touchGesture(mapTouches(e));
   if(touchStart&&next&&Math.hypot(next.x-touchStart.x,next.y-touchStart.y)>5)touchMoved=true;
   if(next&&touchLast){
     if(touchLast.d>0&&next.d>0){touchMoved=true;zoomAt(touchLast.d/next.d,touchLast.x,touchLast.y)}
@@ -234,13 +299,14 @@ svg.addEventListener('touchmove',e=>{
   touchLast=next;
 },{passive:false});
 svg.addEventListener('touchend',e=>{
-  touchLast=touchGesture(e.targetTouches);
+  for(const t of e.changedTouches)mapTouchIds.delete(t.identifier);
+  touchLast=touchGesture(mapTouches(e));
   if(!touchLast){
     if(!touchMoved){const now=Date.now();if(touchSeat){cancelNative(e);pick(touchSeat)}else if(now-lastTap<300)cancelNative(e);lastTap=now}touchSeat=null;
     touchStart=null;
   }
 },{passive:false});
-svg.addEventListener('touchcancel',()=>{touchLast=null;touchStart=null;touchMoved=false;touchSeat=null},{passive:true});
+svg.addEventListener('touchcancel',()=>{mapTouchIds.clear();touchLast=null;touchStart=null;touchMoved=false;touchSeat=null},{passive:true});
 // Standalone document/iframe: cancel Safari's proprietary page gestures and
 // multi-touch page zoom. Single-finger scrolling outside the map stays available.
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,cancelNative,{passive:false});
