@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.18</title>
+<title>Расположение рабочего места — 0.0.19</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -106,6 +106,29 @@ body.map-expanded{overflow:hidden}
 .desk.selected,.desk.selected:focus,.desk.selected:focus-visible{stroke:#8E1F1F;stroke-width:1.6;outline:none}
 .desk:focus{outline:none}
 .desk:focus-visible:not(.selected){stroke:#397bb6;stroke-width:1.5}
+
+/* Callout is a sibling of the SVG frame, never an overlay on seats. */
+.map-column{container-type:inline-size}
+.map-stage{display:flex;align-items:flex-start;gap:0;min-width:0;width:100%;position:relative}
+.map-stage .frame{flex:1;min-width:0;width:auto!important;max-width:none!important;align-self:stretch!important}
+.map-stage.note-open{gap:10px}
+.map-stage[data-side="left"] .seat-note{order:-1}
+.seat-note{position:relative;flex:0 0 clamp(184px,25%,250px);min-width:0;max-width:100%;margin-top:var(--note-offset,0px);padding:11px 12px;border:1px solid #d5dfe6;border-left:3px solid #6EAE7B;border-radius:10px;background:#fff;box-shadow:0 3px 12px #253e6010;display:grid;gap:7px;overflow-wrap:anywhere;line-height:1.35;font-size:12px;color:#294155;touch-action:pan-y}
+.seat-note[hidden]{display:none}
+.seat-note-head{display:flex;align-items:center;justify-content:space-between;gap:6px;color:#64788b;font-size:11px}
+.seat-note-head strong{color:#8E1F1F;white-space:nowrap;font-size:13px}
+.note-close{border:0;background:#f2f5f8;border-radius:6px;color:#516779;font-size:19px;width:27px;height:27px;line-height:1;flex-shrink:0}
+.seat-note-name{font-size:14px;line-height:1.25;color:#253f56}
+.seat-note-position{color:#5d7082}
+.seat-note-field{display:grid;gap:2px}.seat-note-field span{font-size:10px;color:#687b8d}.seat-note-field strong{font-weight:500}.seat-note-field[hidden],.seat-note-position[hidden]{display:none}
+#notePhone{color:#235e97;font-weight:650}
+#focus:not(:disabled){color:#2265a2;border-color:#aac6e1;background:#f2f7fc}
+@container(max-width:620px){
+ .map-stage.note-open{flex-direction:column;gap:8px}
+ .map-stage.note-open .frame{width:100%!important}
+ .map-stage[data-side="left"] .seat-note,.map-stage[data-side="right"] .seat-note{order:1;flex:auto;width:100%;margin-top:0;padding:9px 10px}
+ .map-stage.note-open .map{height:clamp(180px,40dvh,310px)!important}
+}
 </style>
 </head>
 <body>
@@ -147,6 +170,7 @@ body.map-expanded{overflow:hidden}
 <div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
 <div class="map-column">
+<div class="map-stage" id="mapStage" data-side="right">
 <div class="frame" id="frame">
 <svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса">
 <defs>
@@ -164,8 +188,16 @@ body.map-expanded{overflow:hidden}
 <g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
-<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">Открыть во весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.18</span></div>
+<aside class="seat-note" id="seatNote" aria-label="Выбранное рабочее место" aria-live="polite" hidden>
+<div class="seat-note-head"><span>Рабочее место <strong id="noteCode"></strong></span><button type="button" class="note-close" id="noteClose" aria-label="Закрыть сноску">×</button></div>
+<strong id="noteName" class="seat-note-name"></strong>
+<div id="notePosition" class="seat-note-position" hidden></div>
+<div class="seat-note-field" id="noteDepartmentRow" hidden><span>Подразделение</span><strong id="noteDepartment"></strong></div>
+<div class="seat-note-field" id="notePhoneRow" hidden><span>Телефон</span><strong id="notePhone"></strong></div>
+</aside>
+</div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.19</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -186,8 +218,8 @@ const allFloors=[13,12,11,10,9,8,7,6,5,4,3,2,1,-1];
 let seats=[],zoneRefs=new Map(),flipped=false,selectedCode=null,targetCode=null,cardOpen=false,profile=null;
 const demoEmployees=[
  {email:'employee1@example.com',full_name:'Анна Иванова (демо)',seat_code:'6.082',position:'Главный специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12345',birthday:'29.10'},
- {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист'},
- {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист'}
+ {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12346'},
+ {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист',department:'Департамент (демо)',phone:'12347'}
 ];
 let employees=demoEmployees.map(p=>({...p,visibility:'full'}));
 const VISIBILITY={full:'Показывать всё',floor:'Только этаж',private:'Скрыть расположение',hidden:'Скрыть сотрудника'};
@@ -224,8 +256,8 @@ function paintSelection(){
  $('focus').disabled=!targetCode||!active(seatFloor(targetCode));
 }
 function showCard(){
- screenDirty=true;
- const code=selectedCode||targetCode,s=findSeat(code),p=profile||(findPerson(code)&&visibleLevel(findPerson(code))==='full'?findPerson(code):null),level=visibleLevel(p);
+ screenDirty=true;updateSeatNote();
+ const code=targetCode,s=findSeat(code),p=profile,level=visibleLevel(p);
  $('employeeCard').hidden=!cardOpen||(!s&&!p);if(!cardOpen||(!s&&!p)){for(const id of ['cardCode','personName','personPosition','personLocation','avatar'])$(id).textContent='';$('personInfo').replaceChildren();return}
  $('cardCode').textContent=p&&level!=='full'?(level==='floor'?'Точное место скрыто':'Расположение скрыто'):code?'Рабочее место '+code:'Рабочее место не назначено';
  const name=p?(p.full_name||'Сотрудник'):'Нет доступных сведений о сотруднике';
@@ -241,12 +273,64 @@ function showCard(){
 function pick(code){
  if(!findSeat(code))return;
  if(assigningSeat){const occupied=findPerson(code);if(occupied&&occupied.email!==editingEmail){adminMessage('Место '+code+' уже занято. Выберите свободный стол.');$('chooseSeatHint').textContent='Место занято. Выберите другой стол.';return}adminInputs.seat_code.value=code;assigningSeat=false;$('chooseSeatHint').textContent='Выбрано место '+code+'. Нажмите «Сохранить».';$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});return}
- const p=findPerson(code);
- if(p&&visibleLevel(p)==='full'){selectEmployee(p);return}
- $('mapPanel').hidden=false;profile=null;targetCode=null;selectedCode=code;cardOpen=true;message('');paintSelection();showCard();updateQuickSelection();
+ $('mapPanel').hidden=false;selectedCode=code===targetCode?null:code;message('');paintSelection();showCard();
+ if(selectedCode){keepNoteZoneVisible();requestAnimationFrame(revealSeatNote)}else if(targetCode)focusTarget();
 }
+function noteBounds(s){
+ const m=modelForFloor(floor),z=m?.zones?.find(z=>z.id===s.zoneId)||m?.rooms.find(r=>r.id===s.zoneId);
+ return z?{x:z.x,y:z.y,w:z.w,h:z.h}:{x:s.x-15,y:s.y-15,w:30,h:30};
+}
+function noteScreenBounds(s){
+ const a=noteBounds(s);return flipped?{x:1080-a.x-a.w,y:500-a.y-a.h,w:a.w,h:a.h}:a;
+}
+function updateSeatNote(){
+ const s=selectedCode&&findSeat(selectedCode),p=s?findPerson(selectedCode):null,show=!!s&&selectedCode!==targetCode;
+ const note=$('seatNote'),stage=$('mapStage'),wasOpen=!note.hidden;
+ note.hidden=!show;stage.classList.toggle('note-open',show);
+ if(!show){for(const id of ['noteCode','noteName','notePosition','noteDepartment','notePhone'])$(id).textContent='';for(const id of ['notePosition','noteDepartmentRow','notePhoneRow'])$(id).hidden=true;if(wasOpen)screenDirty=true;return}
+ const allowed=p&&visibleLevel(p)==='full';
+ $('noteCode').textContent=selectedCode;
+ $('noteName').textContent=allowed?p.full_name||'Сотрудник':p?'Сведения о сотруднике скрыты':'Свободное рабочее место';
+ $('notePosition').textContent=allowed?p.position||'':'';$('notePosition').hidden=!$('notePosition').textContent;
+ $('noteDepartment').textContent=allowed?[p.department,p.directorate].filter(Boolean).join(' · '):'';$('noteDepartmentRow').hidden=!$('noteDepartment').textContent;
+ $('notePhone').textContent=allowed?p.phone||'Не указан':'';$('notePhoneRow').hidden=!allowed;
+ updateNoteSide(s);screenDirty=true;
+}
+function updateNoteSide(s){
+ const stage=$('mapStage'),a=noteScreenBounds(s),b=flipped?1080-(localModel?.wingBoundary??540):(localModel?.wingBoundary??540);
+ const side=a.x+a.w/2<b?'left':'right';
+ if(stage.getAttribute('data-side')!==side){stage.setAttribute('data-side',side);screenDirty=true}
+}
+function keepNoteZoneVisible(){
+ const s=selectedCode&&findSeat(selectedCode);if(!s||$('seatNote').hidden)return;
+ updateNoteSide(s);const r=measureViewport(),a=noteScreenBounds(s),aspect=r.width>0&&r.height>0?r.width/r.height:view.w/view.h;
+ // Keep the entire highlighted zone in view; avoid extra zoom when the current scale suffices.
+ const margin=12,needW=a.w+2*margin,needH=a.h+2*margin;
+ const vw=Math.max(view.w,view.h*aspect,needW,needH*aspect),vh=vw/aspect;
+ let cx=view.x+view.w/2,cy=view.y+view.h/2;
+ cx=Math.max(a.x+a.w+margin-vw/2,Math.min(cx,a.x-margin+vw/2));
+ cy=Math.max(a.y+a.h+margin-vh/2,Math.min(cy,a.y-margin+vh/2));
+ view={x:cx-vw/2,y:cy-vh/2,w:vw,h:vh};apply();
+}
+function positionSeatNote(r,w,hh){
+ const note=$('seatNote'),s=selectedCode&&findSeat(selectedCode);if(note.hidden||!s)return;
+ const a=noteScreenBounds(s),top=view.y-(hh-view.h)/2;
+ const y=(a.y+a.h/2-top)*r.height/hh,nh=note.getBoundingClientRect().height||0;
+ note.style.setProperty('--note-offset',Math.max(0,Math.min(r.height-nh,y-nh/2))+'px');
+}
+function revealSeatNote(){
+ const note=$('seatNote');if(note.hidden)return;
+ const r=note.getBoundingClientRect(),stage=$('mapStage').getBoundingClientRect(),h=window.innerHeight||document.documentElement.clientHeight||0;
+ // Do not jump the page for ordinary desktop clicks; bring the separate card into the visible window on small screens.
+ if(h>0&&(r.top<0||r.bottom>h)){
+  if(stage.height<=h-12)$('mapStage').scrollIntoView({block:'nearest'});
+  else note.scrollIntoView({block:'nearest'});
+ }
+}
+function closeSeatNote(){selectedCode=null;paintSelection();showCard();invalidateViewport()}
 function focusTarget(){
  if(!targetCode||profile&&visibleLevel(profile)!=='full')return false;
+ selectedCode=null;updateSeatNote();
  if(floor!==seatFloor(targetCode)){floor=seatFloor(targetCode);render()}
  const s=findSeat(targetCode);
  if(!s){message(active(floor)?'Рабочее место не нанесено на схему.':'Схема этого этажа пока недоступна.');return false}
@@ -297,7 +381,7 @@ function applyOrientation(){
  $('flip').setAttribute('aria-pressed',String(flipped));
 }
 function rotateMap(){
- flipped=!flipped;view={x:1080-view.x-view.w,y:500-view.y-view.h,w:view.w,h:view.h};applyOrientation();apply();
+ flipped=!flipped;view={x:1080-view.x-view.w,y:500-view.y-view.h,w:view.w,h:view.h};applyOrientation();if(selectedCode&&findSeat(selectedCode)){updateNoteSide(findSeat(selectedCode));keepNoteZoneVisible()}else apply();
 }
 const active=f=>f>=2&&f<=10;
 const ns='http://www.w3.org/2000/svg';
@@ -420,6 +504,7 @@ function paintView(){
  if(key!==lastViewKey){svg.setAttribute('viewBox',key);lastViewKey=key;}
  const zoom=Math.round(BASE.w/view.w*100)+'%';
  if(zoom!==lastZoom){$('zoom').textContent=zoom;lastZoom=zoom}
+ positionSeatNote(r,w,hh);
 }
 function apply(){if(paintFrame!==null){cancelAnimationFrame(paintFrame);paintFrame=null}paintView()}
 function queuePaint(){if(paintFrame!==null)return;paintFrame=requestAnimationFrame(()=>{paintFrame=null;paintView()})}
@@ -495,7 +580,7 @@ document.addEventListener('touchmove',e=>{if(e.touches.length>1)cancelNative(e)}
 for(const f of allFloors){const b=document.createElement('button');b.className='floor'+(active(f)?'':' soon');b.dataset.floor=f;b.textContent=f;if(!active(f)){const s=document.createElement('small');s.textContent='Скоро';b.append(s)}b.onclick=()=>{floor=f;selectedCode=null;message('');render();if(targetCode&&seatFloor(targetCode)===f)focusTarget()};$('floors').append(b)}
 $('showCodes').addEventListener('change',syncCodes);
 $('flip').onclick=rotateMap;$('focus').onclick=focusTarget;
-$('closeCard').onclick=()=>{cardOpen=false;selectedCode=null;paintSelection();showCard()};
+$('closeCard').onclick=()=>{cardOpen=false;showCard()};$('noteClose').onclick=closeSeatNote;
 $('searchForm').addEventListener('submit',e=>{e.preventDefault();searchPeople()});
 $('employeeSearch').addEventListener('input',clearResults);
 svg.addEventListener('keydown',e=>{const code=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code');if(code&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(code)}});
@@ -964,7 +1049,7 @@ $('saveLocalHtml').onclick=()=>{
  const json=JSON.stringify(localTemplate).replace(/</g,'\\u003c');
  const output=SOURCE_HTML.replace(/^const EMBEDDED_LOCAL_MODEL = .*;$/m,()=> 'const EMBEDDED_LOCAL_MODEL = '+json+';');
  if(output===SOURCE_HTML){message('Не удалось создать автономный HTML.');return}
- const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.18.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.19.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
 $('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
 
@@ -983,7 +1068,7 @@ function toggleExpanded(force){
  if(next===expanded)return;
  panel.classList.toggle('expanded-panel',next);document.body.classList.toggle('map-expanded',next);
  $('full').textContent=next?'Закрыть полный экран':'Открыть во весь экран';$('full').setAttribute('aria-pressed',String(next));invalidateViewport();
- requestAnimationFrame(()=>{measureViewport();apply()});
+ requestAnimationFrame(()=>{measureViewport();if(selectedCode)keepNoteZoneVisible();else apply()});
 }
 $('full').onclick=()=>toggleExpanded();
 document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleExpanded(false)});
