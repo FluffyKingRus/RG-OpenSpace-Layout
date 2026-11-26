@@ -1171,7 +1171,7 @@ function renderLocalFloor(m){
  for(const r of m.rooms){
   const g=el('g',{'data-room-id':r.id}),cls='local-room-floor'+(r.type==='lifts'?' lift-floor':r.type==='stairs'?' stair-floor':['wc','plain','wardrobe'].includes(r.type)?' utility':'');
   const roomFloor=r.notch||r.polygon?el('path',{d:roomPath(r),class:cls},g):rect(r.x,r.y,r.w,r.h,cls,g);
-  if(r.type==='office')zoneRefs.set(r.id,roomFloor);for(const z of m.zones||[])if(z.roomZone===r.id)zoneRefs.set(z.id,roomFloor);localRoomWalls(r,g);const occupied=localRoomFurniture(r,g);if(r.sourceDesk)occupied.push(...renderSourceDesk(r,g));if(r.type==='lifts')localLiftLobby(r);else localRoomText(r,g,m,occupied);
+  const roomZones=(m.zones||[]).filter(z=>z.roomZone===r.id);if(r.type==='office'&&!roomZones.length)zoneRefs.set(r.id,roomFloor);for(const z of roomZones)zoneRefs.set(z.id,roomFloor);localRoomWalls(r,g);const occupied=localRoomFurniture(r,g);if(r.sourceDesk)occupied.push(...renderSourceDesk(r,g));if(r.type==='lifts')localLiftLobby(r);else localRoomText(r,g,m,occupied);
  }
  for(const w of m.walls)wall(...w);
  for(const a of m.areaLabels||[]){const t=el('text',{x:a.x,y:a.y,class:'local-room-label','font-size':5.4});t.textContent=a.name}
