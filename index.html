@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.10</title>
+<title>Расположение рабочего места — 0.0.11</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -73,6 +73,8 @@
 .admin-search{flex:1;font-size:13px}.admin-table-wrap{overflow:auto;max-height:330px;border:1px solid #e7ecf3;border-radius:8px}.admin-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px;min-width:440px}.admin-table th,.admin-table td{padding:8px;border-bottom:1px solid #e7ecf3;vertical-align:middle;overflow-wrap:anywhere}.admin-table th{position:sticky;top:0;background:#f3f6fa;color:#52677f}.admin-table td:last-child{white-space:nowrap}.admin-table small{display:block;color:#728399;margin-top:3px}
 .admin-edit,.import-preview{border:1px solid #dce7f4;padding:10px;border-radius:8px;display:grid;gap:8px;background:#f8fbff}.admin-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.import-errors{max-height:180px;overflow:auto;font-size:12px;margin:0;padding-left:22px;color:#a33232}.import-summary{font-size:13px;line-height:1.5;white-space:pre-wrap}.admin-message{font-size:12px;color:#456783;min-height:0;white-space:pre-wrap}.admin-progress{height:7px;background:#e2ebf4;border-radius:7px;overflow:hidden}.admin-progress div{background:#1676d3;height:100%;width:0}
 @media(max-width:650px){.admin-panel{padding:9px;gap:9px}.admin-metric{padding:7px}.admin-metric small{font-size:9px}.admin-metric strong{font-size:17px}.admin-field input{font-size:16px}.admin-actions .control{font-size:11px}.admin-table th,.admin-table td{padding:6px}.admin-title{font-size:15px}}
+
+.login-panel{display:grid;gap:8px;padding:12px;border:1px solid #dce7f4;border-radius:10px;background:#f8fbff;max-width:420px}.login-panel[hidden],.export-button[hidden]{display:none}.login-panel input{width:100%;padding:10px;border:1px solid #dce4ee;border-radius:8px;font-size:16px}.login-error{font-size:12px;color:#a33232}.visibility-tag{display:block;color:#9a672b!important;font-size:10px}.panel[hidden]{display:none}.admin-note strong{color:#8e5925}
 </style>
 </head>
 <body>
@@ -80,7 +82,8 @@
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
 <form id="searchForm" class="search-form" role="search"><input type="search" id="employeeSearch" placeholder="ФИО или электронная почта" autocomplete="off" aria-label="Поиск сотрудника"><button type="submit">Найти</button></form>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
-<div class="export-row"><button class="control export-button" id="exportEmployees" type="button">↓ XLSX</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
+<div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
+<form id="adminLogin" class="login-panel" hidden><strong>Вход в панель администратора</strong><input id="adminPassword" type="password" placeholder="Пароль" autocomplete="current-password" aria-label="Пароль администратора" required><div class="admin-actions"><button class="control admin-primary" id="loginSubmit" type="submit">Войти</button><button class="control" id="loginCancel" type="button">Отмена</button></div><div class="login-error" id="loginError" role="status"></div><p class="admin-note">Временный вход для демонстрации. Не является защитой персональных данных.</p></form>
 <div class="search-results" id="searchResults" hidden></div>
 <div class="status" id="status" role="status" hidden></div>
 <section class="employee-card" id="employeeCard" aria-label="Карточка сотрудника" hidden>
@@ -91,7 +94,7 @@
 <details class="local-tools" id="localTools" hidden><summary>Локальные данные сотрудников (JSON)</summary><input id="employeeFile" type="file" accept=".json,application/json"><div>Данные остаются в памяти открытого файла. Для постоянного хранения сохраните исходный JSON.</div></details>
 </section>
 <section class="admin-panel" id="adminPanel" aria-label="Панель администратора" hidden>
-<div class="admin-top"><h2 class="admin-title">Управление рассадкой</h2><button class="control" id="closeAdmin">Закрыть</button></div>
+<div class="admin-top"><h2 class="admin-title">Управление рассадкой</h2><button class="control" id="closeAdmin">Выйти</button></div>
 <p class="admin-note">Демонстрационный режим. На публичном сайте используйте только вымышленные данные. Изменения хранятся в памяти вкладки; для сохранения выгрузите XLSX. Права доступа будут проверяться корпоративным сервером.</p>
 <div class="admin-list-head"><strong>Статистика</strong><select id="adminFloor" class="admin-select" aria-label="Этаж для статистики"><option value="all">Все доступные этажи</option></select></div>
 <div class="admin-metrics">
@@ -108,7 +111,7 @@
 <div class="admin-message" id="adminMessage" role="status"></div>
 <div class="admin-actions"><button class="control" type="button" disabled>Редактор планировок · Скоро</button><button class="control" type="button" disabled>Резервные копии · Скоро</button></div>
 </section>
-<section class="panel" aria-label="Схема этажа">
+<section class="panel" id="mapPanel" aria-label="Схема этажа">
 <h1 class="module-title">Схема размещения</h1>
 <div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
@@ -131,7 +134,7 @@
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">На весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.10</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.11</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -153,7 +156,12 @@ const demoEmployees=[
  {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист'},
  {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист'}
 ];
-let employees=demoEmployees.slice();
+let employees=demoEmployees.map(p=>({...p,visibility:'full'}));
+const VISIBILITY={full:'Показывать всё',floor:'Только этаж',private:'Скрыть расположение',hidden:'Скрыть сотрудника'};
+function visibilityValue(v){const s=String(v??'').trim();if(!s)return 'full';if(Object.hasOwn(VISIBILITY,s))return s;const key=Object.keys(VISIBILITY).find(k=>VISIBILITY[k].toLowerCase()===s.toLowerCase());if(!key)throw Error('Неизвестный режим видимости: '+s);return key}
+const visibleLevel=p=>adminOpen?'full':(p?.visibility||'full');
+const publicPeople=()=>employees.filter(p=>visibleLevel(p)!=='hidden');
+const locationText=p=>visibleLevel(p)==='full'?(p.seat_code_source||p.seat_code||'Без места'):visibleLevel(p)==='floor'&&p.seat_code?seatFloor(p.seat_code)+' этаж':'Расположение скрыто';
 const normalizeEmail=v=>String(v??'').trim().toLowerCase();
 function normalizeCode(v){const m=String(v??'').trim().match(/^(-?\d+)\.(\d{1,3})$/);return m?Number(m[1])+'.'+String(Number(m[2])).padStart(3,'0'):''}
 const seatFloor=code=>Number(String(code).split('.')[0]);
@@ -171,24 +179,24 @@ function setEmployees(records){
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||emails.has(email))throw Error('Некорректная или повторная почта: строка '+(i+1));
   if(seat_code&&codes.has(seat_code))throw Error('Повторное место: '+seat_code);
   if(email)emails.add(email);if(seat_code)codes.add(seat_code);
-  const obj={email,seat_code,seat_code_source:seat_code?String(p.seat_code_source??p.seat_code).trim():''};if(normalizeCode(obj.seat_code_source)!==seat_code)obj.seat_code_source=seat_code;for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
+  const obj={email,seat_code,visibility:visibilityValue(p.visibility),seat_code_source:seat_code?String(p.seat_code_source??p.seat_code).trim():''};if(normalizeCode(obj.seat_code_source)!==seat_code)obj.seat_code_source=seat_code;for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
   return obj;
  });
- employees=next;selectedCode=null;targetCode=null;profile=null;cardOpen=false;message('');paintSelection();showCard();renderQuickPeople();clearResults();if(adminReady)refreshAdmin();return next.length;
+ employees=next;selectedCode=null;targetCode=null;profile=null;cardOpen=false;$('mapPanel').hidden=false;message('');paintSelection();showCard();renderQuickPeople();clearResults();if(adminReady)refreshAdmin();return next.length;
 }
 function paintSelection(){
- for(const s of seats){const code=s.code.textContent;const sel=code===selectedCode||(!selectedCode&&code===targetCode);s.desk.classList.toggle('assigned',!!findPerson(code));s.desk.classList.toggle('selected',sel);s.code.classList.toggle('selected',sel)}
+ for(const s of seats){const code=s.code.textContent;const sel=code===selectedCode||(!selectedCode&&code===targetCode);const p=findPerson(code);s.desk.classList.toggle('assigned',!!p&&visibleLevel(p)==='full');s.desk.classList.toggle('selected',sel);s.code.classList.toggle('selected',sel)}
  $('focus').disabled=!targetCode||!active(seatFloor(targetCode));
 }
 function showCard(){
  screenDirty=true;
- const code=selectedCode||targetCode,s=findSeat(code),p=profile||findPerson(code);
- $('employeeCard').hidden=!cardOpen||(!s&&!p);if(!cardOpen||(!s&&!p))return;
- $('cardCode').textContent=code?'Рабочее место '+code:'Рабочее место не назначено';
- const name=p?(p.full_name||'Сотрудник'):'Рабочее место не назначено';
+ const code=selectedCode||targetCode,s=findSeat(code),p=profile||(findPerson(code)&&visibleLevel(findPerson(code))==='full'?findPerson(code):null),level=visibleLevel(p);
+ $('employeeCard').hidden=!cardOpen||(!s&&!p);if(!cardOpen||(!s&&!p)){for(const id of ['cardCode','personName','personPosition','personLocation','avatar'])$(id).textContent='';$('personInfo').replaceChildren();return}
+ $('cardCode').textContent=p&&level!=='full'?(level==='floor'?'Точное место скрыто':'Расположение скрыто'):code?'Рабочее место '+code:'Рабочее место не назначено';
+ const name=p?(p.full_name||'Сотрудник'):'Нет доступных сведений о сотруднике';
  $('personName').textContent=name;$('personPosition').textContent=p?.position||'';
  $('avatar').textContent=p?name.replace(/\s*\(демо\)/i,'').trim().split(/\s+/).slice(0,2).map(v=>v[0]||'').join('').toUpperCase():'—';
- $('personLocation').textContent=code?seatFloor(code)+' этаж'+(s?' · '+wing(s):''):'';
+ $('personLocation').textContent=level==='floor'&&p?.seat_code?seatFloor(p.seat_code)+' этаж':level==='full'&&code?seatFloor(code)+' этаж'+(s?' · '+wing(s):''):'';
  const info=$('personInfo');info.replaceChildren();
  for(const [key,title] of [['department','Департамент'],['directorate','Управление'],['phone','Телефон'],['email','Почта'],['birthday','День рождения']]){
   if(!p||!p[key])continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=title;dd.textContent=p[key];info.append(dt,dd);
@@ -199,11 +207,11 @@ function pick(code){
  if(!findSeat(code))return;
  if(assigningSeat){const occupied=findPerson(code);if(occupied&&occupied.email!==editingEmail){adminMessage('Место '+code+' уже занято. Выберите свободный стол.');$('chooseSeatHint').textContent='Место занято. Выберите другой стол.';return}adminInputs.seat_code.value=code;assigningSeat=false;$('chooseSeatHint').textContent='Выбрано место '+code+'. Нажмите «Сохранить».';$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});return}
  const p=findPerson(code);
- if(p){selectEmployee(p);return}
- profile=null;targetCode=null;selectedCode=code;cardOpen=true;message('');paintSelection();showCard();updateQuickSelection();
+ if(p&&visibleLevel(p)==='full'){selectEmployee(p);return}
+ $('mapPanel').hidden=false;profile=null;targetCode=null;selectedCode=code;cardOpen=true;message('');paintSelection();showCard();updateQuickSelection();
 }
 function focusTarget(){
- if(!targetCode)return false;
+ if(!targetCode||profile&&visibleLevel(profile)!=='full')return false;
  if(floor!==seatFloor(targetCode)){floor=seatFloor(targetCode);render()}
  const s=findSeat(targetCode);
  if(!s){message(active(floor)?'Рабочее место не нанесено на схему.':'Схема этого этажа пока недоступна.');return false}
@@ -214,9 +222,13 @@ function focusTarget(){
  view={x,y,w,h:hh};apply();selectedCode=null;cardOpen=true;paintSelection();showCard();return true;
 }
 function selectEmployee(p){
- profile=p||null;targetCode=null;selectedCode=null;cardOpen=!!p;message('');clearResults();
- if(!p){paintSelection();showCard();updateQuickSelection();message('Сотрудник не найден.');return false}
+ if(p&&visibleLevel(p)==='hidden')p=null;
+ $('mapPanel').hidden=false;profile=p||null;targetCode=null;selectedCode=null;cardOpen=!!p;message('');clearResults();
+ if(!p){$('employeeSearch').value='';paintSelection();showCard();updateQuickSelection();message('Сотрудник не найден.');return false}
  $('employeeSearch').value=p.full_name||p.email||'';
+ const level=visibleLevel(p);
+ if(level==='private'||level==='floor'&&!p.seat_code){$('mapPanel').hidden=true;paintSelection();showCard();updateQuickSelection();message('Расположение сотрудника скрыто.');return false}
+ if(level==='floor'){const f=seatFloor(p.seat_code);if(active(f)){floor=f;render();message('Точное рабочее место скрыто.');return true}$('mapPanel').hidden=true;paintSelection();showCard();message('Точное рабочее место скрыто.');return false}
  if(!p.seat_code){paintSelection();showCard();message('Рабочее место не назначено.');return false}
  targetCode=p.seat_code;const nextFloor=seatFloor(targetCode);
  if(!allFloors.includes(nextFloor)){targetCode=null;paintSelection();showCard();message('Этаж не поддерживается.');return false}
@@ -225,17 +237,17 @@ function selectEmployee(p){
 function showEmployee(email){return selectEmployee(employees.find(p=>p.email&&p.email===normalizeEmail(email)))}
 function personButton(p){
  const b=document.createElement('button');b.type='button';b.className='quick-person';b.setAttribute('aria-pressed',String(p===profile));
- const name=document.createElement('span'),code=document.createElement('small');name.textContent=p.full_name||p.email||'Сотрудник';code.textContent=p.seat_code||'Без места';b.append(name,code);b.onclick=()=>selectEmployee(p);return b;
+ const name=document.createElement('span'),code=document.createElement('small');name.textContent=p.full_name||p.email||'Сотрудник';code.textContent=locationText(p);b.append(name,code);b.onclick=()=>selectEmployee(p);return b;
 }
-function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();for(const p of employees.slice(0,3))box.append(personButton(p))}
-function updateQuickSelection(){Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(employees[i]===profile)))}
+function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();for(const p of publicPeople().slice(0,3))box.append(personButton(p))}
+function updateQuickSelection(){Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(publicPeople()[i]===profile)))}
 function clearResults(){$('searchResults').replaceChildren();$('searchResults').hidden=true}
 function searchPeople(){
  const query=normalizeEmail($('employeeSearch').value).replace(/ё/g,'е');
  clearResults();message('');
  if(!query){message('Введите ФИО или электронную почту.');return}
  const terms=query.split(/\s+/);
- const matches=employees.filter(p=>{const text=normalizeEmail((p.full_name||'')+' '+(p.email||'')).replace(/ё/g,'е');return terms.every(t=>text.includes(t))});
+ const matches=publicPeople().filter(p=>{const text=normalizeEmail((p.full_name||'')+' '+(p.email||'')).replace(/ё/g,'е');return terms.every(t=>text.includes(t))});
  if(matches.length===1){selectEmployee(matches[0]);return}
  if(!matches.length){message('Сотрудник не найден.');return}
  const box=$('searchResults');box.hidden=false;for(const p of matches)box.append(personButton(p));message('Найдено: '+matches.length+'. Выберите сотрудника.');
@@ -457,7 +469,7 @@ svg.addEventListener('keydown',e=>{const code=e.target.closest('[data-seat-code]
 const EMPLOYEE_COLUMNS=[
  ['ФИО','full_name',35],['Email','email',32],['Код рабочего места','seat_code',22],
  ['Должность','position',32],['Департамент','department',36],['Управление','directorate',36],
- ['Телефон','phone',24],['День рождения','birthday',18]
+ ['Телефон','phone',24],['День рождения','birthday',18],['Видимость','visibility',30]
 ];
 const XML_HEAD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
 const MAIN_NS='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
@@ -480,10 +492,10 @@ function zipStore(files){
  return [...locals,...centrals,end.a];
 }
 function employeeWorkbook(records=employees){
- const rows=[EMPLOYEE_COLUMNS.map(c=>c[0]),...records.map(p=>EMPLOYEE_COLUMNS.map(c=>c[1]==='seat_code'?(p.seat_code_source??p.seat_code??''):(p[c[1]]??'')))];
+ const rows=[EMPLOYEE_COLUMNS.map(c=>c[0]),...records.map(p=>EMPLOYEE_COLUMNS.map(c=>c[1]==='seat_code'?(p.seat_code_source??p.seat_code??''):c[1]==='visibility'?VISIBILITY[p.visibility||'full']:(p[c[1]]??'')))];
  const cells=rows.map((r,i)=>'<row r="'+(i+1)+'"'+(i===0?' ht="24" customHeight="1"':'')+'>'+r.map((v,j)=>'<c r="'+String.fromCharCode(65+j)+(i+1)+'" t="inlineStr" s="'+(i===0?1:2)+'"><is><t xml:space="preserve">'+xmlText(v)+'</t></is></c>').join('')+'</row>').join('');
  const cols=EMPLOYEE_COLUMNS.map((c,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+c[2]+'" customWidth="1"/>').join('');
- const range='A1:H'+rows.length;
+ const range='A1:'+String.fromCharCode(64+EMPLOYEE_COLUMNS.length)+rows.length;
  return zipStore([
  ['[Content_Types].xml',XML_HEAD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
  ['_rels/.rels',XML_HEAD+'<Relationships xmlns="'+PACK_REL+'"><Relationship Id="rId1" Type="'+REL_NS+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
@@ -499,7 +511,7 @@ function downloadWorkbook(records,name){
  link.href=url;link.download=name;
  document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
-function exportEmployees(){downloadWorkbook(employees,'employees_'+new Date().toISOString().slice(0,10)+'.xlsx')}
+function exportEmployees(){if(!adminOpen){message('Выгрузка доступна только администратору.');return}downloadWorkbook(employees,'employees_'+new Date().toISOString().slice(0,10)+'.xlsx')}
 
 
 /* XLSX reader: ZIP central directory + stored/deflated entries, no external requests. */
@@ -568,7 +580,7 @@ async function readEmployeeWorkbook(buffer){
  const alias={'электронная почта':'email','эл. почта':'email','e-mail':'email','номер телефона':'phone'};
  const mapping=new Map();
  for(const [i,c] of header){const name=norm(c.value),key=EMPLOYEE_COLUMNS.find(x=>norm(x[0])===name||x[1]===name)?.[1]||alias[name];if(key){if([...mapping.values()].includes(key))throw Error('Повторная колонка: '+c.value);mapping.set(i,key)}}
- const missing=EMPLOYEE_COLUMNS.filter(c=>![...mapping.values()].includes(c[1]));
+ const missing=EMPLOYEE_COLUMNS.filter(c=>c[1]!=='visibility'&&![...mapping.values()].includes(c[1]));
  if(missing.length)throw Error('Не хватает колонок: '+missing.map(c=>c[0]).join(', ')+'. Используйте шаблон выгрузки.');
  const result=[],errors=[];
  if(rows.length>10001)throw Error('Поддерживается до 10 000 строк сотрудников.');
@@ -594,25 +606,46 @@ function normalizeRecord(p){
  if(code&&!validMappedSeat(code))throw Error('Место '+raw+' не нанесено на доступную схему.');
  const birthday=String(p.birthday??'').trim();
  if(birthday){const m=birthday.match(/^(\d{2})\.(\d{2})$/),day=m?Number(m[1]):0,month=m?Number(m[2]):0;const max=[31,29,31,30,31,30,31,31,30,31,30,31][month-1]||0;if(day<1||day>max)throw Error('День рождения должен быть в формате ДД.ММ.')}
- const obj={email,seat_code:code,seat_code_source:raw};for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'').trim();return obj;
+ const obj={email,seat_code:code,seat_code_source:raw,visibility:visibilityValue(p.visibility)};for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'').trim();return obj;
 }
 function checkImport(data,base=employees){
  const errors=data.errors.slice(),seen=new Set(),existing=new Map(base.map(p=>[p.email,p])),next=new Map(existing),lineByEmail=new Map();
  let added=0,updated=0,unchanged=0;
  for(const {line,p} of data.rows){
-  try{const obj=normalizeRecord(p);if(seen.has(obj.email))throw Error('Повторный email '+obj.email);seen.add(obj.email);lineByEmail.set(obj.email,line);
+  try{const previous=existing.get(normalizeEmail(p.email));const obj=normalizeRecord({...p,visibility:String(p.visibility??'').trim()||previous?.visibility||'full'});if(seen.has(obj.email))throw Error('Повторный email '+obj.email);seen.add(obj.email);lineByEmail.set(obj.email,line);
    const old=existing.get(obj.email);
-   if(!old)added++;else if(EMPLOYEE_COLUMNS.every(([,key])=>String(old[key]??'')===String(obj[key]??''))&&String(old.seat_code_source??old.seat_code??'')===obj.seat_code_source)unchanged++;else updated++;
+   if(!old)added++;else if(EMPLOYEE_COLUMNS.every(([,key])=>String(old[key]??(key==='visibility'?'full':''))===String(obj[key]??''))&&String(old.seat_code_source??old.seat_code??'')===obj.seat_code_source)unchanged++;else updated++;
    next.set(obj.email,obj);
   }catch(err){errors.push('Строка '+line+': '+err.message)}
  }
  const occupied=new Map();for(const p of next.values()){if(!p.seat_code)continue;const old=occupied.get(p.seat_code);if(old){errors.push('Конфликт места '+p.seat_code+': '+old.email+' и '+p.email+(lineByEmail.has(p.email)?' (строка '+lineByEmail.get(p.email)+')':''));}else occupied.set(p.seat_code,p)}
  return {records:[...next.values()],errors,added,updated,unchanged,kept:base.filter(p=>!seen.has(p.email)).length,read:data.rows.length};
 }
-let adminReady=false,adminOpen=false,editingEmail=null,assigningSeat=false,pendingImport=null,importToken=0,adminInputs={};
+let adminReady=false,adminOpen=false,loginToken=0,editingEmail=null,assigningSeat=false,pendingImport=null,importToken=0,adminInputs={};
 function adminMessage(text){$('adminMessage').textContent=text||''}
-function setAdmin(open){adminOpen=open;$('adminPanel').hidden=!open;$('toggleAdmin').setAttribute('aria-expanded',String(open));if(open)refreshAdmin();else{cancelEdit();cancelImport()}invalidateViewport()}
+// A client-only demonstration lock; not a security boundary.
+const DEMO_PASSWORD_HASH='039054aec89f68802a17169473ebe1c2668757a15d511035894f014aabe32316';
+async function verifyPassword(value){if(!globalThis.crypto?.subtle)throw Error('Откройте страницу в современном браузере через HTTPS или локальный файл.');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('rg-layout-demo-v1:'+value));return Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,'0')).join('')===DEMO_PASSWORD_HASH}
+function setAdmin(open){
+ adminOpen=open;$('adminPanel').hidden=!open;$('exportEmployees').hidden=!open;$('localTools').hidden=!(open&&location.protocol==='file');$('toggleAdmin').setAttribute('aria-expanded',String(open));
+ $('toggleAdmin').textContent=open?'Выйти из админки':'⚙ Администратор';
+ clearResults();renderQuickPeople();
+ if(open){refreshAdmin();if(profile)selectEmployee(profile);else paintSelection()}
+ else{
+  cancelEdit();cancelImport();$('adminRows').replaceChildren();$('adminSearch').value='';$('adminMessage').textContent='';$('importSummary').textContent='';$('importErrors').replaceChildren();for(const input of Object.values(adminInputs))input.value='';
+  for(const id of ['statTotal','statOccupied','statFree','statRate','adminExtra'])$(id).textContent='';$('statBar').style.width='0';
+  const p=profile;targetCode=null;selectedCode=null;cardOpen=false;profile=null;message('');$('employeeSearch').value='';$('mapPanel').hidden=false;floor=6;render();
+  if(p&&visibleLevel(p)!=='hidden')selectEmployee(p);else{showCard();updateQuickSelection()}
+ }
+ invalidateViewport();
+}
+function cancelLogin(){loginToken++;$('adminLogin').hidden=true;$('adminPassword').value='';$('loginError').textContent='';$('loginSubmit').disabled=false}
+async function submitLogin(){
+ const token=++loginToken,value=$('adminPassword').value;$('adminPassword').value='';$('loginSubmit').disabled=true;$('loginError').textContent='';
+ try{const valid=await verifyPassword(value);if(token!==loginToken)return;if(!valid){$('loginError').textContent='Неверный пароль.';return}cancelLogin();setAdmin(true)}catch(err){if(token===loginToken)$('loginError').textContent=err.message}finally{if(token===loginToken)$('loginSubmit').disabled=false}
+}
 function refreshAdmin(){
+ if(!adminOpen)return;
  const f=$('adminFloor').value||'all',floors=f==='all'?[2,3,4,5,6,7,8,9,10]:[Number(f)],total=floors.reduce((n,x)=>n+seatCapacity(x),0);
  const assigned=employees.filter(p=>p.seat_code&&validMappedSeat(p.seat_code)&&floors.includes(seatFloor(p.seat_code)));
  const occupied=new Set(assigned.map(p=>p.seat_code)).size,rate=total?occupied/total*100:0;
@@ -622,7 +655,7 @@ function refreshAdmin(){
  const filtered=employees.filter(p=>(f==='all'||(p.seat_code&&seatFloor(p.seat_code)===Number(f)))&&(!q||normalizeEmail([p.full_name,p.email,p.seat_code,p.seat_code_source].join(' ')).includes(q)));
  for(const p of filtered.slice(0,200)){
   const tr=document.createElement('tr'),name=document.createElement('td'),seat=document.createElement('td'),actions=document.createElement('td'),small=document.createElement('small');
-  name.textContent=p.full_name||'Без имени';small.textContent=p.email;name.append(small);seat.textContent=(p.seat_code_source??p.seat_code)||'—';
+  name.textContent=p.full_name||'Без имени';small.textContent=p.email;name.append(small);seat.textContent=(p.seat_code_source??p.seat_code)||'—';if((p.visibility||'full')!=='full'){const tag=document.createElement('small');tag.className='visibility-tag';tag.textContent=VISIBILITY[p.visibility];seat.append(tag)}
   const edit=document.createElement('button');edit.type='button';edit.className='control';edit.textContent='Изменить';edit.onclick=()=>editEmployee(p);
   const show=document.createElement('button');show.type='button';show.className='control';show.textContent='На схеме';show.disabled=!p.seat_code;show.onclick=()=>selectEmployee(p);actions.append(edit,show);tr.append(name,seat,actions);body.append(tr);
  }
@@ -630,12 +663,13 @@ function refreshAdmin(){
  if(filtered.length>200){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='Первые 200 из '+filtered.length+'. Уточните поиск.';tr.append(td);body.append(tr)}
 }
 function editEmployee(p){
- cancelImport();editingEmail=p?.email||null;assigningSeat=false;$('adminEdit').hidden=false;$('adminEditTitle').textContent=p?'Редактирование сотрудника':'Новый сотрудник';$('chooseSeatHint').textContent='';
- for(const [,key] of EMPLOYEE_COLUMNS)adminInputs[key].value=key==='seat_code'?(p?.seat_code_source??p?.seat_code??''):(p?.[key]??'');
+ if(!adminOpen)return;cancelImport();editingEmail=p?.email||null;assigningSeat=false;$('adminEdit').hidden=false;$('adminEditTitle').textContent=p?'Редактирование сотрудника':'Новый сотрудник';$('chooseSeatHint').textContent='';
+ for(const [,key] of EMPLOYEE_COLUMNS)adminInputs[key].value=key==='seat_code'?(p?.seat_code_source??p?.seat_code??''):key==='visibility'?(p?.visibility||'full'):(p?.[key]??'');
  adminMessage('');$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 function cancelEdit(){assigningSeat=false;editingEmail=null;$('adminEdit').hidden=true;$('chooseSeatHint').textContent=''}
 function saveEdit(){
+ if(!adminOpen)return;
  try{const raw={};for(const [,key] of EMPLOYEE_COLUMNS)raw[key]=adminInputs[key].value;
  const p=normalizeRecord(raw),base=employees.filter(x=>x.email!==editingEmail);
  if(base.some(x=>x.email===p.email))throw Error('Такой email уже существует.');
@@ -652,21 +686,21 @@ function showImport(result){
  if(result.errors.length>100){const li=document.createElement('li');li.textContent='И ещё '+(result.errors.length-100)+' ошибок';ul.append(li)}
 }
 async function importFile(file){
- if(!file)return;cancelEdit();cancelImport();const token=importToken;adminMessage('Проверка XLSX…');
+ if(!file||!adminOpen)return;cancelEdit();cancelImport();const token=importToken;adminMessage('Проверка XLSX…');
  try{if(file.size>XLSX_MAX)throw Error('Максимальный размер файла 15 МБ.');const data=await readEmployeeWorkbook(await file.arrayBuffer());if(token!==importToken)return;showImport(checkImport(data));adminMessage('')}catch(err){if(token!==importToken)return;adminMessage('Импорт не выполнен: '+err.message)}
 }
 function initAdmin(){
  for(const f of [2,3,4,5,6,7,8,9,10]){const option=document.createElement('option');option.value=String(f);option.textContent=f+' этаж';$('adminFloor').append(option)}
- for(const [title,key] of EMPLOYEE_COLUMNS){const field=document.createElement('label');field.className='admin-field';field.textContent=title;const input=document.createElement('input');input.type='text';input.name=key;if(key==='email')input.type='email';if(key==='email'||key==='full_name')input.required=true;if(key==='birthday')input.placeholder='ДД.ММ';if(key==='seat_code')input.placeholder='6.082 или пусто';field.append(input);$('adminFields').append(field);adminInputs[key]=input}
- $('toggleAdmin').onclick=()=>setAdmin(!adminOpen);$('closeAdmin').onclick=()=>setAdmin(false);
+ for(const [title,key] of EMPLOYEE_COLUMNS){const field=document.createElement('label');field.className='admin-field';field.textContent=title;const input=document.createElement(key==='visibility'?'select':'input');if(key==='visibility'){for(const [v,label] of Object.entries(VISIBILITY)){const option=document.createElement('option');option.value=v;option.textContent=label;input.append(option)}}else input.type='text';input.name=key;if(key==='email')input.type='email';if(key==='email'||key==='full_name')input.required=true;if(key==='birthday')input.placeholder='ДД.ММ';if(key==='seat_code')input.placeholder='6.082 или пусто';field.append(input);$('adminFields').append(field);adminInputs[key]=input}
+ $('toggleAdmin').onclick=()=>{if(adminOpen)setAdmin(false);else{$('adminLogin').hidden=false;$('adminPassword').focus()}};$('closeAdmin').onclick=()=>setAdmin(false);$('adminLogin').addEventListener('submit',e=>{e.preventDefault();submitLogin()});$('loginCancel').onclick=cancelLogin;
  $('adminFloor').addEventListener('change',refreshAdmin);$('adminSearch').addEventListener('input',refreshAdmin);
- $('adminExport').onclick=exportEmployees;$('downloadTemplate').onclick=()=>downloadWorkbook([],'employees_template.xlsx');
+ $('adminExport').onclick=exportEmployees;$('downloadTemplate').onclick=()=>{if(adminOpen)downloadWorkbook([],'employees_template.xlsx')};
  $('importEmployees').onclick=()=>$('xlsxFile').click();$('xlsxFile').addEventListener('change',e=>importFile(e.target.files[0]));
  $('cancelImport').onclick=()=>{cancelImport();adminMessage('Импорт отменён.')};
- $('applyImport').onclick=()=>{if(!pendingImport||pendingImport.errors.length||!pendingImport.read)return;const r=pendingImport;try{setEmployees(r.records);cancelImport();adminMessage('Импорт выполнен. Добавлено: '+r.added+', обновлено: '+r.updated+'. Выгрузите XLSX для сохранения.')}catch(err){adminMessage(err.message)}};
+ $('applyImport').onclick=()=>{if(!adminOpen||!pendingImport||pendingImport.errors.length||!pendingImport.read)return;const r=pendingImport;try{setEmployees(r.records);cancelImport();adminMessage('Импорт выполнен. Добавлено: '+r.added+', обновлено: '+r.updated+'. Выгрузите XLSX для сохранения.')}catch(err){adminMessage(err.message)}};
  $('addEmployee').onclick=()=>editEmployee(null);$('cancelEdit').onclick=cancelEdit;
  $('adminEdit').addEventListener('submit',e=>{e.preventDefault();saveEdit()});
- $('chooseSeat').onclick=()=>{assigningSeat=true;$('chooseSeatHint').textContent='Выберите свободный стол на схеме ниже.';$('frame').scrollIntoView({block:'center',behavior:'smooth'})};
+ $('chooseSeat').onclick=()=>{if(!adminOpen)return;$('mapPanel').hidden=false;assigningSeat=true;$('chooseSeatHint').textContent='Выберите свободный стол на схеме ниже.';$('frame').scrollIntoView({block:'center',behavior:'smooth'})};
  adminReady=true;refreshAdmin();
 }
 initAdmin();
@@ -674,8 +708,8 @@ initAdmin();
 $('exportEmployees').onclick=exportEmployees;
 window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,exportEmployees};
 if(location.protocol==='file:'){
- $('localTools').hidden=false;
- $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
+ $('localTools').hidden=true;
+ $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file||!adminOpen)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
 }
 
 $('minus').onclick=()=>zoomAt(1.25);$('plus').onclick=()=>zoomAt(.8);$('reset').onclick=fit;
