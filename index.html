@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.15</title>
+<title>Расположение рабочего места — 0.0.16</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -88,6 +88,16 @@
 .expanded-panel .layout{flex:1;min-height:0;align-items:start}.expanded-panel .map{height:calc(100vh - 112px);height:calc(100dvh - 112px);min-height:220px}.expanded-panel .map-column{width:100%}.expanded-panel .frame{width:100%;max-width:none}.expanded-panel .floors{max-height:calc(100dvh - 62px);overflow-y:auto}
 @media(max-width:650px) and (orientation:portrait){.expanded-panel{padding:7px}.expanded-panel .map{height:calc(100dvh - 170px)}}
 body.map-expanded{overflow:hidden}
+
+/* Stronger but restrained navigation landmark; separate exterior balcony layer. */
+.local-room-floor.lift-floor{fill:#d7e7ee}
+.lift-car{fill:#91b9cd;stroke:#436f87;stroke-width:1.55}
+.lift-car-inner{fill:#c5dfe9;stroke:#6f99ae;stroke-width:.8}
+.lift-label{fill:#234c63;font-weight:750}
+.balcony-floor{fill:#e7edf0;stroke:#8399a9;stroke-width:1.1}
+.balcony-rail{fill:none;stroke:#70899b;stroke-width:1.6;stroke-linecap:round}
+.balcony-inner-rail{fill:none;stroke:#c7d4dc;stroke-width:.7}
+.balcony-label{fill:#4c6577;font-size:4px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
 </style>
 </head>
 <body>
@@ -147,7 +157,7 @@ body.map-expanded{overflow:hidden}
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="full">Открыть во весь экран</button></div><strong class="floor-title" id="floorTitle"></strong></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.15</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.16</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -743,6 +753,7 @@ function validateFloorModel(m){
   d.code=code;d.wing=d.x<m.wingBoundary?'L':'R';ids.add(d.id);codes.add(code);
  }
  if(!m.walls.every(w=>Array.isArray(w)&&w.length===4&&point(w.slice(0,2))&&point(w.slice(2)))||!m.plants.every(point))throw Error('Некорректные координаты.');
+ if(m.balconies!==undefined){if(!Array.isArray(m.balconies)||m.balconies.length>20)throw Error('Некорректный слой балконов.');for(const b of m.balconies){if(!b||typeof b.id!=='string'||ids.has(b.id)||!finite(b.x,0,1080)||!finite(b.y,0,500)||!finite(b.w,2,1080-b.x)||!finite(b.h,2,500-b.y))throw Error('Некорректный балкон.');ids.add(b.id)}}
  return m;
 }
 function localWallPath(d,g){for(const cls of ['local-wall-depth','local-wall','local-wall-top'])el('path',{d,class:cls},g)}
@@ -856,7 +867,19 @@ function localRoomText(r,g,m,occupied=[]){
  el('rect',{x,y,width:tw,height:th},clip);const textLayer=el('g',{'clip-path':'url(#'+clipId+')'},layer);
  lines.forEach((s,i)=>{const t=el('text',{x:x+tw/2,y:y+.5+(i+.5)*size*1.22,class:'local-room-label','font-size':size},textLayer);t.textContent=s;});
 }
+function renderLocalBalconies(m){
+ for(const b of m.balconies||[]){
+  const g=el('g',{'data-balcony-id':b.id}),x=b.x,y=b.y,w=b.w,h=b.h;
+  rect(x,y,w,h,'balcony-floor',g);
+  // Generalized exterior terrace symbol, without structural details.
+  el('path',{d:'M'+(x+w)+' '+y+' H'+x+' V'+(y+h)+' H'+(x+w),class:'balcony-rail'},g);
+  el('path',{d:'M'+(x+w-1)+' '+(y+2)+' H'+(x+2)+' V'+(y+h-2)+' H'+(x+w-1),class:'balcony-inner-rail'},g);
+  const t=el('text',{x:x+w/2,y:y+h/2,class:'balcony-label'},g);
+  t.textContent='Балкон';t.style.fontSize=Math.min(4.5,(w-3)/4)+'px';
+ }
+}
 function renderLocalFloor(m){
+ renderLocalBalconies(m);
  const outline='M'+m.outline.map(p=>p.join(' ')).join(' L')+' Z';
  el('path',{d:outline,class:'shell-shadow',transform:'translate(2 5)'});el('path',{d:outline,class:'shell'});el('path',{d:outline,class:'shell-edge'});
  for(let i=0;i<m.outline.length;i++){const a=m.outline[i],b=m.outline[(i+1)%m.outline.length],len=Math.hypot(b[0]-a[0],b[1]-a[1]);if(len<30)continue;for(let j=12;j<len-10;j+=30){const t=j/len,u=Math.min((j+17)/len,1);windowLine(a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u)}}
@@ -893,7 +916,7 @@ $('saveLocalHtml').onclick=()=>{
  const json=JSON.stringify(localModel).replace(/</g,'\\u003c');
  const output=SOURCE_HTML.replace(/^const EMBEDDED_LOCAL_MODEL = .*;$/m,()=> 'const EMBEDDED_LOCAL_MODEL = '+json+';');
  if(output===SOURCE_HTML){message('Не удалось создать автономный HTML.');return}
- const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.15.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.16.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
 $('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
 
