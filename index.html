@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.3</title>
+<title>Расположение рабочего места — 0.0.4</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#26374a;background:#f3f5f8;font-size:14px;--blue:#125a9f;--line:#dbe2e9}
 *{box-sizing:border-box}body{margin:0}button{font:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #71b6ff;outline-offset:2px}.page{max-width:1500px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.brand{font-size:20px;font-weight:700;color:var(--blue)}.version{font-size:12px;color:#617387}.panel{background:white;border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:0 3px 12px #243f5910}h1{font-size:21px;margin:0 0 5px}.sub{color:#66778a;font-size:13px;margin:0}.header{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.tag{font-size:12px;border:1px solid #d9e5ef;background:#f5f9fc;color:#47647e;padding:7px 10px;border-radius:6px}.floors{display:flex;flex-wrap:wrap;gap:6px;margin:20px 0 14px}.floor{min-width:44px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#41546a}.floor[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:white}.floor.soon{color:#8794a2;background:#f5f7f9}.floor small{display:block;font-size:9px;margin-top:2px}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.control{border:1px solid #d6dfe8;background:white;border-radius:6px;min-height:36px;padding:7px 12px;color:#31475e}.control:hover{background:#eef5fb}.number{min-width:52px;text-align:center;font-variant-numeric:tabular-nums;color:#60768a}.frame{position:relative;border:1px solid #d7e1e9;border-radius:8px;background:#f6f8fa;overflow:hidden}.map{display:block;width:100%;height:clamp(360px,57vh,650px);touch-action:none;cursor:grab;user-select:none}.map.drag{cursor:grabbing}.overlay{position:absolute;inset:0;display:grid;place-content:center;text-align:center;pointer-events:none;background:#f7f9fb}.overlay[hidden]{display:none}.overlay strong{font-size:24px}.overlay p{color:#64768a}.legend{display:flex;flex-wrap:wrap;gap:14px;color:#63778b;font-size:12px;margin-top:14px}.legend span{display:flex;align-items:center;gap:5px}.dot{width:12px;height:12px;border:1px solid #aebdca;border-radius:3px}.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px;font-size:12px;color:#718196}.room{fill:#e7eef4;stroke:#8a9cac;stroke-width:1.4}.label{font-size:10px;fill:#526578;text-anchor:middle;pointer-events:none}.wing{font-size:12px;fill:#64798b;letter-spacing:1.5px;text-anchor:middle}.desk{fill:#dbc7ac;stroke:#b5a084;stroke-width:.65}.chair{fill:#aab6c0;stroke:#8998a6;stroke-width:.5}.divider{fill:#8f9ca7}.shell{fill:#fff;stroke:#6f8496;stroke-width:2.5;stroke-linejoin:round}
@@ -35,6 +35,13 @@ html,body{background:#fff}
 html,body{width:100%;max-width:100%;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}
 .frame,.map,.map *{touch-action:none;overscroll-behavior:contain}
 .map{-webkit-user-select:none;-webkit-touch-callout:none}
+
+.desk[data-seat-code]{cursor:pointer}.desk.assigned{fill:#c7d9e8;stroke:#8ba4bb}.desk.selected{fill:#df353d;stroke:#a81f28;stroke-width:1.5}.seat-code.selected{fill:#fff;font-weight:bold}
+.employee-card{border:1px solid var(--line);border-radius:5px;padding:12px;display:grid;gap:7px;background:white}
+.employee-card[hidden],.status[hidden],.local-tools[hidden]{display:none}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.person{font-weight:700;font-size:16px}.meta{font-size:12px;color:#60768a}.person-info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 12px;margin:0;font-size:12px;overflow-wrap:anywhere}.person-info dt{color:#67798a}.person-info dd{margin:0}.status{font-size:12px;color:#47647e;background:#f3f7fb;padding:8px;border-radius:4px}
+.local-tools{font-size:12px;color:#566b80}.local-tools summary{cursor:pointer}.local-tools input{max-width:100%;margin:8px 0}
+@media(max-width:600px){.person{font-size:14px}.employee-card{padding:8px}.person-info{gap:4px 8px}}
 </style>
 </head>
 <body>
@@ -43,13 +50,20 @@ html,body{width:100%;max-width:100%;overflow-x:hidden;touch-action:manipulation;
 <div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
 <div class="map-column">
-<div class="toolbar"><strong id="floorTitle"></strong><label class="codes-toggle"><input type="checkbox" id="showCodes" checked>Показывать коды мест</label><div class="actions"><button class="control" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">Весь этаж</button><button class="control" id="full">Развернуть</button></div></div>
+<div class="toolbar"><strong id="floorTitle"></strong><label class="codes-toggle"><input type="checkbox" id="showCodes" checked>Показывать коды мест</label><div class="actions"><button class="control" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">Весь этаж</button><button class="control" id="focus" disabled>К месту</button><button class="control" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов">↻ 180°</button><button class="control" id="full">Развернуть</button></div></div>
 <div class="frame" id="frame">
 <svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#e9eef3" stroke-width=".6"/></pattern></defs><rect x="-5000" y="-5000" width="10000" height="10000" fill="url(#grid)"/><g id="drawing"></g></svg>
 <div id="soon" class="overlay" hidden><strong>Скоро</strong><p>Планировка этого этажа пока недоступна.</p></div>
 </div>
-<div class="legend"><span><i class="dot" style="background:#dbc7ac"></i>Рабочие столы</span><span><i class="dot" style="background:#e7eef4"></i>Помещения</span><span><i class="dot" style="background:#fff"></i>Проходы</span></div>
-<div class="foot"><span>Колесо мыши или два пальца — масштаб · перетаскивание — перемещение</span><span>Условная схема · v0.0.3</span></div>
+<div class="status" id="status" role="status" hidden></div>
+<section class="employee-card" id="employeeCard" aria-label="Карточка рабочего места" hidden>
+<div class="card-head"><strong id="cardCode"></strong><button class="control" id="closeCard" aria-label="Закрыть карточку">×</button></div>
+<div class="person" id="personName"></div><div class="meta" id="personLocation"></div>
+<dl class="person-info" id="personInfo"></dl>
+</section>
+<details class="local-tools" id="localTools" hidden><summary>Локальные данные сотрудников (JSON)</summary><input id="employeeFile" type="file" accept=".json,application/json"><div>Данные остаются в памяти открытого файла. Для постоянного хранения сохраните исходный JSON.</div></details>
+<div class="legend"><span><i class="dot" style="background:#dbc7ac"></i>Рабочие столы</span><span><i class="dot" style="background:#e7eef4"></i>Помещения</span><span><i class="dot" style="background:#c7d9e8"></i>Назначено</span><span><i class="dot" style="background:#df353d"></i>Выбрано</span></div>
+<div class="foot"><span>Колесо мыши или два пальца — масштаб · перетаскивание — перемещение</span><span>Условная схема · v0.0.4</span></div>
 </div>
 </div>
 </section>
@@ -61,7 +75,79 @@ const svg=$('map'),drawing=$('drawing');
 const BASE={x:0,y:0,w:1080,h:500};
 let view={...BASE},floor=6;
 const allFloors=[13,12,11,10,9,8,7,6,5,4,3,2,1,-1];
-let seats=[];
+let seats=[],flipped=false,selectedCode=null,targetCode=null,cardOpen=false;
+const demoEmployees=[
+ {email:'employee1@example.com',full_name:'Анна Иванова (демо)',seat_code:'6.069',position:'Главный специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12345',birthday:'29.10'},
+ {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист'},
+ {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист'}
+];
+let employees=demoEmployees.slice();
+const normalizeEmail=v=>String(v??'').trim().toLowerCase();
+function normalizeCode(v){const m=String(v??'').trim().match(/^(-?\d+)\.(\d{1,3})$/);return m?Number(m[1])+'.'+String(Number(m[2])).padStart(3,'0'):''}
+const seatFloor=code=>Number(String(code).split('.')[0]);
+const findSeat=code=>seats.find(s=>s.code.textContent===code);
+const findPerson=code=>employees.find(p=>p.seat_code===code);
+const wing=s=>s.x>=540?'Левое крыло':'Правое крыло';
+function message(t){$('status').textContent=t||'';$('status').hidden=!t}
+function setEmployees(records){
+ if(!Array.isArray(records))throw Error('Ожидается массив сотрудников');
+ const emails=new Set(),codes=new Set();
+ const next=records.map((p,i)=>{
+  if(!p||typeof p!=='object')throw Error('Некорректная запись '+(i+1));
+  const email=normalizeEmail(p.email),seat_code=normalizeCode(p.seat_code);
+  if(p.seat_code&&!seat_code)throw Error('Некорректный код: строка '+(i+1));
+  if(email&&(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||emails.has(email)))throw Error('Некорректная или повторная почта: строка '+(i+1));
+  if(seat_code&&codes.has(seat_code))throw Error('Повторное место: '+seat_code);
+  if(email)emails.add(email);if(seat_code)codes.add(seat_code);
+  const obj={email,seat_code};for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
+  return obj;
+ });
+ employees=next;selectedCode=null;targetCode=null;cardOpen=false;message('');paintSelection();showCard();return next.length;
+}
+function paintSelection(){
+ for(const s of seats){const code=s.code.textContent;const sel=code===selectedCode||(!selectedCode&&code===targetCode);s.desk.classList.toggle('assigned',!!findPerson(code));s.desk.classList.toggle('selected',sel);s.code.classList.toggle('selected',sel)}
+ $('focus').disabled=!targetCode||!active(seatFloor(targetCode));
+}
+function showCard(){
+ const code=selectedCode||targetCode,s=findSeat(code);
+ $('employeeCard').hidden=!cardOpen||!s;if(!s||!cardOpen)return;
+ const p=findPerson(code);$('cardCode').textContent=code;$('personName').textContent=p?(p.full_name||'Сотрудник'):'Рабочее место не назначено';
+ $('personLocation').textContent=floor+' этаж · '+wing(s);
+ const info=$('personInfo');info.replaceChildren();
+ for(const [key,title] of [['position','Должность'],['department','Департамент'],['directorate','Управление'],['phone','Телефон'],['email','Почта'],['birthday','День рождения']]){
+  if(!p||!p[key])continue;const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=title;dd.textContent=p[key];info.append(dt,dd);
+ }
+}
+function pick(code){if(!findSeat(code))return;selectedCode=code;cardOpen=true;message('');paintSelection();showCard()}
+function focusTarget(){
+ if(!targetCode)return false;
+ if(floor!==seatFloor(targetCode)){floor=seatFloor(targetCode);render()}
+ const s=findSeat(targetCode);
+ if(!s){message(active(floor)?'Рабочее место не нанесено на схему.':'Схема этого этажа пока недоступна.');return false}
+ const left=s.x<540;
+ let x=left?15:465,y=14,w=600,hh=470;
+ if(flipped){x=1080-x-w;y=500-y-hh}
+ view={x,y,w,h:hh};apply();selectedCode=null;cardOpen=true;paintSelection();showCard();return true;
+}
+function showEmployee(email){
+ const p=employees.find(p=>p.email&&p.email===normalizeEmail(email));
+ targetCode=null;selectedCode=null;cardOpen=false;message('');
+ if(!p||!p.seat_code){paintSelection();showCard();message(p?'Рабочее место не назначено.':'Сотрудник не найден.');return false}
+ targetCode=p.seat_code;floor=seatFloor(targetCode);
+ if(!allFloors.includes(floor)){targetCode=null;paintSelection();showCard();message('Этаж не поддерживается.');return false}
+ render();return focusTarget();
+}
+function applyOrientation(){
+ drawing.setAttribute('transform',flipped?'rotate(180 540 250)':'');
+ for(const t of drawing.querySelectorAll('text')){
+  const x=t.getAttribute('x'),y=t.getAttribute('y');
+  t.setAttribute('transform',flipped?'rotate(180 '+x+' '+y+')':'');
+ }
+ $('flip').setAttribute('aria-pressed',String(flipped));
+}
+function rotateMap(){
+ flipped=!flipped;view={x:1080-view.x-view.w,y:500-view.y-view.h,w:view.w,h:view.h};applyOrientation();apply();
+}
 const active=f=>f>=2&&f<=10;
 const ns='http://www.w3.org/2000/svg';
 function el(tag,attrs={},parent=drawing){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));parent.append(n);return n}
@@ -93,10 +179,10 @@ function assignCodes(){
     const order=s=>(angle(s)+Math.PI/2)%(Math.PI*2);
     return side(a)-side(b)||order(a)-order(b)||a.x-b.x||a.y-b.y;
   });
-  seats.forEach((s,i)=>{const code=floor+'.'+String(i+1).padStart(3,'0');s.code.textContent=code;s.desk.setAttribute('data-seat-code',code);const tip=el('title',{},s.desk);tip.textContent=code});
+  seats.forEach((s,i)=>{const code=floor+'.'+String(i+1).padStart(3,'0');s.code.textContent=code;s.desk.setAttribute('data-seat-code',code);s.desk.setAttribute('tabindex','0');s.desk.setAttribute('role','button');s.desk.setAttribute('aria-label','Рабочее место '+code);const tip=el('title',{},s.desk);tip.textContent=code});
 }
 function syncCodes(){svg.classList.toggle('hide-codes',!$('showCodes').checked)}
-function common(){el('path',{d:'M40 45 H1040 V415 H580 L40 455 Z',class:'shell'});rect(485,205,110,70,'room');for(let i=0;i<3;i++)rect(493+i*32,214,26,30,'room');label(540,263,'Лифты');room(505,105,70,42,'Лестница');label(280,32,'ЛЕВОЕ КРЫЛО','wing');label(800,32,'ПРАВОЕ КРЫЛО','wing')}
+function common(){el('path',{d:'M40 45 H1040 V415 H580 L40 455 Z',class:'shell'});rect(485,205,110,70,'room');for(let i=0;i<3;i++)rect(493+i*32,214,26,30,'room');label(540,263,'Лифты');room(505,105,70,42,'Лестница');label(280,32,'ПРАВОЕ КРЫЛО','wing');label(800,32,'ЛЕВОЕ КРЫЛО','wing')}
 function standard(){common();for(const offset of [0,510]){room(90+offset,175,95,55,'Переговорная 1');room(185+offset,175,95,55,'Переговорная 2');room(280+offset,175,75,55,'Малая переговорная');room(355+offset,175,80,55,'Кабинет');room(90+offset,235,110,55,'Приём пищи');room(200+offset,235,45,55,'WC');room(245+offset,235,45,55,'WC');room(290+offset,235,145,55,'Кабинеты');for(let i=0;i<3;i++){cluster(65+offset+i*115,85,4);cluster(65+offset+i*115,135,4);cluster(65+offset+i*115,330,4);cluster(65+offset+i*115,380,4)}cluster(410+offset,85,2);
   // Short, doorless partitions between adjacent work groups, keeping the corridor open.
   for(const y of [85,135,330,380])for(let i=0;i<2;i++){
@@ -107,22 +193,22 @@ function standard(){common();for(const offset of [0,510]){room(90+offset,175,95,
     const x=65+offset+i*115;wall(x,y,x+64,y);
   }
 }label(540,290,'Общий проход')}
-function special(f){common();if(f===2){room(95,120,300,180,'Общественная зона');room(685,120,300,180,'Общие помещения');label(540,345,'Холл')}else if(f===3){room(85,90,350,290,'Служебные помещения');room(735,170,240,120,'Служебные помещения');for(let i=0;i<4;i++){cluster(630+i*87,95,4);cluster(630+i*87,345,4);if(i<3){wall(704+i*87,87,704+i*87,119);wall(704+i*87,337,704+i*87,369)}}}else{for(let i=0;i<4;i++){room(85+i*88,100,85,90,'Кабинет');room(85+i*88,285,85,90,'Кабинет')}room(655,95,330,280,'Большой зал')}}
-function render(){drawing.replaceChildren();seats=[];$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full'])$(id).disabled=!active(floor);if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}$('showCodes').disabled=!active(floor);syncCodes();fit()}
+function special(f){common();if(f===2){room(95,120,300,180,'Общественная зона');room(685,120,300,180,'Общие помещения');label(540,345,'Холл')}else if(f===3){room(85,90,350,290,'Служебные помещения');room(735,170,240,120,'Служебные помещения');for(let i=0;i<4;i++){cluster(630+i*87,95,4);cluster(630+i*87,345,4);if(i<3){wall(704+i*87,87,704+i*87,119);wall(704+i*87,337,704+i*87,369)}}cluster(630,150,4);cluster(630,285,4)}else{for(let i=0;i<4;i++){room(85+i*88,100,85,90,'Кабинет');room(85+i*88,285,85,90,'Кабинет')}room(655,95,330,280,'Большой зал')}}
+function render(){drawing.replaceChildren();seats=[];$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж'+(active(floor)?'':' · скоро');document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','full','flip'])$(id).disabled=!active(floor);if(active(floor)){if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}$('showCodes').disabled=!active(floor);syncCodes();applyOrientation();paintSelection();showCard();fit()}
 function fit(){view={...BASE};apply()}
 function apply(){svg.setAttribute('viewBox',[view.x,view.y,view.w,view.h].join(' '));$('zoom').textContent=Math.round(BASE.w/view.w*100)+'%'}
 function world(x,y){const p=svg.createSVGPoint();p.x=x;p.y=y;const matrix=svg.getScreenCTM();return matrix?p.matrixTransform(matrix.inverse()):{x:view.x+view.w/2,y:view.y+view.h/2}}
 function zoomAt(factor,cx,cy){if(!active(floor))return;const r=svg.getBoundingClientRect();const p=world(cx??r.left+r.width/2,cy??r.top+r.height/2);const nw=Math.max(BASE.w/7,Math.min(BASE.w*1.3,view.w*factor));const k=nw/view.w;view={x:p.x+(view.x-p.x)*k,y:p.y+(view.y-p.y)*k,w:nw,h:view.h*k};apply()}
 svg.addEventListener('wheel',e=>{e.preventDefault();zoomAt(Math.exp(e.deltaY*.0015),e.clientX,e.clientY)},{passive:false});
-const pointers=new Map();let last=null;
+const pointers=new Map();let last=null,mouseSeat=null,mouseStart=null,mouseMoved=false;
 function gesture(){const a=[...pointers.values()];if(a.length===0)return null;if(a.length===1)return {x:a[0].x,y:a[0].y,d:0};return {x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}}
-svg.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||(e.button!==0&&e.pointerType==='mouse'))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});svg.setPointerCapture(e.pointerId);last=gesture();svg.classList.add('drag')});
-svg.addEventListener('pointermove',e=>{if(e.pointerType==='touch'||!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const next=gesture();if(last&&next){if(last.d>0&&next.d>0)zoomAt(last.d/next.d,last.x,last.y);const a=world(last.x,last.y),b=world(next.x,next.y);view.x+=a.x-b.x;view.y+=a.y-b.y;apply()}last=next});
-function end(e){if(e.pointerType==='touch')return;pointers.delete(e.pointerId);last=gesture();if(!pointers.size)svg.classList.remove('drag')}
+svg.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||(e.button!==0&&e.pointerType==='mouse'))return;mouseSeat=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code')||null;mouseStart={x:e.clientX,y:e.clientY};mouseMoved=false;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});svg.setPointerCapture(e.pointerId);last=gesture();svg.classList.add('drag')});
+svg.addEventListener('pointermove',e=>{if(e.pointerType==='touch'||!pointers.has(e.pointerId))return;if(mouseStart&&Math.hypot(e.clientX-mouseStart.x,e.clientY-mouseStart.y)>5)mouseMoved=true;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});const next=gesture();if(last&&next){if(last.d>0&&next.d>0)zoomAt(last.d/next.d,last.x,last.y);const a=world(last.x,last.y),b=world(next.x,next.y);view.x+=a.x-b.x;view.y+=a.y-b.y;apply()}last=next});
+function end(e){if(e.pointerType==='touch')return;if(e.type==='pointerup'&&pointers.has(e.pointerId)&&!mouseMoved&&mouseSeat)pick(mouseSeat);mouseSeat=null;mouseStart=null;pointers.delete(e.pointerId);last=gesture();if(!pointers.size)svg.classList.remove('drag')}
 for(const ev of ['pointerup','pointercancel','lostpointercapture'])svg.addEventListener(ev,end);
 // iOS Safari: native Touch Events provide explicit cancellation of page pinch.
 // Touch and pointer handlers are deliberately exclusive to avoid double zoom.
-let touchLast=null,touchStart=null,touchMoved=false,lastTap=0;
+let touchLast=null,touchStart=null,touchMoved=false,lastTap=0,touchSeat=null;
 function touchGesture(list){
   if(!list.length)return null;
   const a=list[0],b=list[1];
@@ -131,7 +217,7 @@ function touchGesture(list){
 function cancelNative(e){if(e.cancelable)e.preventDefault()}
 svg.addEventListener('touchstart',e=>{
   touchLast=touchGesture(e.targetTouches);
-  if(e.targetTouches.length===1){touchStart=touchLast;touchMoved=false}
+  if(e.targetTouches.length===1){touchStart=touchLast;touchMoved=false;touchSeat=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code')||null}
   else{touchMoved=true;cancelNative(e)}
 },{passive:false});
 svg.addEventListener('touchmove',e=>{
@@ -150,17 +236,26 @@ svg.addEventListener('touchmove',e=>{
 svg.addEventListener('touchend',e=>{
   touchLast=touchGesture(e.targetTouches);
   if(!touchLast){
-    if(!touchMoved){const now=Date.now();if(now-lastTap<300)cancelNative(e);lastTap=now}
+    if(!touchMoved){const now=Date.now();if(touchSeat){cancelNative(e);pick(touchSeat)}else if(now-lastTap<300)cancelNative(e);lastTap=now}touchSeat=null;
     touchStart=null;
   }
 },{passive:false});
-svg.addEventListener('touchcancel',()=>{touchLast=null;touchStart=null;touchMoved=false},{passive:true});
+svg.addEventListener('touchcancel',()=>{touchLast=null;touchStart=null;touchMoved=false;touchSeat=null},{passive:true});
 // Standalone document/iframe: cancel Safari's proprietary page gestures and
 // multi-touch page zoom. Single-finger scrolling outside the map stays available.
 for(const type of ['gesturestart','gesturechange','gestureend'])document.addEventListener(type,cancelNative,{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)cancelNative(e)},{passive:false});
-for(const f of allFloors){const b=document.createElement('button');b.className='floor'+(active(f)?'':' soon');b.dataset.floor=f;b.textContent=f;if(!active(f)){const s=document.createElement('small');s.textContent='Скоро';b.append(s)}b.onclick=()=>{floor=f;render()};$('floors').append(b)}
+for(const f of allFloors){const b=document.createElement('button');b.className='floor'+(active(f)?'':' soon');b.dataset.floor=f;b.textContent=f;if(!active(f)){const s=document.createElement('small');s.textContent='Скоро';b.append(s)}b.onclick=()=>{floor=f;selectedCode=null;cardOpen=false;message('');render()};$('floors').append(b)}
 $('showCodes').addEventListener('change',syncCodes);
+$('flip').onclick=rotateMap;$('focus').onclick=focusTarget;
+$('closeCard').onclick=()=>{cardOpen=false;selectedCode=null;paintSelection();showCard()};
+svg.addEventListener('keydown',e=>{const code=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code');if(code&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(code)}});
+window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget};
+if(location.protocol==='file:'){
+ $('localTools').hidden=false;
+ $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
+}
+
 $('minus').onclick=()=>zoomAt(1.25);$('plus').onclick=()=>zoomAt(.8);$('reset').onclick=fit;
 $('full').onclick=()=>{
   const frame=$('frame');
@@ -174,6 +269,7 @@ $('full').onclick=()=>{
   frame.append(b);
 };
 render();
+const initialEmail=new URLSearchParams(location.search).get('email');if(initialEmail)showEmployee(initialEmail);
 </script>
 </body>
 </html>
