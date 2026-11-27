@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.0.28</title>
+<title>Расположение рабочего места — 0.1.0 · сборка №29</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -148,6 +148,15 @@ body.map-expanded{overflow:hidden}
 .turnstile-body{fill:#e2e8ec;stroke:#71899c;stroke-width:.7}.turnstile-detail{stroke:#8da2b1;stroke-width:.55;stroke-linecap:round}
 
 .room-code{fill:#344b60;stroke-width:.6}
+
+.report-dialog{width:min(540px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto;border:1px solid #dce4ee;border-radius:14px;padding:18px;color:#173357;background:#fff;box-shadow:0 12px 50px #17335735}
+.report-dialog::backdrop{background:#17335766}.report-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.report-head h2{font-size:18px;margin:0}.report-head .control{font-size:20px;line-height:1}
+.report-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}.report-tabs .control{min-height:48px;line-height:1.35;white-space:normal}.report-tabs .control[aria-pressed=true]{border-color:#8bb7ec;background:#eaf3ff;color:#0757bd}
+.report-fields{display:grid;gap:12px}.report-fields[hidden],.report-inbox[hidden]{display:none}.report-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.report-fields label{min-width:0;display:grid;gap:5px;font-size:12px;font-weight:600}.report-fields small{font-weight:400;color:#718399}
+.report-fields input,.report-fields textarea{min-width:0;width:100%;border:1px solid #dce4ee;border-radius:8px;background:#f8fafc;padding:9px;color:#173357;font:400 16px Arial,sans-serif}.report-fields textarea{resize:vertical;min-height:84px}
+.report-status{font-size:12px;color:#486781;white-space:pre-wrap;overflow-wrap:anywhere;min-height:0}.report-status:not(:empty){margin:7px 0}.report-count{display:inline-flex;min-width:21px;padding:2px 6px;justify-content:center;align-items:center;border-radius:10px;background:#e9eff6;color:#536b84;font-size:11px;font-weight:700}.report-count.has-new{background:#d83043;color:#fff}
+.report-inbox{display:grid;gap:8px;padding:12px;border:1px solid #dce4ee;border-radius:10px;background:#f9fbfd}.report-inbox-tools label{font-size:12px;color:#52677f}.reports-list{display:grid;gap:8px}.report-item{display:grid;gap:7px;padding:10px;border:1px solid #e1e7ef;border-radius:8px;background:#fff;font-size:12px;overflow-wrap:anywhere}.report-item-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#173357}.report-item p{margin:0;white-space:pre-wrap;line-height:1.45}.report-item .admin-note{margin:0}.report-item .admin-actions{justify-content:flex-end}
+@media(max-width:480px){.report-dialog{padding:12px}.report-tabs .control{font-size:11px}.report-field-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -169,6 +178,12 @@ body.map-expanded{overflow:hidden}
 <section class="admin-panel" id="adminPanel" aria-label="Панель администратора" hidden>
 <div class="admin-top"><h2 class="admin-title">Управление рассадкой</h2><button class="control" id="closeAdmin">Выйти</button></div>
 <p class="admin-note">Демонстрационный режим. На публичном сайте используйте только вымышленные данные. Изменения хранятся в памяти вкладки; для сохранения выгрузите XLSX. Права доступа будут проверяться корпоративным сервером.</p>
+<div class="admin-actions"><button class="control" id="reportsOpen" type="button" aria-expanded="false">Обращения <span class="report-count" id="reportsCount" aria-label="Новые обращения">0</span></button></div>
+<section class="report-inbox" id="reportsPanel" hidden aria-label="Обращения сотрудников">
+<div class="admin-list-head"><strong>Обращения сотрудников</strong><button class="control" id="reportsRefresh" type="button">Обновить</button><button class="control" id="reportsClose" type="button">Закрыть</button></div>
+<div class="report-inbox-tools"><label>Статус <select id="reportsFilter" class="admin-select"><option value="open">Новые</option><option value="closed">Обработанные</option><option value="all">Все</option></select></label></div>
+<p class="admin-note" id="reportsMode"></p><div id="reportsStatus" role="status" class="report-status"></div><div id="reportsList" class="reports-list"></div>
+</section>
 <div class="admin-list-head"><strong>Статистика</strong><select id="adminFloor" class="admin-select" aria-label="Этаж для статистики"><option value="all">Все доступные этажи</option></select></div>
 <div class="admin-metrics">
 <div class="admin-metric"><small>Рабочие места</small><strong id="statTotal">0</strong></div>
@@ -218,8 +233,8 @@ body.map-expanded{overflow:hidden}
 <div class="seat-note-field" id="notePhoneRow" hidden><span>Телефон</span><strong id="notePhone"></strong></div>
 </aside>
 </div>
-<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.0.28</span></div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.1.0 · сборка №29</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -228,6 +243,21 @@ body.map-expanded{overflow:hidden}
 </div>
 </section>
 </main>
+<dialog id="reportDialog" class="report-dialog" aria-labelledby="reportTitle">
+<div class="report-head"><h2 id="reportTitle">Сообщить об ошибке</h2><button class="control" id="reportCancel" type="button" aria-label="Закрыть">×</button></div>
+<div class="report-tabs" role="group" aria-label="Тип обращения"><button type="button" id="reportTabSeat" aria-pressed="true" class="control">Неправильный номер рабочего места</button><button type="button" id="reportTabStaff" aria-pressed="false" class="control">Новый сотрудник/уволенный сотрудник</button></div>
+<form id="reportForm" novalidate>
+<div class="report-fields" id="reportSeatFields">
+<div class="report-field-grid"><label>Неправильный номер <small>необязательно</small><input type="text" id="reportWrong" maxlength="64" placeholder="Например, 6.082" autocomplete="off"></label><label>Правильный номер <small>необязательно</small><input type="text" id="reportRight" maxlength="64" placeholder="Например, 6.083" autocomplete="off"></label></div>
+<label>Комментарий <textarea id="reportSeatComment" maxlength="2000" rows="4" placeholder="Опишите, что нужно исправить"></textarea></label>
+</div>
+<div class="report-fields" id="reportStaffFields" hidden>
+<label>Номер рабочего места <small>необязательно</small><input type="text" id="reportStaffCode" maxlength="64" placeholder="Например, 6.082" autocomplete="off"></label>
+<label>Комментарий <textarea id="reportStaffComment" maxlength="2000" rows="4" placeholder="Опишите, что изменилось"></textarea></label>
+</div>
+<p class="admin-note" id="reportMode"></p><div id="reportStatus" role="status" class="report-status"></div><div class="admin-actions"><button class="control admin-primary" type="submit" id="reportSend">Отправить обращение</button></div>
+</form>
+</dialog>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -793,9 +823,9 @@ function setAdmin(open){
  adminOpen=open;$('adminPanel').hidden=!open;$('exportEmployees').hidden=!open;$('localTools').hidden=!(open&&location.protocol==='file');$('toggleAdmin').setAttribute('aria-expanded',String(open));
  $('toggleAdmin').textContent=open?'Выйти из админки':'⚙ Администратор';
  clearResults();renderQuickPeople();
- if(open){refreshAdmin();if(profile)selectEmployee(profile);else paintSelection()}
+ if(open){refreshAdmin();refreshReports();if(profile)selectEmployee(profile);else paintSelection()}
  else{
-  cancelEdit();cancelImport();$('adminRows').replaceChildren();$('adminSearch').value='';$('adminMessage').textContent='';$('importSummary').textContent='';$('importErrors').replaceChildren();for(const input of Object.values(adminInputs))input.value='';
+  clearReportAdmin();cancelEdit();cancelImport();$('adminRows').replaceChildren();$('adminSearch').value='';$('adminMessage').textContent='';$('importSummary').textContent='';$('importErrors').replaceChildren();for(const input of Object.values(adminInputs))input.value='';
   for(const id of ['statTotal','statOccupied','statFree','statRate','adminExtra'])$(id).textContent='';$('statBar').style.width='0';
   const p=profile;targetCode=null;selectedCode=null;cardOpen=false;profile=null;message('');$('employeeSearch').value='';$('mapPanel').hidden=false;floor=6;render();
   if(p&&visibleLevel(p)!=='hidden')selectEmployee(p);else{showCard();updateQuickSelection()}
@@ -1310,14 +1340,118 @@ $('saveLocalHtml').onclick=()=>{
  const json=JSON.stringify(localTemplate).replace(/</g,'\\u003c');
  const output=SOURCE_HTML.replace(/^const EMBEDDED_LOCAL_MODEL = .*;$/m,()=> 'const EMBEDDED_LOCAL_MODEL = '+json+';');
  if(output===SOURCE_HTML){message('Не удалось создать автономный HTML.');return}
- const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.0.28.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.1.0.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
 $('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
 
 initAdmin();
 
 $('exportEmployees').onclick=exportEmployees;
-window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,findWorkplace:searchSeat,exportEmployees,loadLocalFloor,unloadLocalFloor};
+
+/* Reports: standalone demo persists only on this browser. The portal may inject a
+   server-backed adapter; the server must enforce authentication and authorization. */
+const REPORT_KEY='rg-office-map-reports-v1';
+const REPORT_TYPES={seat:'Неправильный номер рабочего места',staff:'Новый сотрудник/уволенный сотрудник'};
+let reportType='seat',reportAdapter=null,reportRows=[],reportReadToken=0,reportBusy=false,reportPendingId=null;
+function reportText(v,max){return String(v??'').trim().slice(0,max)}
+function normalizeReport(r){
+ if(!r||!Object.hasOwn(REPORT_TYPES,r.type)||typeof r.id!=='string'||!r.id||r.id.length>120||!['open','closed'].includes(r.status)||!Number.isFinite(Date.parse(r.createdAt)))throw Error('Некорректное обращение.');
+ const comment=reportText(r.comment,2000);if(!comment)throw Error('Комментарий не заполнен.');
+ return {id:r.id,type:r.type,status:r.status,createdAt:r.createdAt,comment,wrongCode:r.type==='seat'?reportText(r.wrongCode,64):'',rightCode:r.type==='seat'?reportText(r.rightCode,64):'',seatCode:r.type==='staff'?reportText(r.seatCode,64):'',closedAt:r.closedAt&&Number.isFinite(Date.parse(r.closedAt))?r.closedAt:''};
+}
+function checkedReports(rows){
+ if(!Array.isArray(rows))throw Error('Хранилище вернуло неверный список обращений.');
+ const seen=new Set();return rows.map(normalizeReport).filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true});
+}
+function localReports(){
+ const raw=window.localStorage.getItem(REPORT_KEY);
+ return checkedReports(raw?JSON.parse(raw):[]);
+}
+function saveLocalReports(rows){window.localStorage.setItem(REPORT_KEY,JSON.stringify(rows))}
+const localReportAdapter={
+ async submit(payload){const rows=localReports();if(rows.some(r=>r.id===payload.id))return;rows.unshift(normalizeReport({...payload,status:'open',createdAt:new Date().toISOString()}));saveLocalReports(rows)},
+ async list(){return localReports()},
+ async setStatus(id,status){const rows=localReports(),r=rows.find(x=>x.id===id);if(!r)throw Error('Обращение не найдено.');r.status=status;r.closedAt=status==='closed'?new Date().toISOString():'';saveLocalReports(rows)}
+};
+const reportStore=()=>reportAdapter||localReportAdapter;
+function reportModeText(){return reportAdapter?'Обращение поступит в корпоративную очередь администраторов.':'Демо: обращение сохранится только в этом браузере. Не вводите реальные персональные данные.'}
+function setReportType(type){
+ if(!Object.hasOwn(REPORT_TYPES,type)||reportBusy)return;
+ reportType=type;reportPendingId=null;
+ $('reportTabSeat').setAttribute('aria-pressed',String(type==='seat'));$('reportTabStaff').setAttribute('aria-pressed',String(type==='staff'));
+ $('reportSeatFields').hidden=type!=='seat';$('reportStaffFields').hidden=type!=='staff';$('reportStatus').textContent='';
+}
+function openReport(){
+ $('reportMode').textContent=reportModeText();$('reportStatus').textContent='';if(!$('reportDialog').open)$('reportDialog').showModal();setReportType(reportType);
+}
+function closeReport(){if(!reportBusy&&$('reportDialog').open)$('reportDialog').close()}
+function makeReportId(){return globalThis.crypto?.randomUUID?.()||('report-'+Date.now()+'-'+Math.random().toString(36).slice(2))}
+async function submitReport(){
+ if(reportBusy)return false;
+ const comment=reportText($(reportType==='seat'?'reportSeatComment':'reportStaffComment').value,2000);
+ if(!comment){$('reportStatus').textContent='Добавьте комментарий.';$(reportType==='seat'?'reportSeatComment':'reportStaffComment').focus();return false}
+ const payload={id:reportPendingId||makeReportId(),type:reportType,comment,wrongCode:reportType==='seat'?reportText($('reportWrong').value,64):'',rightCode:reportType==='seat'?reportText($('reportRight').value,64):'',seatCode:reportType==='staff'?reportText($('reportStaffCode').value,64):''};
+ reportPendingId=payload.id;reportBusy=true;$('reportSend').disabled=true;$('reportStatus').textContent='Отправляем…';
+ const store=reportStore();
+ try{
+  await store.submit(payload);
+  for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment'])$(id).value='';
+  reportPendingId=null;$('reportStatus').textContent=reportAdapter?'Обращение отправлено. Спасибо!':'Обращение сохранено в этом браузере. Спасибо!';
+  if(adminOpen)await refreshReports();
+  return true;
+ }catch(err){$('reportStatus').textContent='Не удалось отправить обращение. Проверьте подключение или доступность хранилища и повторите попытку.';return false}
+ finally{reportBusy=false;$('reportSend').disabled=false}
+}
+function setReportsCount(value){
+ const b=$('reportsCount');b.textContent=value===null?'—':String(value);b.classList.toggle('has-new',value>0);b.setAttribute('aria-label',value===null?'Количество обращений недоступно':'Новые обращения: '+value);
+}
+function renderReports(){
+ if(!adminOpen)return;
+ const list=$('reportsList');list.replaceChildren();const filter=$('reportsFilter').value||'open';
+ setReportsCount(reportRows.filter(r=>r.status==='open').length);
+ const rows=reportRows.filter(r=>filter==='all'||r.status===filter).sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+ if(!rows.length){const p=document.createElement('p');p.className='admin-note';p.textContent='Обращений нет.';list.append(p);return}
+ for(const r of rows){
+  const item=document.createElement('article');item.className='report-item';const head=document.createElement('div');head.className='report-item-head';const title=document.createElement('strong');title.textContent=REPORT_TYPES[r.type];const when=document.createElement('small');when.textContent=new Date(r.createdAt).toLocaleString('ru-RU');head.append(title,when);item.append(head);
+  const fields=r.type==='seat'?[['Неправильный номер',r.wrongCode],['Правильный номер',r.rightCode]]:[['Рабочее место',r.seatCode]];
+  for(const [name,value] of fields)if(value){const p=document.createElement('p');p.textContent=name+': '+value;item.append(p)}
+  const p=document.createElement('p');p.textContent=r.comment;item.append(p);
+  const meta=document.createElement('small');meta.className='admin-note';meta.textContent=r.status==='open'?'Новое':'Обработано'+(r.closedAt?' · '+new Date(r.closedAt).toLocaleString('ru-RU'):'');item.append(meta);
+  const actions=document.createElement('div');actions.className='admin-actions';const b=document.createElement('button');b.type='button';b.className='control';b.textContent=r.status==='open'?'Отметить обработанным':'Вернуть в новые';b.onclick=async()=>{b.disabled=true;await changeReportStatus(r.id,r.status==='open'?'closed':'open');b.disabled=false};actions.append(b);item.append(actions);list.append(item);
+ }
+}
+async function refreshReports(){
+ if(!adminOpen)return false;
+ const token=++reportReadToken,store=reportStore();$('reportsMode').textContent=reportAdapter?'Корпоративная очередь.':'Локальная демонстрационная очередь — обращения из других браузеров здесь не появятся.';
+ $('reportsStatus').textContent='Загрузка…';
+ try{
+  const rows=checkedReports(await store.list());
+  if(!adminOpen||token!==reportReadToken)return false;
+  reportRows=rows;$('reportsStatus').textContent='';renderReports();return true;
+ }catch(err){if(adminOpen&&token===reportReadToken){reportRows=[];$('reportsList').replaceChildren();setReportsCount(null);$('reportsStatus').textContent='Не удалось загрузить обращения. Нажмите «Обновить».'}return false}
+}
+async function changeReportStatus(id,status){
+ if(!adminOpen||!['open','closed'].includes(status))return false;
+ try{await reportStore().setStatus(id,status);if(adminOpen)await refreshReports();return true}
+ catch(err){if(adminOpen)$('reportsStatus').textContent='Не удалось изменить статус. Повторите попытку.';return false}
+}
+function closeReports(){ $('reportsPanel').hidden=true;$('reportsOpen').setAttribute('aria-expanded','false') }
+function clearReportAdmin(){reportReadToken++;reportRows=[];closeReports();$('reportsList').replaceChildren();$('reportsStatus').textContent='';$('reportsMode').textContent='';setReportsCount(0)}
+function configureReports(adapter){
+ if(reportBusy)throw Error('Дождитесь отправки обращения.');
+ if(adapter!==null&&(!adapter||!['submit','list','setStatus'].every(k=>typeof adapter[k]==='function')))throw Error('Нужны методы submit, list, setStatus.');
+ reportAdapter=adapter;clearReportAdmin();$('reportMode').textContent=reportModeText();if(adminOpen)refreshReports();
+}
+$('reportOpen').onclick=openReport;$('reportCancel').onclick=closeReport;
+$('reportTabSeat').onclick=()=>setReportType('seat');$('reportTabStaff').onclick=()=>setReportType('staff');
+$('reportForm').addEventListener('submit',e=>{e.preventDefault();submitReport()});
+$('reportDialog').addEventListener('cancel',e=>{if(reportBusy)e.preventDefault()});
+for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment'])$(id).addEventListener('input',()=>{if(!reportBusy)reportPendingId=null});
+$('reportsOpen').onclick=()=>{if(!adminOpen)return;if(!$('reportsPanel').hidden){closeReports();return}$('reportsPanel').hidden=false;$('reportsOpen').setAttribute('aria-expanded','true');refreshReports()};
+$('reportsClose').onclick=closeReports;$('reportsRefresh').onclick=refreshReports;$('reportsFilter').onchange=renderReports;
+window.addEventListener('storage',e=>{if(adminOpen&&!reportAdapter&&e.key===REPORT_KEY)refreshReports()});
+
+window.OfficeMap={setEmployees,showEmployee,focusEmployee:focusTarget,findWorkplace:searchSeat,exportEmployees,loadLocalFloor,unloadLocalFloor,configureReports,refreshReports};
 if(location.protocol==='file:'){
  $('localTools').hidden=true;
  $('employeeFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file||!adminOpen)return;const count=setEmployees(JSON.parse(await file.text()));message('Загружено сотрудников: '+count)}catch(err){message(err.message)}});
@@ -1332,7 +1466,7 @@ function toggleExpanded(force){
  requestAnimationFrame(()=>{measureViewport();if(selectedCode)keepNoteZoneVisible();else apply()});
 }
 $('full').onclick=()=>toggleExpanded();
-document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleExpanded(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reportDialog').open)toggleExpanded(false)});
 renderQuickPeople();
 const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else if(employees.length)selectEmployee(employees[0]);else render()}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else selectEmployee(employees[0]);
 </script>
