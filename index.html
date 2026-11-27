@@ -165,14 +165,15 @@ body.map-expanded{overflow:hidden}
 .label-edit-active [data-label-hit],.label-edit-active [data-label-handle]{pointer-events:all!important;cursor:move}.label-edit-active [data-label-handle]{cursor:nwse-resize}.label-edit-active.hide-codes .seat-code{display:inline}.editor-tools [hidden]{display:none!important}.editor-props input[type=checkbox]{width:auto}.editor-active{touch-action:none}
 #ed-ltext{font:inherit;min-width:120px;max-width:100%;width:180px;resize:vertical;border:1px solid #b8c8d9;border-radius:5px;padding:5px;box-sizing:border-box}#ed-mobile-props:empty,#ed-mobile-props[hidden]{display:none!important}#ed-mobile-props{margin-top:8px;display:grid;gap:6px;min-width:0}#ed-mobile-props [hidden]{display:none!important}
 @media(max-width:850px) and (pointer:coarse){.editor-head #ed-floor{flex:0 0 100%;min-height:15px;order:5}.editor-head .editor-spacer{min-width:0}.map-column{overflow-anchor:none}}
+.site-footer{align-items:center;justify-content:flex-end;gap:12px;padding:12px 4px 4px}.site-footer .control{font-size:11px}.search-input-wrap{position:relative;display:flex;flex:1;min-width:0}.search-input-wrap input{width:100%;padding-right:42px}.search-input-wrap input::-webkit-search-cancel-button{display:none;-webkit-appearance:none}.search-form #clearEmployeeSearch{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:32px;height:32px;padding:0;border:0;border-radius:7px;background:transparent;color:#60768a;font-size:23px;line-height:1}.search-form #clearEmployeeSearch:hover{background:#e8eef6}.backup-panel{display:grid;gap:8px;padding:12px;border:1px solid #d5e0e9;border-radius:9px;background:#f7fafc}.backup-panel[hidden]{display:none!important}.backup-panel p{margin:0}.backup-panel strong{font-size:13px}.floor-departments summary{font-weight:700;color:#173357}
 </style>
 </head>
 <body>
 <main class="page">
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
-<form id="searchForm" class="search-form" role="search"><input type="search" id="employeeSearch" placeholder="ФИО, email или номер места" autocomplete="off" aria-label="Поиск сотрудника или рабочего места"><button type="submit">Найти</button></form>
+<form id="searchForm" class="search-form" role="search"><div class="search-input-wrap"><input type="search" id="employeeSearch" placeholder="ФИО, email или номер рабочего места" autocomplete="off" aria-label="Поиск сотрудника или рабочего места"><button type="button" id="clearEmployeeSearch" aria-label="Очистить поиск" title="Очистить поиск">×</button></div><button type="submit">Найти</button></form>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
-<div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="loadFloorModel" type="button">Загрузить планировку</button><input id="floorModelFile" type="file" accept=".json,application/json" hidden><button class="control" id="unloadFloorModel" type="button" hidden>Вернуть демо</button><button class="control" id="saveLocalHtml" type="button" hidden>Скачать локальный HTML</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button></div>
+<div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="loadFloorModel" type="button">Загрузить планировку</button><input id="floorModelFile" type="file" accept=".json,application/json" hidden><button class="control" id="unloadFloorModel" type="button" hidden>Вернуть демо</button><button class="control" id="saveLocalHtml" type="button" hidden>Скачать локальный HTML</button></div>
 <form id="adminLogin" class="login-panel" hidden><strong>Вход в панель администратора</strong><input id="adminPassword" type="password" placeholder="Пароль" autocomplete="current-password" aria-label="Пароль администратора" required><div class="admin-actions"><button class="control admin-primary" id="loginSubmit" type="submit">Войти</button><button class="control" id="loginCancel" type="button">Отмена</button></div><div class="login-error" id="loginError" role="status"></div><p class="admin-note">Временный вход для демонстрации. Не является защитой персональных данных.</p></form>
 <div class="search-results" id="searchResults" hidden></div>
 <div class="status" id="status" role="status" hidden></div>
@@ -206,7 +207,8 @@ body.map-expanded{overflow:hidden}
 <form class="admin-edit" id="adminEdit" hidden><strong id="adminEditTitle">Редактирование сотрудника</strong><div class="admin-fields" id="adminFields"></div><div class="admin-edit-actions"><button class="control admin-primary" type="submit">Сохранить</button><button class="control" id="chooseSeat" type="button">Выбрать стол на схеме</button><button class="control" id="cancelEdit" type="button">Отмена</button></div><div class="admin-note" id="chooseSeatHint"></div></form>
 <div class="admin-message" id="adminMessage" role="status"></div>
 
-<div class="admin-actions"><button class="control admin-primary" id="ed-open" type="button">Редактировать объекты</button><button class="control admin-primary" id="ed-walls-open" type="button">Редактировать стены</button><button class="control admin-primary" id="ed-label-open" type="button">Редактировать наименования</button><button class="control" id="ed-download" type="button">↓ Скачать обновлённый HTML</button><button class="control" type="button" disabled>Резервные копии · Скоро</button></div>
+<div class="admin-actions"><button class="control admin-primary" id="ed-open" type="button">Редактировать объекты</button><button class="control admin-primary" id="ed-walls-open" type="button">Редактировать стены</button><button class="control admin-primary" id="ed-label-open" type="button">Редактировать наименования</button><button class="control" id="ed-download" type="button">↓ Скачать обновлённый HTML</button><button class="control" id="ed-backup" type="button" aria-expanded="false" aria-controls="ed-backup-panel">Резервные копии</button></div>
+<div class="backup-panel" id="ed-backup-panel" hidden><strong>Перенос планировки</strong><p class="admin-note">Все этажи, мебель, стены, двери, номера и надписи. Реестр сотрудников сохраняется отдельно через XLSX.</p><div class="admin-actions"><button class="control admin-primary" id="ed-json-export" type="button">↓ Скачать JSON</button><button class="control" id="ed-backup-html" type="button">↓ Скачать HTML</button><button class="control" id="ed-backup-import" type="button">↑ Загрузить JSON / HTML</button><input id="ed-backup-file" type="file" accept=".json,.html,.htm,application/json,text/html" hidden></div><div class="admin-note" id="ed-backup-status" role="status"></div></div>
 </section>
 <section class="panel" id="mapPanel" aria-label="Схема этажа">
 <h1 class="module-title">Схема размещения</h1>
@@ -223,7 +225,7 @@ body.map-expanded{overflow:hidden}
 <div id="ed-status" role="status" class="admin-note"></div></div>
 <div class="map-stage" id="mapStage" data-side="right">
 <div class="frame" id="frame">
-<svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса">
+<svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Схема офиса">
 <defs>
 <pattern id="floorMaterial" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#f6f2ed"/><path d="M16 0H0V16" stroke="#eae4dc" stroke-width=".35" fill="none"/></pattern>
 <linearGradient id="roomMaterial" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fcfdff"/><stop offset="1" stop-color="#e2e9f0"/></linearGradient>
@@ -247,8 +249,8 @@ body.map-expanded{overflow:hidden}
 <div class="seat-note-field" id="notePhoneRow" hidden><span>Телефон</span><strong id="notePhone"></strong></div>
 </aside>
 </div>
-<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.2.2 · сборка №41 (тест)</span></div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения этажа</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
+
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -258,6 +260,7 @@ body.map-expanded{overflow:hidden}
 </aside>
 </div>
 </section>
+<footer class="foot site-footer"><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button><span>0.3.2 · Сборка №42 (тест)</span></footer>
 </main>
 <dialog id="reportDialog" class="report-dialog" aria-labelledby="reportTitle">
 <div class="report-head"><h2 id="reportTitle">Сообщить об ошибке</h2><button class="control" id="reportCancel" type="button" aria-label="Закрыть">×</button></div>
@@ -689,6 +692,7 @@ $('flip').onclick=rotateMap;$('focus').onclick=focusTarget;
 $('closeCard').onclick=()=>{cardOpen=false;showCard()};$('noteClose').onclick=closeSeatNote;
 $('searchForm').addEventListener('submit',e=>{e.preventDefault();searchPeople()});
 $('employeeSearch').addEventListener('input',clearResults);
+$('clearEmployeeSearch').onclick=()=>{$('employeeSearch').value='';clearResults();message('');profile=null;targetCode=null;selectedCode=null;cardOpen=false;paintSelection();showCard();updateQuickSelection();$('employeeSearch').focus()};
 svg.addEventListener('keydown',e=>{const code=e.target.closest('[data-seat-code]')?.getAttribute('data-seat-code');if(code&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pick(code)}});
 
 /* Minimal OOXML workbook exporter. ZIP STORE, UTF-8, inline text cells.
@@ -857,7 +861,7 @@ function setAdmin(open){
  adminOpen=open;$('adminPanel').hidden=!open;$('exportEmployees').hidden=!open;$('localTools').hidden=!(open&&location.protocol==='file');$('toggleAdmin').setAttribute('aria-expanded',String(open));
  $('toggleAdmin').textContent=open?'Выйти из админки':'⚙ Администратор';
  clearResults();renderQuickPeople();
- if(open){refreshAdmin();refreshReports();if(profile)selectEmployee(profile);else paintSelection()}
+ if(open){refreshAdmin();refreshReports();if(profile)selectEmployee(profile);else paintSelection();$('adminPanel').scrollIntoView({block:'start'})}
  else{
   clearReportAdmin();cancelEdit();cancelImport();$('adminRows').replaceChildren();$('adminSearch').value='';$('adminMessage').textContent='';$('importSummary').textContent='';$('importErrors').replaceChildren();for(const input of Object.values(adminInputs))input.value='';
   for(const id of ['statTotal','statOccupied','statFree','statRate','adminExtra'])$(id).textContent='';$('statBar').style.width='0';
@@ -920,7 +924,7 @@ async function importFile(file){
 function initAdmin(){
  for(const f of [2,3,4,5,6,7,8,9,10]){const option=document.createElement('option');option.value=String(f);option.textContent=f+' этаж';$('adminFloor').append(option)}
  for(const [title,key] of EMPLOYEE_COLUMNS){const field=document.createElement('label');field.className='admin-field';field.textContent=title;const input=document.createElement(key==='visibility'?'select':'input');if(key==='visibility'){for(const [v,label] of Object.entries(VISIBILITY)){const option=document.createElement('option');option.value=v;option.textContent=label;input.append(option)}}else input.type='text';input.name=key;if(key==='email')input.type='email';if(key==='email'||key==='full_name')input.required=true;if(key==='birthday')input.placeholder='ДД.ММ';if(key==='seat_code')input.placeholder='6.082 или 6.04.14';field.append(input);$('adminFields').append(field);adminInputs[key]=input}
- $('toggleAdmin').onclick=()=>{if(adminOpen)setAdmin(false);else{$('adminLogin').hidden=false;$('adminPassword').focus()}};$('closeAdmin').onclick=()=>setAdmin(false);$('adminLogin').addEventListener('submit',e=>{e.preventDefault();submitLogin()});$('loginCancel').onclick=cancelLogin;
+ $('toggleAdmin').onclick=()=>{if(adminOpen)setAdmin(false);else{$('adminLogin').hidden=false;$('adminLogin').scrollIntoView({block:'center'});$('adminPassword').focus()}};$('closeAdmin').onclick=()=>setAdmin(false);$('adminLogin').addEventListener('submit',e=>{e.preventDefault();submitLogin()});$('loginCancel').onclick=cancelLogin;
  $('adminFloor').addEventListener('change',refreshAdmin);$('adminSearch').addEventListener('input',refreshAdmin);
  $('adminExport').onclick=exportEmployees;$('downloadTemplate').onclick=()=>{if(adminOpen)downloadWorkbook([],'employees_template.xlsx')};
  $('importEmployees').onclick=()=>$('xlsxFile').click();$('xlsxFile').addEventListener('change',e=>importFile(e.target.files[0]));
@@ -1484,7 +1488,7 @@ function toggleExpanded(force){
 $('full').onclick=()=>toggleExpanded();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reportDialog').open)toggleExpanded(false)});
 renderQuickPeople();
-const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else if(employees.length)selectEmployee(employees[0]);else render()}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else selectEmployee(employees[0]);
+const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else{profile=null;targetCode=null;selectedCode=null;cardOpen=false;$('employeeSearch').value='';render();updateQuickSelection()}}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else{$('employeeSearch').value='';render();updateQuickSelection()}
 
 (function editorBoot(){
  const clone=o=>JSON.parse(JSON.stringify(o)), $e=id=>document.getElementById('ed-'+id);
@@ -1564,7 +1568,7 @@ const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED
   if(!save&&start){localModels=start.models;localTemplate=localModels.get(start.templateFloor)||null;employees=start.employees}
   start=null;clearHistory();$('adminPanel').hidden=!adminOpen;redraw();invalidateViewport();if(save)saveDraft();else if(adminOpen)adminMessage('Изменения редактора отменены.');
  }
- const baseAdmin=setAdmin;setAdmin=function(value){if(!value&&open){finish(true)}baseAdmin(value)};
+ const baseAdmin=setAdmin;setAdmin=function(value){if(!value&&open){finish(true)}if(!value){$e('backup-panel').hidden=true;$e('backup').setAttribute('aria-expanded','false');backupStatus('')}baseAdmin(value)};
  function idNew(){return 'ed-'+(globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2))}
  function freeCode(m){for(let i=1;i<=999;i++){const c=normalizeCode(floor+'.'+i);if(!m.desks.some(o=>o.code===c)&&!(m.secretaries||[]).some(o=>o.code===c)&&!m.rooms.some(o=>o.number===c||o.roomCode===c)&&!findPerson(c))return c}throw Error('Нет свободных номеров.')}
  function addAt(x,y){act(()=>{const m=model(),k=$e('catalog').value;ids.clear();roomId=null;
@@ -1627,6 +1631,42 @@ const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED
  function draft(){return {schema:2,numberingRevision:39,assistantRevision:41,stamp:Date.now(),floors:[...localModels.values()].map(m=>{const v=clone(m);delete v.individualFloors;delete v.typicalFloors;delete v.secondFloorOutline;return v}),renames:[...localModels.values()].flatMap(m=>[...m.desks,...(m.secretaries||[])].filter(o=>initialCodes.has(o.id)&&o.code!==initialCodes.get(o.id)).map(o=>[initialCodes.get(o.id),o.code]))}}
  function saveDraft(){try{const d=draft();localStorage.setItem(KEY,JSON.stringify(d));adminMessage('Планировка сохранена в браузере. Для переноса скачайте обновлённый HTML.')}catch(err){adminMessage('Не удалось сохранить в браузере. Скачайте HTML: '+err.message)}}
  function downloadDraft(){if(!adminOpen)return;const d=draft(),json=JSON.stringify(d).replace(/</g,'\\u003c'),output=SOURCE_HTML.replace(/^const EMBEDDED_EDITOR_STATE = .*;$/m,()=> 'const EMBEDDED_EDITOR_STATE = '+json+';').replace(/^const EMBEDDED_HOLIDAY_MODE = (true|false);$/m,()=> 'const EMBEDDED_HOLIDAY_MODE = '+Boolean($('holidayMode')?.checked)+';');if(output===SOURCE_HTML){adminMessage('Не удалось встроить планировку.');return}const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='index.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+
+ function parseLayoutBackup(raw){
+ const t=raw.replace(/^\uFEFF/,'').trim();let data;
+ if(t.startsWith('<')){
+  const matches=[...t.matchAll(/^const EMBEDDED_EDITOR_STATE = (.*);[ \t]*$/gm)];
+  if(matches.length!==1)throw Error('HTML не содержит единственной встроенной резервной копии. Используйте скачанный обновлённый HTML.');
+  data=JSON.parse(matches[0][1]);
+ }else data=JSON.parse(t);
+ if(!data||data.schema!==2||!Array.isArray(data.floors)||!data.floors.length||!Array.isArray(data.renames)||!Number.isFinite(data.stamp))throw Error('Неверный формат резервной копии планировки.');
+ if(data.numberingRevision>39||data.assistantRevision>41)throw Error('Копия создана более новой версией модуля.');
+ if(data.renames.length>10000||data.renames.some(p=>!Array.isArray(p)||p.length!==2||p.some(x=>typeof x!=='string'||x.length>24)))throw Error('Некорректные данные перенумерации.');
+ return data
+}
+ function backupStatus(t){$e('backup-status').textContent=t||''}
+ function downloadJsonBackup(){if(!adminOpen||open)return;const d=draft(),url=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)],{type:'application/json;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-layout-'+new Date(d.stamp).toISOString().slice(0,19).replace(/:/g,'-')+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);backupStatus('JSON подготовлен к скачиванию.')}
+ function prepareBackup(d){d=migrateAssistants41(d);if(!d||d.schema!==2||d.floors.length!==localModels.size)throw Error('Количество этажей в резервной копии не совпадает.');const next=new Map();for(const m of d.floors){if(!m||!localModels.has(m.floor)||next.has(m.floor))throw Error('Неверный или повторный этаж.');check(m);next.set(m.floor,m)}return next}
+ async function importLayoutBackup(file){
+  if(!file||!adminOpen||open)return;
+  try{
+   if(file.size>12*1024*1024)throw Error('Размер файла превышает 12 МБ.');
+   const incoming=parseLayoutBackup(await file.text());if(!adminOpen||open)return;
+   const next=prepareBackup(incoming);if(!confirm('Заменить планировку всех этажей из файла «'+file.name+'»? Реестр сотрудников останется прежним. Для возврата сохраните текущую копию заранее.')){backupStatus('Импорт отменён.');return}
+   const previous={models:localModels,template:localTemplate,profile,targetCode,selectedCode,cardOpen},records=clone(employees);
+   try{localModels=next;localTemplate=next.get(localTemplate?.floor)||next.get(6);setEmployees(records);renderedFloor=null;render(false)}
+   catch(err){localModels=previous.models;localTemplate=previous.template;profile=previous.profile;targetCode=previous.targetCode;selectedCode=previous.selectedCode;cardOpen=previous.cardOpen;renderedFloor=null;render(false);throw err}
+   const missing=employees.filter(p=>p.seat_code&&!validMappedSeat(p.seat_code)).length;
+   let persisted=true;try{localStorage.setItem(KEY,JSON.stringify(draft()))}catch{persisted=false}
+   backupStatus('Загружено этажей: '+next.size+'. '+(persisted?'Планировка сохранена в браузере.':'В браузере сохранить не удалось — скачайте HTML или JSON.')+(missing?' Мест сотрудников вне схемы: '+missing+'.':''));
+   adminMessage('Резервная копия планировки загружена.');
+  }catch(err){backupStatus('Копия не загружена: '+err.message)}
+ }
+ $e('backup').onclick=()=>{if(!adminOpen||open)return;const p=$e('backup-panel');p.hidden=!p.hidden;$e('backup').setAttribute('aria-expanded',String(!p.hidden));backupStatus('')};
+ $e('json-export').onclick=downloadJsonBackup;$e('backup-html').onclick=downloadDraft;
+ $e('backup-import').onclick=()=>{if(adminOpen&&!open)$e('backup-file').click()};
+ $e('backup-file').addEventListener('change',async e=>{const file=e.target.files[0];e.target.value='';$e('backup-import').disabled=true;try{await importLayoutBackup(file)}finally{$e('backup-import').disabled=false}});
+
  function migrateNumbering39(d){
  if(!d||d.numberingRevision===39)return d;
  // Match by immutable desk IDs, retain saved coordinates, shapes and all non-numbering changes.
