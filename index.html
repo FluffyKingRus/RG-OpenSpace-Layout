@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.3.8 · сборка №52</title>
+<title>Расположение рабочего места — 0.3.9 · сборка №53</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -277,7 +277,7 @@ body.map-expanded{overflow:hidden}
 <div class="seat-note-field" id="notePhoneRow" hidden><span>Телефон</span><strong id="notePhone"></strong></div>
 </aside>
 </div>
-<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button></div></div>
+<div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="myWorkplace" type="button" hidden>Моё рабочее место</button><button class="control" id="full">Открыть во весь экран</button></div></div>
 
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
@@ -290,7 +290,7 @@ body.map-expanded{overflow:hidden}
 </div>
 <details class="floor-departments" id="floorDepartments"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3"/></svg><span class="department-heading">Структурные подразделения<span id="floorDepartmentCaption" class="department-caption"></span></span><strong id="departmentFloor" class="department-floor"></strong><svg class="department-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="floorDepartmentList" class="floor-department-list"></div></details>
 </section>
-<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false" hidden>⚙ Администратор</button><span>0.3.8 · Сборка №52 (тест)</span></footer>
+<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false" hidden>⚙ Администратор</button><span>0.3.9 · Сборка №53 (тест)</span></footer>
 </main>
 <dialog id="reportDialog" class="report-dialog" aria-labelledby="reportTitle">
 <div class="report-head"><h2 id="reportTitle">Сообщить об ошибке</h2><button class="control" id="reportCancel" type="button" aria-label="Закрыть">×</button></div>
@@ -453,8 +453,8 @@ const demoEmployees=[
  }
 ];
 // Portal deployment: change enabled to true, keep secrets on the server.
-const RG_MAGNET_CONFIG=Object.freeze({enabled:false,base:'/api/rg-magnet',intervalMs:900000,demoFallback:false});
-const rgState={mode:RG_MAGNET_CONFIG.enabled?'loading':'demo',userId:'',isAdmin:false,csrf:'',history:[],last:null,stats:null,busy:false,hasSnapshot:false,error:''};
+const RG_MAGNET_CONFIG=Object.freeze({enabled:false,base:'/api/rg-magnet',intervalMs:900000,demoFallback:false,reportsEnabled:false,reportsBase:'/api/reports'});
+const rgState={mode:RG_MAGNET_CONFIG.enabled?'loading':'demo',userId:'',employeeId:'',isAdmin:false,csrf:'',history:[],last:null,stats:null,busy:false,hasSnapshot:false,error:''};
 let employees=RG_MAGNET_CONFIG.enabled?[]:demoEmployees.map(p=>({...p,visibility:'full'}));
 const VISIBILITY={full:'Показывать всё',floor:'Только этаж',private:'Скрыть расположение',hidden:'Скрыть сотрудника'};
 function visibilityValue(v){const s=String(v??'').trim();if(!s)return 'full';if(Object.hasOwn(VISIBILITY,s))return s;const key=Object.keys(VISIBILITY).find(k=>VISIBILITY[k].toLowerCase()===s.toLowerCase());if(!key)throw Error('Неизвестный режим видимости: '+s);return key}
@@ -1686,14 +1686,23 @@ function setReportType(type){
  $('reportTabSeat').setAttribute('aria-pressed',String(type==='seat'));$('reportTabStaff').setAttribute('aria-pressed',String(type==='staff'));
  $('reportSeatFields').hidden=type!=='seat';$('reportStaffFields').hidden=type!=='staff';$('reportStatus').textContent='';
 }
+function rgOwnEmployee(){return RG_MAGNET_CONFIG.enabled&&rgState.userId&&rgState.employeeId&&['live','stale'].includes(rgState.mode)?employees.find(p=>p.employee_id===rgState.employeeId&&p.visibility!=='hidden')||null:null}
+function rgShowOwnWorkplace(){
+ if(!RG_MAGNET_CONFIG.enabled||!rgState.userId||!$('ed-bar').hidden)return false;
+ const p=rgOwnEmployee();if(!p){message(!rgState.hasSnapshot?'Кадровые данные недоступны. Повторите попытку после обновления.':!rgState.employeeId?'Учётная запись портала не связана с сотрудником 1С Магнит.':'Ваши данные не найдены в доступном кадровом реестре.');return false}
+ return selectEmployee(p)
+}
+function rgOwnContact(){const p=rgOwnEmployee();return p?reportText(p.email||p.phone||p.full_name,160):''}
 function openReport(){
  if(RG_MAGNET_CONFIG.enabled&&!reportAdapter){message('Корпоративная очередь обращений пока не подключена.');return;}
+ if(RG_MAGNET_CONFIG.enabled&&!rgState.userId){message('Не удалось подтвердить корпоративную сессию.');return;}
+ if(!$('reportContact').value&&reportAdapter)$('reportContact').value=rgOwnContact();
  $('reportMode').textContent=reportModeText();$('reportStatus').textContent='';if(!$('reportDialog').open)$('reportDialog').showModal();setReportType(reportType);
 }
 function closeReport(){if(!reportBusy&&$('reportDialog').open)$('reportDialog').close()}
 function makeReportId(){return globalThis.crypto?.randomUUID?.()||('report-'+Date.now()+'-'+Math.random().toString(36).slice(2))}
 async function submitReport(){
- if(reportBusy||RG_MAGNET_CONFIG.enabled&&!reportAdapter)return false;
+ if(reportBusy||RG_MAGNET_CONFIG.enabled&&(!reportAdapter||!rgState.userId))return false;
  const comment=reportText($(reportType==='seat'?'reportSeatComment':'reportStaffComment').value,2000);
  if(!comment){$('reportStatus').textContent='Добавьте комментарий.';$(reportType==='seat'?'reportSeatComment':'reportStaffComment').focus();return false}
  const payload={id:reportPendingId||makeReportId(),type:reportType,comment,contact:reportText($('reportContact').value,160),wrongCode:reportType==='seat'?reportText($('reportWrong').value,64):'',rightCode:reportType==='seat'?reportText($('reportRight').value,64):'',seatCode:reportType==='staff'?reportText($('reportStaffCode').value,64):''};
@@ -2442,18 +2451,29 @@ function rgUI(){
  $('rgCheck').disabled=rgState.busy;$('rgRefresh').disabled=rgState.busy;
  $('rgIntegrationMessage').textContent=rgState.error||(!RG_MAGNET_CONFIG.enabled?'Разработчику: настройте серверный API и включите RG_MAGNET_CONFIG.enabled.':'Кадровый реестр доступен только для чтения; изменения выполняются в 1С Магнит.');
  $('toggleAdmin').hidden=RG_MAGNET_CONFIG.enabled?!rgState.isAdmin:new URLSearchParams(location.search).get('admin')!=='1'&&!adminOpen;
+ $('myWorkplace').hidden=!RG_MAGNET_CONFIG.enabled||!rgState.userId||demo;
  renderQuickPeople();
 }
 function rgClearIdentity(){
- if(adminOpen)setAdmin(false);rgState.isAdmin=false;rgState.csrf='';rgState.userId='';rgState.history=[];rgState.hasSnapshot=false;rgState.last=null;rgState.stats=null;rgState.mode='unavailable';setEmployees([]);
+ if(adminOpen)setAdmin(false);rgState.isAdmin=false;rgState.csrf='';rgState.userId='';rgState.employeeId='';rgState.history=[];rgState.hasSnapshot=false;rgState.last=null;rgState.stats=null;rgState.mode='unavailable';setEmployees([]);
+ for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment','reportContact'])$(id).value='';
+ reportPendingId=null;if($('reportDialog').open)$('reportDialog').close();$('myWorkplace').hidden=true;
 }
-async function rgRequest(path,method='GET'){
- const u=new URL(RG_MAGNET_CONFIG.base+path,location.origin);if(u.origin!==location.origin||!/^https?:$/.test(location.protocol))throw Error('API должен быть размещён на том же корпоративном сервере.');
+async function rgHttp(path,method='GET',body,allowEmpty=false){
+ const u=new URL(path,location.origin);if(u.origin!==location.origin||!/^https?:$/.test(location.protocol))throw Error('API должен быть размещён на том же корпоративном сервере.');
+ const write=method!=='GET';if(write&&!rgState.csrf)throw Error('Не получен CSRF-токен корпоративной сессии.');
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
- try{const response=await fetch(u,{method,credentials:'same-origin',cache:'no-store',redirect:'error',signal:controller.signal,headers:{Accept:'application/json',...(method==='POST'?{'Content-Type':'application/json','X-CSRF-Token':rgState.csrf}:{})},...(method==='POST'?{body:'{}'}:{})});
+ try{const response=await fetch(u,{method,credentials:'same-origin',cache:'no-store',redirect:'error',signal:controller.signal,headers:{Accept:'application/json',...(write?{'Content-Type':'application/json','X-CSRF-Token':rgState.csrf}:{})},...(write?{body:JSON.stringify(body??{})}:{})});
  if(!response.ok){const e=Error('HTTP '+response.status);e.status=response.status;throw e}
+ if(allowEmpty){if(response.status===204)return null;const t=await response.text();return t.trim()?JSON.parse(t):null}
  return await response.json()}finally{clearTimeout(timer)}
 }
+function rgRequest(path,method='GET'){return rgHttp(RG_MAGNET_CONFIG.base+path,method)}
+const rgCorporateReports={
+ async submit(payload){return rgHttp(RG_MAGNET_CONFIG.reportsBase,'POST',payload,true)},
+ async list(){return rgHttp(RG_MAGNET_CONFIG.reportsBase)},
+ async setStatus(id,status){return rgHttp(RG_MAGNET_CONFIG.reportsBase+'/'+encodeURIComponent(id),'PATCH',{status},true)}
+};
 function rgNormalize(payload){
  if(!payload||!Array.isArray(payload.employees)||typeof payload.updated_at!=='string'||!Number.isFinite(Date.parse(payload.updated_at)))throw Error('Некорректный формат ответа API.');
  const ids=new Set(),emails=new Set(),counts=new Map(),rows=[];let errors=0,unassigned=0;
@@ -2480,10 +2500,11 @@ async function rgRefresh(manual=false){
  try{
   const session=await rgRequest('/session');
   if(!session||typeof session.user_id!=='string'||!session.user_id.trim()||typeof session.is_admin!=='boolean')throw Error('Некорректный ответ проверки доступа.');
-  if(session.user_id!==rgState.userId||session.is_admin!==rgState.isAdmin){
+  const employeeId=typeof session.employee_id==='string'?session.employee_id.trim():'';
+  if(session.user_id!==rgState.userId||session.is_admin!==rgState.isAdmin||employeeId!==rgState.employeeId){
    rgClearIdentity();rgState.userId=session.user_id;try{const h=JSON.parse(sessionStorage.getItem(rgHistoryKey())||'[]');if(Array.isArray(h))rgState.history=h.filter(x=>typeof x==='string').slice(0,10)}catch{}
   }
-  rgState.isAdmin=session.is_admin;rgState.csrf=typeof session.csrf_token==='string'?session.csrf_token:'';confirmed=true;
+  rgState.employeeId=employeeId;rgState.isAdmin=session.is_admin;rgState.csrf=typeof session.csrf_token==='string'?session.csrf_token:'';confirmed=true;
   if(manual&&(!rgState.isAdmin||!rgState.csrf))throw Error('Ручное обновление требует прав администратора и CSRF-токен.');
   const result=rgNormalize(await rgRequest(manual?'/refresh':'/employees',manual?'POST':'GET'));
   const selected=profile?.employee_id;rgState.mode='live';setEmployees(result.rows);rgState.hasSnapshot=true;rgState.stats=result.stats;rgState.last=result.updated_at;
@@ -2499,6 +2520,7 @@ async function rgRefresh(manual=false){
   return false;
  }finally{rgState.busy=false;rgUI()}
 }
+$('myWorkplace').onclick=rgShowOwnWorkplace;
 $('rgIntegrationOpen').onclick=()=>{if(!adminOpen)return;const p=$('rgIntegrationPanel');p.hidden=!p.hidden;$('rgIntegrationOpen').setAttribute('aria-expanded',String(!p.hidden));rgUI()};
 $('rgClearRecent').onclick=()=>{rgState.history=[];rgSaveHistory();renderQuickPeople()};
 $('rgCheck').onclick=()=>{if(adminOpen)rgRefresh(false)};
@@ -2508,6 +2530,7 @@ if(RG_MAGNET_CONFIG.enabled){
  $('adminPanel').querySelector('.admin-note').textContent='Рабочий режим: кадровые данные поступают из 1С Магнит. Изменения реестра выполняются на стороне кадровой системы. Локальные изменения планировки не являются серверным сохранением.';
  // Do not expose demo login or real data through the local file import.
  $('adminLogin').hidden=true;
+ if(RG_MAGNET_CONFIG.reportsEnabled){configureReports(rgCorporateReports);setInterval(()=>{if(adminOpen&&!reportBusy)refreshReports()},60000)}
  rgRefresh(false);setInterval(()=>rgRefresh(false),RG_MAGNET_CONFIG.intervalMs);
 }
 rgUI();
