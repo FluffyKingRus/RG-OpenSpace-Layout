@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.1.0 · сборка №29</title>
+<title>Расположение рабочего места — 0.1.1 · сборка №30</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -39,9 +39,9 @@
 .map{contain:paint}
 
 /* Portrait: the map reaches the right edge of the module, controls remain above it. */
-.quick-people{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.quick-people .quick-person{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
-.quick-people .quick-person span{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.2}
+.quick-people{display:flex;flex-wrap:nowrap;gap:6px;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;padding-bottom:4px;overscroll-behavior-x:contain;touch-action:pan-x}
+.quick-people .quick-person{flex:0 0 auto;min-width:138px;max-width:220px;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.quick-people .quick-person span{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
 .quick-people .quick-person small{white-space:nowrap}
 .export-row{display:flex;justify-content:flex-end;align-items:center;gap:8px}
 .export-button{display:inline-flex;align-items:center;gap:6px}
@@ -156,7 +156,8 @@ body.map-expanded{overflow:hidden}
 .report-fields input,.report-fields textarea{min-width:0;width:100%;border:1px solid #dce4ee;border-radius:8px;background:#f8fafc;padding:9px;color:#173357;font:400 16px Arial,sans-serif}.report-fields textarea{resize:vertical;min-height:84px}
 .report-status{font-size:12px;color:#486781;white-space:pre-wrap;overflow-wrap:anywhere;min-height:0}.report-status:not(:empty){margin:7px 0}.report-count{display:inline-flex;min-width:21px;padding:2px 6px;justify-content:center;align-items:center;border-radius:10px;background:#e9eff6;color:#536b84;font-size:11px;font-weight:700}.report-count.has-new{background:#d83043;color:#fff}
 .report-inbox{display:grid;gap:8px;padding:12px;border:1px solid #dce4ee;border-radius:10px;background:#f9fbfd}.report-inbox-tools label{font-size:12px;color:#52677f}.reports-list{display:grid;gap:8px}.report-item{display:grid;gap:7px;padding:10px;border:1px solid #e1e7ef;border-radius:8px;background:#fff;font-size:12px;overflow-wrap:anywhere}.report-item-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#173357}.report-item p{margin:0;white-space:pre-wrap;line-height:1.45}.report-item .admin-note{margin:0}.report-item .admin-actions{justify-content:flex-end}
-@media(max-width:480px){.report-dialog{padding:12px}.report-tabs .control{font-size:11px}.report-field-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.report-dialog{padding:12px}.report-tabs .control{font-size:11px}.report-field-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}.report-field-grid input{padding:9px 6px;font-size:16px}.report-field-grid label{font-size:11px}}
+.report-contact{margin-top:12px}.profile-preview{min-width:0}.quick-people .quick-person{flex-shrink:0}
 </style>
 </head>
 <body>
@@ -234,7 +235,7 @@ body.map-expanded{overflow:hidden}
 </aside>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.1.0 · сборка №29</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.1.1 · сборка №30</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -255,6 +256,7 @@ body.map-expanded{overflow:hidden}
 <label>Номер рабочего места <small>необязательно</small><input type="text" id="reportStaffCode" maxlength="64" placeholder="Например, 6.082" autocomplete="off"></label>
 <label>Комментарий <textarea id="reportStaffComment" maxlength="2000" rows="4" placeholder="Опишите, что изменилось"></textarea></label>
 </div>
+<div class="report-fields report-contact"><label>Контакт для уточнений <small>необязательно</small><input type="text" id="reportContact" maxlength="160" placeholder="Телефон, email или ФИО" autocomplete="off"></label></div>
 <p class="admin-note" id="reportMode"></p><div id="reportStatus" role="status" class="report-status"></div><div class="admin-actions"><button class="control admin-primary" type="submit" id="reportSend">Отправить обращение</button></div>
 </form>
 </dialog>
@@ -271,7 +273,18 @@ let seats=[],zoneRefs=new Map(),flipped=false,selectedCode=null,targetCode=null,
 const demoEmployees=[
  {email:'employee1@example.com',full_name:'Анна Иванова (демо)',seat_code:'6.082',position:'Главный специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12345',birthday:'29.10'},
  {email:'employee2@example.com',full_name:'Александр Петров (демо)',seat_code:'6.167',position:'Специалист',department:'Департамент (демо)',directorate:'Управление (демо)',phone:'12346'},
- {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист',department:'Департамент (демо)',phone:'12347'}
+ {email:'employee3@example.com',full_name:'Мария Соколова (демо)',seat_code:'3.073',position:'Специалист',department:'Департамент (демо)',phone:'12347'},
+ {"email":"demo-floor-3@example.com","full_name":"Дмитрий Орлов (демо)","seat_code":"3.020","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-4@example.com","full_name":"Елена Волкова (демо)","seat_code":"4.057","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-5@example.com","full_name":"Илья Морозов (демо)","seat_code":"5.094","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-6@example.com","full_name":"Ольга Крылова (демо)","seat_code":"6.137","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-7@example.com","full_name":"Никита Беляев (демо)","seat_code":"7.168","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-8@example.com","full_name":"Виктория Лебедева (демо)","seat_code":"8.205","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-9@example.com","full_name":"Артём Громов (демо)","seat_code":"9.011","position":"Специалист","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-10@example.com","full_name":"София Котова (демо)","seat_code":"10.04.20","position":"Руководитель (демо)","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-11@example.com","full_name":"Роман Синицын (демо)","seat_code":"11.04.08","position":"Руководитель (демо)","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-12@example.com","full_name":"Наталья Зайцева (демо)","seat_code":"12.04.02","position":"Руководитель (демо)","department":"Департамент (демо)","directorate":"Управление (демо)"},
+ {"email":"demo-floor-13@example.com","full_name":"Павел Рябов (демо)","seat_code":"13.04.01","position":"Руководитель (демо)","department":"Департамент (демо)","directorate":"Управление (демо)"}
 ];
 let employees=demoEmployees.map(p=>({...p,visibility:'full'}));
 const VISIBILITY={full:'Показывать всё',floor:'Только этаж',private:'Скрыть расположение',hidden:'Скрыть сотрудника'};
@@ -411,8 +424,8 @@ function personButton(p){
  const b=document.createElement('button');b.type='button';b.className='quick-person';b.setAttribute('aria-pressed',String(p===profile));
  const name=document.createElement('span'),code=document.createElement('small');name.textContent=p.full_name||p.email||'Сотрудник';code.textContent=locationText(p);b.append(name,code);b.onclick=()=>selectEmployee(p);return b;
 }
-function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();for(const p of publicPeople().slice(0,3))box.append(personButton(p))}
-function updateQuickSelection(){Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(publicPeople()[i]===profile)))}
+function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();for(const p of publicPeople().filter(p=>demoEmployees.some(d=>d.email===p.email)))box.append(personButton(p))}
+function updateQuickSelection(){const people=publicPeople().filter(p=>demoEmployees.some(d=>d.email===p.email));Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(people[i]===profile)))}
 function clearResults(){$('searchResults').replaceChildren();$('searchResults').hidden=true}
 function searchSeat(raw){
  const code=normalizeCode(raw);
@@ -1340,7 +1353,7 @@ $('saveLocalHtml').onclick=()=>{
  const json=JSON.stringify(localTemplate).replace(/</g,'\\u003c');
  const output=SOURCE_HTML.replace(/^const EMBEDDED_LOCAL_MODEL = .*;$/m,()=> 'const EMBEDDED_LOCAL_MODEL = '+json+';');
  if(output===SOURCE_HTML){message('Не удалось создать автономный HTML.');return}
- const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.1.0.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
+ const url=URL.createObjectURL(new Blob([output],{type:'text/html;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='office-map-local-0.1.1.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
 };
 $('unloadFloorModel').onclick=()=>{if(confirm('Вернуть демонстрационную схему? Локальные изменения рассадки будут потеряны.'))unloadLocalFloor()};
 
@@ -1357,7 +1370,7 @@ function reportText(v,max){return String(v??'').trim().slice(0,max)}
 function normalizeReport(r){
  if(!r||!Object.hasOwn(REPORT_TYPES,r.type)||typeof r.id!=='string'||!r.id||r.id.length>120||!['open','closed'].includes(r.status)||!Number.isFinite(Date.parse(r.createdAt)))throw Error('Некорректное обращение.');
  const comment=reportText(r.comment,2000);if(!comment)throw Error('Комментарий не заполнен.');
- return {id:r.id,type:r.type,status:r.status,createdAt:r.createdAt,comment,wrongCode:r.type==='seat'?reportText(r.wrongCode,64):'',rightCode:r.type==='seat'?reportText(r.rightCode,64):'',seatCode:r.type==='staff'?reportText(r.seatCode,64):'',closedAt:r.closedAt&&Number.isFinite(Date.parse(r.closedAt))?r.closedAt:''};
+ return {id:r.id,type:r.type,status:r.status,createdAt:r.createdAt,comment,contact:reportText(r.contact,160),wrongCode:r.type==='seat'?reportText(r.wrongCode,64):'',rightCode:r.type==='seat'?reportText(r.rightCode,64):'',seatCode:r.type==='staff'?reportText(r.seatCode,64):'',closedAt:r.closedAt&&Number.isFinite(Date.parse(r.closedAt))?r.closedAt:''};
 }
 function checkedReports(rows){
  if(!Array.isArray(rows))throw Error('Хранилище вернуло неверный список обращений.');
@@ -1390,12 +1403,12 @@ async function submitReport(){
  if(reportBusy)return false;
  const comment=reportText($(reportType==='seat'?'reportSeatComment':'reportStaffComment').value,2000);
  if(!comment){$('reportStatus').textContent='Добавьте комментарий.';$(reportType==='seat'?'reportSeatComment':'reportStaffComment').focus();return false}
- const payload={id:reportPendingId||makeReportId(),type:reportType,comment,wrongCode:reportType==='seat'?reportText($('reportWrong').value,64):'',rightCode:reportType==='seat'?reportText($('reportRight').value,64):'',seatCode:reportType==='staff'?reportText($('reportStaffCode').value,64):''};
+ const payload={id:reportPendingId||makeReportId(),type:reportType,comment,contact:reportText($('reportContact').value,160),wrongCode:reportType==='seat'?reportText($('reportWrong').value,64):'',rightCode:reportType==='seat'?reportText($('reportRight').value,64):'',seatCode:reportType==='staff'?reportText($('reportStaffCode').value,64):''};
  reportPendingId=payload.id;reportBusy=true;$('reportSend').disabled=true;$('reportStatus').textContent='Отправляем…';
  const store=reportStore();
  try{
   await store.submit(payload);
-  for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment'])$(id).value='';
+  for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment','reportContact'])$(id).value='';
   reportPendingId=null;$('reportStatus').textContent=reportAdapter?'Обращение отправлено. Спасибо!':'Обращение сохранено в этом браузере. Спасибо!';
   if(adminOpen)await refreshReports();
   return true;
@@ -1415,7 +1428,7 @@ function renderReports(){
   const item=document.createElement('article');item.className='report-item';const head=document.createElement('div');head.className='report-item-head';const title=document.createElement('strong');title.textContent=REPORT_TYPES[r.type];const when=document.createElement('small');when.textContent=new Date(r.createdAt).toLocaleString('ru-RU');head.append(title,when);item.append(head);
   const fields=r.type==='seat'?[['Неправильный номер',r.wrongCode],['Правильный номер',r.rightCode]]:[['Рабочее место',r.seatCode]];
   for(const [name,value] of fields)if(value){const p=document.createElement('p');p.textContent=name+': '+value;item.append(p)}
-  const p=document.createElement('p');p.textContent=r.comment;item.append(p);
+  const p=document.createElement('p');p.textContent=r.comment;item.append(p);if(r.contact){const contact=document.createElement('p');contact.textContent='Контакт для уточнений: '+r.contact;item.append(contact)}
   const meta=document.createElement('small');meta.className='admin-note';meta.textContent=r.status==='open'?'Новое':'Обработано'+(r.closedAt?' · '+new Date(r.closedAt).toLocaleString('ru-RU'):'');item.append(meta);
   const actions=document.createElement('div');actions.className='admin-actions';const b=document.createElement('button');b.type='button';b.className='control';b.textContent=r.status==='open'?'Отметить обработанным':'Вернуть в новые';b.onclick=async()=>{b.disabled=true;await changeReportStatus(r.id,r.status==='open'?'closed':'open');b.disabled=false};actions.append(b);item.append(actions);list.append(item);
  }
@@ -1446,7 +1459,7 @@ $('reportOpen').onclick=openReport;$('reportCancel').onclick=closeReport;
 $('reportTabSeat').onclick=()=>setReportType('seat');$('reportTabStaff').onclick=()=>setReportType('staff');
 $('reportForm').addEventListener('submit',e=>{e.preventDefault();submitReport()});
 $('reportDialog').addEventListener('cancel',e=>{if(reportBusy)e.preventDefault()});
-for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment'])$(id).addEventListener('input',()=>{if(!reportBusy)reportPendingId=null});
+for(const id of ['reportWrong','reportRight','reportStaffCode','reportSeatComment','reportStaffComment','reportContact'])$(id).addEventListener('input',()=>{if(!reportBusy)reportPendingId=null});
 $('reportsOpen').onclick=()=>{if(!adminOpen)return;if(!$('reportsPanel').hidden){closeReports();return}$('reportsPanel').hidden=false;$('reportsOpen').setAttribute('aria-expanded','true');refreshReports()};
 $('reportsClose').onclick=closeReports;$('reportsRefresh').onclick=refreshReports;$('reportsFilter').onchange=renderReports;
 window.addEventListener('storage',e=>{if(adminOpen&&!reportAdapter&&e.key===REPORT_KEY)refreshReports()});
