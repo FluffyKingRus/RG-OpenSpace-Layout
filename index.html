@@ -168,12 +168,19 @@ body.map-expanded{overflow:hidden}
 .site-footer{align-items:center;justify-content:flex-end;gap:12px;padding:12px 4px 4px}.site-footer .control{font-size:11px}.search-input-wrap{position:relative;display:flex;flex:1;min-width:0}.search-input-wrap input{width:100%;padding-right:42px}.search-input-wrap input::-webkit-search-cancel-button{display:none;-webkit-appearance:none}.search-form #clearEmployeeSearch{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:32px;height:32px;padding:0;border:0;border-radius:7px;background:transparent;color:#60768a;font-size:23px;line-height:1}.search-form #clearEmployeeSearch:hover{background:#e8eef6}.backup-panel{display:grid;gap:8px;padding:12px;border:1px solid #d5e0e9;border-radius:9px;background:#f7fafc}.backup-panel[hidden]{display:none!important}.backup-panel p{margin:0}.backup-panel strong{font-size:13px}.floor-departments summary{font-weight:700;color:#173357}
 .floor-departments{margin-top:12px;border:1px solid #d5e0e9;border-radius:10px;background:#fff;z-index:auto;min-width:0}.floor-departments[hidden]{display:none!important}.floor-departments summary{display:flex;align-items:center;gap:12px;list-style:none;padding:12px 14px;white-space:normal;border:0;border-radius:10px;background:#f5f8fc;font-size:14px}.floor-departments summary::-webkit-details-marker{display:none}.floor-departments summary>svg{width:24px;height:24px;flex-shrink:0;color:#35689b}.department-heading{flex:1;min-width:0;font-weight:700}.department-caption{display:block;color:#6b7e90;font-size:11px;font-weight:400;margin-top:3px}.floor-departments[open] .department-chevron{transform:rotate(180deg)}.floor-department-list{position:static;width:auto;min-width:0;max-width:none;padding:0 14px;border:0;border-radius:0 0 10px 10px;box-shadow:none;background:transparent;font-size:13px;color:#173357}.floor-department-list ul{list-style:none;padding:0;gap:0}.floor-department-list li{position:relative;padding:11px 0 11px 16px;border-top:1px solid #e8edf3;overflow-wrap:anywhere}.floor-department-list li::before{content:'';position:absolute;left:1px;top:17px;width:5px;height:5px;border-radius:50%;background:#789abf}.site-footer .report-footer-button{display:inline-flex;align-items:center;gap:7px;background:#eaf3ff;border-color:#bdd5f1;color:#0757bd;font-size:12px;padding:8px 12px}.report-footer-button svg{width:18px;height:18px;flex-shrink:0}.site-footer .report-footer-button:hover{background:#dcecff}@media(max-width:650px){.floor-departments summary{font-size:13px;padding:10px}.floor-department-list{padding:0 10px;font-size:12px}.site-footer{gap:7px}.site-footer .report-footer-button{font-size:11px;padding:7px 9px}}
 .map-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.map-heading .module-title{margin:0}.map-heading .floor-title,.department-floor{font-size:20px;line-height:1.2;font-weight:700;color:#0757bd;background:#e6f0ff;padding:6px 12px;border-radius:8px;white-space:nowrap}.department-floor{font-size:18px;padding:4px 8px}.card-head{gap:16px;align-items:flex-start}.card-address{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0;font-size:12px;color:#60768a;line-height:1.4}.card-address a{color:#0757bd;text-decoration:underline;text-underline-offset:2px}.floor-department-list li{display:flex;justify-content:space-between;align-items:center;gap:10px}.floor-department-list li>span:first-child{min-width:0;flex:1}.department-count{display:inline-flex;justify-content:center;min-width:26px;padding:4px 7px;border-radius:6px;background:#edf3f9;color:#173357;font-weight:700;font-variant-numeric:tabular-nums}.wc-symbol{font-weight:700;fill:#526d86;text-anchor:middle;dominant-baseline:middle;pointer-events:none}.safety-object{display:none;pointer-events:none}.safety-visible .safety-object,.editor-active:not(.label-edit-active):not(.wall-edit-active) .safety-object{display:inline}.editor-active:not(.label-edit-active):not(.wall-edit-active) [data-editor-plant],.editor-active:not(.label-edit-active):not(.wall-edit-active) [data-editor-plant] .plant-hit{pointer-events:all!important;cursor:move}.wall-edit-active [data-editor-plant] .plant-hit,.label-edit-active [data-editor-plant] .plant-hit{pointer-events:none!important}.editor-picked[data-editor-plant] .plant-hit{stroke:#0670f4;stroke-width:.7}.safety-object.editor-picked{filter:drop-shadow(0 0 1px #006bff)}@media(max-width:650px){.map-heading .floor-title,.department-floor{font-size:16px;padding:4px 7px}.card-head{flex-wrap:wrap;gap:7px}.card-head #cardCode{flex:1}.card-head #closeCard{order:1}.card-address{order:2;flex:1 0 100%;font-size:11px}.floor-departments summary{gap:8px}}
+[hidden]{display:none!important}
+.rg-integration-banner{padding:10px 12px;margin:8px 0;border:1px solid #d5dfe8;border-radius:9px;background:#f4f7fa;color:#42566a;font-size:13px;line-height:1.45}
+.rg-recent-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 4px;font-size:13px;color:#42566a}
+.rg-integration-box{padding:12px;margin:10px 0;border:1px solid #d5dfe8;border-radius:10px}
+.rg-integration-box .admin-note{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
 <main class="page">
 <section class="profile-preview" aria-label="Демонстрационный выбор сотрудника">
 <form id="searchForm" class="search-form" role="search"><div class="search-input-wrap"><input type="search" id="employeeSearch" placeholder="ФИО, email или номер рабочего места" autocomplete="off" aria-label="Поиск сотрудника или рабочего места"><button type="button" id="clearEmployeeSearch" aria-label="Очистить поиск" title="Очистить поиск">×</button></div><button type="submit">Найти</button></form>
+<div id="rgDataNotice" class="rg-integration-banner" role="status">Демонстрационный режим. На схеме отображаются тестовые сотрудники. Для отображения актуальных данных необходимо заполнить сведения о рабочих местах в 1С Магнит и подключить интеграцию.</div>
+<div id="rgRecentHead" class="rg-recent-head" hidden><strong>Недавний поиск</strong><button class="control" id="rgClearRecent" type="button">Очистить</button></div>
 <div class="quick-people" id="quickPeople" aria-label="Тестовые сотрудники"></div>
 <div class="export-row"><button class="control export-button" id="exportEmployees" type="button" hidden>↓ XLSX</button><button class="control" id="loadFloorModel" type="button">Загрузить планировку</button><input id="floorModelFile" type="file" accept=".json,application/json" hidden><button class="control" id="unloadFloorModel" type="button" hidden>Вернуть демо</button><button class="control" id="saveLocalHtml" type="button" hidden>Скачать локальный HTML</button></div>
 <form id="adminLogin" class="login-panel" hidden><strong>Вход в панель администратора</strong><input id="adminPassword" type="password" placeholder="Пароль" autocomplete="current-password" aria-label="Пароль администратора" required><div class="admin-actions"><button class="control admin-primary" id="loginSubmit" type="submit">Войти</button><button class="control" id="loginCancel" type="button">Отмена</button></div><div class="login-error" id="loginError" role="status"></div><p class="admin-note">Временный вход для демонстрации. Не является защитой персональных данных.</p></form>
@@ -189,6 +196,19 @@ body.map-expanded{overflow:hidden}
 <section class="admin-panel" id="adminPanel" aria-label="Панель администратора" hidden>
 <div class="admin-top"><h2 class="admin-title">Управление рассадкой</h2><button class="control" id="closeAdmin">Выйти</button></div>
 <p class="admin-note">Демонстрационный режим. На публичном сайте используйте только вымышленные данные. Изменения хранятся в памяти вкладки; для сохранения выгрузите XLSX. Права доступа будут проверяться корпоративным сервером.</p>
+<div class="admin-actions"><button class="control" id="rgIntegrationOpen" type="button" aria-expanded="false" aria-controls="rgIntegrationPanel">Интеграции</button></div>
+<section class="rg-integration-box" id="rgIntegrationPanel" hidden aria-label="Интеграции">
+<div class="admin-list-head"><strong>1С Магнит</strong><strong id="rgConnectionState" role="status">Не подключено</strong></div>
+<p class="admin-note">Серверная переменная: <code>API_RG_MAGNET</code> (ключ не передаётся в браузер). Адрес API: <code id="rgEndpoint"></code></p>
+<p class="admin-note">Автоматическое обновление: каждые 15 минут. Ручное обновление — без ожидания интервала.</p>
+<div class="admin-metrics">
+<div class="admin-metric"><small>Получено</small><strong id="rgReceived">—</strong></div>
+<div class="admin-metric"><small>На схеме</small><strong id="rgMapped">—</strong></div>
+<div class="admin-metric"><small>Без места</small><strong id="rgUnassigned">—</strong></div>
+<div class="admin-metric"><small>Ошибки мест</small><strong id="rgErrors">—</strong></div></div>
+<p class="admin-note" id="rgLastSync">Последняя синхронизация: не выполнялась</p>
+<div class="admin-actions"><button class="control" id="rgCheck" type="button">Проверить подключение</button><button class="control admin-primary" id="rgRefresh" type="button">Обновить данные сейчас</button></div>
+<p class="admin-note" id="rgIntegrationMessage" role="status"></p></section>
 <div class="admin-actions"><button class="control" id="reportsOpen" type="button" aria-expanded="false">Обращения <span class="report-count" id="reportsCount" aria-label="Новые обращения">0</span></button></div>
 <section class="report-inbox" id="reportsPanel" hidden aria-label="Обращения сотрудников">
 <div class="admin-list-head"><strong>Обращения сотрудников</strong><button class="control" id="reportsRefresh" type="button">Обновить</button><button class="control" id="reportsClose" type="button">Закрыть</button></div>
@@ -264,7 +284,7 @@ body.map-expanded{overflow:hidden}
 </div>
 <details class="floor-departments" id="floorDepartments"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3"/></svg><span class="department-heading">Структурные подразделения<span id="floorDepartmentCaption" class="department-caption"></span></span><strong id="departmentFloor" class="department-floor"></strong><svg class="department-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="floorDepartmentList" class="floor-department-list"></div></details>
 </section>
-<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false">⚙ Администратор</button><span>0.3.2 · Сборка №46 (тест)</span></footer>
+<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false" hidden>⚙ Администратор</button><span>0.3.3 · Сборка №47 (тест)</span></footer>
 </main>
 <dialog id="reportDialog" class="report-dialog" aria-labelledby="reportTitle">
 <div class="report-head"><h2 id="reportTitle">Сообщить об ошибке</h2><button class="control" id="reportCancel" type="button" aria-label="Закрыть">×</button></div>
@@ -422,12 +442,15 @@ const demoEmployees=[
   "phone": "3346"
  }
 ];
-let employees=demoEmployees.map(p=>({...p,visibility:'full'}));
+// Portal deployment: change enabled to true, keep secrets on the server.
+const RG_MAGNET_CONFIG=Object.freeze({enabled:false,base:'/api/rg-magnet',intervalMs:900000,demoFallback:false});
+const rgState={mode:RG_MAGNET_CONFIG.enabled?'loading':'demo',userId:'',isAdmin:false,csrf:'',history:[],last:null,stats:null,busy:false,hasSnapshot:false,error:''};
+let employees=RG_MAGNET_CONFIG.enabled?[]:demoEmployees.map(p=>({...p,visibility:'full'}));
 const VISIBILITY={full:'Показывать всё',floor:'Только этаж',private:'Скрыть расположение',hidden:'Скрыть сотрудника'};
 function visibilityValue(v){const s=String(v??'').trim();if(!s)return 'full';if(Object.hasOwn(VISIBILITY,s))return s;const key=Object.keys(VISIBILITY).find(k=>VISIBILITY[k].toLowerCase()===s.toLowerCase());if(!key)throw Error('Неизвестный режим видимости: '+s);return key}
 const visibleLevel=p=>adminOpen?'full':(p?.visibility||'full');
 const publicPeople=()=>employees.filter(p=>visibleLevel(p)!=='hidden');
-const locationText=p=>visibleLevel(p)==='full'?(p.seat_code_source||p.seat_code||'Без места'):visibleLevel(p)==='floor'&&p.seat_code?seatFloor(p.seat_code)+' этаж':'Расположение скрыто';
+const locationText=p=>visibleLevel(p)==='full'?(p.seat_code_source||p.seat_code||'Без места'):visibleLevel(p)==='floor'&&(p.location_floor!==null&&p.location_floor!==undefined||p.seat_code)?(p.location_floor??seatFloor(p.seat_code))+' этаж':'Расположение скрыто';
 const normalizeEmail=v=>String(v??'').trim().toLowerCase();
 function normalizeCode(v){const raw=String(v??'').trim().toUpperCase().replace(/^[LR]\.?(?=\d)/,'');const r=raw.match(/^(-?\d+)\.(\d{1,2})\.(\d{1,2})([ПP])?$/);if(r)return Number(r[1])+'.'+r[2].padStart(2,'0')+'.'+r[3].padStart(2,'0')+(r[4]?'П':'');const m=raw.match(/^(-?\d+)\.(\d{1,3})$/);return m?Number(m[1])+'.'+Number(m[2]):''}
 const seatFloor=code=>Number(normalizeCode(code).split('.')[0]);
@@ -445,7 +468,7 @@ function setEmployees(records){
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||emails.has(email))throw Error('Некорректная или повторная почта: строка '+(i+1));
   if(seat_code&&codes.has(seat_code))throw Error('Повторное место: '+seat_code);
   if(email)emails.add(email);if(seat_code)codes.add(seat_code);
-  const obj={email,seat_code,visibility:visibilityValue(p.visibility),seat_code_source:seat_code};if(normalizeCode(obj.seat_code_source)!==seat_code)obj.seat_code_source=seat_code;for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
+  const obj={email,employee_id:String(p.employee_id??email),location_floor:p.location_floor??null,seat_code,visibility:visibilityValue(p.visibility),seat_code_source:seat_code};if(normalizeCode(obj.seat_code_source)!==seat_code)obj.seat_code_source=seat_code;for(const k of ['full_name','position','department','directorate','phone','birthday'])obj[k]=String(p[k]??'');
   return obj;
  });
  employees=next;selectedCode=null;targetCode=null;profile=null;cardOpen=false;$('mapPanel').hidden=false;message('');paintSelection();showCard();renderQuickPeople();clearResults();if(adminReady)refreshAdmin();renderFloorDepartments();return next.length;
@@ -548,10 +571,11 @@ function selectEmployee(p){
  $('mapPanel').hidden=false;profile=p||null;targetCode=null;selectedCode=null;cardOpen=!!p;message('');clearResults();
  if(!p){$('employeeSearch').value='';paintSelection();showCard();updateQuickSelection();message('Сотрудник не найден.');return false}
  $('employeeSearch').value=p.full_name||p.email||'';
+ rgRemember(p);
  const level=visibleLevel(p);
- if(level==='private'||level==='floor'&&!p.seat_code){$('mapPanel').hidden=true;paintSelection();showCard();updateQuickSelection();message('Расположение сотрудника скрыто.');return false}
- if(level==='floor'){const f=seatFloor(p.seat_code);if(active(f)){floor=f;render();message('Точное рабочее место скрыто.');return true}$('mapPanel').hidden=true;paintSelection();showCard();message('Точное рабочее место скрыто.');return false}
- if(!p.seat_code){paintSelection();showCard();message('Рабочее место не назначено.');return false}
+ if(level==='private'||level==='floor'&&!p.seat_code&&p.location_floor==null){$('mapPanel').hidden=true;paintSelection();showCard();updateQuickSelection();message('Расположение сотрудника скрыто.');return false}
+ if(level==='floor'){const f=p.location_floor??seatFloor(p.seat_code);if(active(f)){floor=f;render();message('Точное рабочее место скрыто.');return true}$('mapPanel').hidden=true;paintSelection();showCard();message('Точное рабочее место скрыто.');return false}
+ if(!p.seat_code){paintSelection();showCard();updateQuickSelection();message('Рабочее место не назначено.');return false}
  targetCode=p.seat_code;const nextFloor=seatFloor(targetCode);
  if(!allFloors.includes(nextFloor)){targetCode=null;paintSelection();showCard();message('Этаж не поддерживается.');return false}
  floor=nextFloor;render(false);const found=focusTarget();if(!found)fit();return found;
@@ -561,8 +585,12 @@ function personButton(p){
  const b=document.createElement('button');b.type='button';b.className='quick-person';b.setAttribute('aria-pressed',String(p===profile));
  const name=document.createElement('span'),code=document.createElement('small');name.textContent=p.full_name||p.email||'Сотрудник';code.textContent=locationText(p);b.append(name,code);b.onclick=()=>selectEmployee(p);return b;
 }
-function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();for(const p of publicPeople().filter(p=>demoEmployees.some(d=>d.email===p.email)))box.append(personButton(p))}
-function updateQuickSelection(){const people=publicPeople().filter(p=>demoEmployees.some(d=>d.email===p.email));Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(people[i]===profile)))}
+function rgQuickRecords(){const people=publicPeople();return rgState.mode==='demo'?people.filter(p=>demoEmployees.some(d=>d.email===p.email)):rgState.history.map(id=>people.find(p=>p.employee_id===id)).filter(Boolean)}
+function renderQuickPeople(){const box=$('quickPeople');box.replaceChildren();const records=rgQuickRecords(),real=rgState.mode==='live'||rgState.mode==='stale';$('rgRecentHead').hidden=!real||!records.length;box.setAttribute('aria-label',real?'Недавний поиск':'Тестовые сотрудники');for(const p of records)box.append(personButton(p))}
+function updateQuickSelection(){const people=rgQuickRecords();Array.from($('quickPeople').children).forEach((b,i)=>b.setAttribute('aria-pressed',String(people[i]===profile)))}
+function rgHistoryKey(){return 'rg-recent-v1:'+encodeURIComponent(rgState.userId)}
+function rgSaveHistory(){if(!rgState.userId)return;try{sessionStorage.setItem(rgHistoryKey(),JSON.stringify(rgState.history))}catch{}}
+function rgRemember(p){if(!rgState.userId||!['live','stale'].includes(rgState.mode)||!p.employee_id||p.visibility==='hidden')return;rgState.history=[p.employee_id,...rgState.history.filter(x=>x!==p.employee_id)].slice(0,10);rgSaveHistory();renderQuickPeople()}
 function clearResults(){$('searchResults').replaceChildren();$('searchResults').hidden=true}
 function searchSeat(raw){
  const code=normalizeCode(raw);
@@ -978,6 +1006,7 @@ function adminMessage(text){$('adminMessage').textContent=text||''}
 const DEMO_PASSWORD_HASH='039054aec89f68802a17169473ebe1c2668757a15d511035894f014aabe32316';
 async function verifyPassword(value){if(!globalThis.crypto?.subtle)throw Error('Откройте страницу в современном браузере через HTTPS или локальный файл.');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('rg-layout-demo-v1:'+value));return Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,'0')).join('')===DEMO_PASSWORD_HASH}
 function setAdmin(open){
+ if(open&&RG_MAGNET_CONFIG.enabled&&!rgState.isAdmin)return;
  adminOpen=open;$('adminPanel').hidden=!open;$('exportEmployees').hidden=!open;$('localTools').hidden=!(open&&location.protocol==='file');$('toggleAdmin').setAttribute('aria-expanded',String(open));
  $('toggleAdmin').textContent=open?'Выйти из админки':'⚙ Администратор';
  clearResults();renderQuickPeople();renderFloorDepartments();
@@ -992,6 +1021,7 @@ function setAdmin(open){
 }
 function cancelLogin(){loginToken++;$('adminLogin').hidden=true;$('adminPassword').value='';$('loginError').textContent='';$('loginSubmit').disabled=false}
 async function submitLogin(){
+ if(RG_MAGNET_CONFIG.enabled){cancelLogin();return;}
  const token=++loginToken,value=$('adminPassword').value;$('adminPassword').value='';$('loginSubmit').disabled=true;$('loginError').textContent='';
  try{const valid=await verifyPassword(value);if(token!==loginToken)return;if(!valid){$('loginError').textContent='Неверный пароль.';return}cancelLogin();setAdmin(true)}catch(err){if(token===loginToken)$('loginError').textContent=err.message}finally{if(token===loginToken)$('loginSubmit').disabled=false}
 }
@@ -1008,20 +1038,20 @@ function refreshAdmin(){
  for(const p of filtered.slice(0,200)){
   const tr=document.createElement('tr'),name=document.createElement('td'),seat=document.createElement('td'),actions=document.createElement('td'),small=document.createElement('small');
   name.textContent=p.full_name||'Без имени';small.textContent=p.email;name.append(small);seat.textContent=(p.seat_code_source??p.seat_code)||'—';if((p.visibility||'full')!=='full'){const tag=document.createElement('small');tag.className='visibility-tag';tag.textContent=VISIBILITY[p.visibility];seat.append(tag)}
-  const edit=document.createElement('button');edit.type='button';edit.className='control';edit.textContent='Изменить';edit.onclick=()=>editEmployee(p);
+  const edit=document.createElement('button');edit.type='button';edit.className='control';edit.textContent='Изменить';edit.disabled=RG_MAGNET_CONFIG.enabled;edit.onclick=()=>editEmployee(p);
   const show=document.createElement('button');show.type='button';show.className='control';show.textContent='На схеме';show.disabled=!p.seat_code;show.onclick=()=>selectEmployee(p);actions.append(edit,show);tr.append(name,seat,actions);body.append(tr);
  }
  if(!filtered.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='Сотрудники не найдены';tr.append(td);body.append(tr)}
  if(filtered.length>200){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=3;td.textContent='Первые 200 из '+filtered.length+'. Уточните поиск.';tr.append(td);body.append(tr)}
 }
 function editEmployee(p){
- if(!adminOpen)return;cancelImport();editingEmail=p?.email||null;assigningSeat=false;$('adminEdit').hidden=false;$('adminEditTitle').textContent=p?'Редактирование сотрудника':'Новый сотрудник';$('chooseSeatHint').textContent='';
+ if(!adminOpen||RG_MAGNET_CONFIG.enabled)return;cancelImport();editingEmail=p?.email||null;assigningSeat=false;$('adminEdit').hidden=false;$('adminEditTitle').textContent=p?'Редактирование сотрудника':'Новый сотрудник';$('chooseSeatHint').textContent='';
  for(const [,key] of EMPLOYEE_COLUMNS)adminInputs[key].value=key==='seat_code'?(p?.seat_code_source??p?.seat_code??''):key==='visibility'?(p?.visibility||'full'):(p?.[key]??'');
  adminMessage('');$('adminEdit').scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 function cancelEdit(){assigningSeat=false;editingEmail=null;$('adminEdit').hidden=true;$('chooseSeatHint').textContent=''}
 function saveEdit(){
- if(!adminOpen)return;
+ if(!adminOpen||RG_MAGNET_CONFIG.enabled)return;
  try{const raw={};for(const [,key] of EMPLOYEE_COLUMNS)raw[key]=adminInputs[key].value;
  const p=normalizeRecord(raw),base=employees.filter(x=>x.email!==editingEmail);
  if(base.some(x=>x.email===p.email))throw Error('Такой email уже существует.');
@@ -1038,18 +1068,18 @@ function showImport(result){
  if(result.errors.length>100){const li=document.createElement('li');li.textContent='И ещё '+(result.errors.length-100)+' ошибок';ul.append(li)}
 }
 async function importFile(file){
- if(!file||!adminOpen)return;cancelEdit();cancelImport();const token=importToken;adminMessage('Проверка XLSX…');
+ if(!file||!adminOpen||RG_MAGNET_CONFIG.enabled)return;cancelEdit();cancelImport();const token=importToken;adminMessage('Проверка XLSX…');
  try{if(file.size>XLSX_MAX)throw Error('Максимальный размер файла 15 МБ.');const data=await readEmployeeWorkbook(await file.arrayBuffer());if(token!==importToken)return;showImport(checkImport(data));adminMessage('')}catch(err){if(token!==importToken)return;adminMessage('Импорт не выполнен: '+err.message)}
 }
 function initAdmin(){
  for(const f of [2,3,4,5,6,7,8,9,10]){const option=document.createElement('option');option.value=String(f);option.textContent=f+' этаж';$('adminFloor').append(option)}
  for(const [title,key] of EMPLOYEE_COLUMNS){const field=document.createElement('label');field.className='admin-field';field.textContent=title;const input=document.createElement(key==='visibility'?'select':'input');if(key==='visibility'){for(const [v,label] of Object.entries(VISIBILITY)){const option=document.createElement('option');option.value=v;option.textContent=label;input.append(option)}}else input.type='text';input.name=key;if(key==='email')input.type='email';if(key==='email'||key==='full_name')input.required=true;if(key==='birthday')input.placeholder='ДД.ММ';if(key==='seat_code')input.placeholder='6.082 или 6.04.14';field.append(input);$('adminFields').append(field);adminInputs[key]=input}
- $('toggleAdmin').onclick=()=>{if(adminOpen)setAdmin(false);else{$('adminLogin').hidden=false;$('adminLogin').scrollIntoView({block:'center'});$('adminPassword').focus()}};$('closeAdmin').onclick=()=>setAdmin(false);$('adminLogin').addEventListener('submit',e=>{e.preventDefault();submitLogin()});$('loginCancel').onclick=cancelLogin;
+ $('toggleAdmin').onclick=()=>{if(adminOpen)setAdmin(false);else if(RG_MAGNET_CONFIG.enabled){if(rgState.isAdmin)setAdmin(true)}else{$('adminLogin').hidden=false;$('adminLogin').scrollIntoView({block:'center'});$('adminPassword').focus()}};$('closeAdmin').onclick=()=>setAdmin(false);$('adminLogin').addEventListener('submit',e=>{e.preventDefault();submitLogin()});$('loginCancel').onclick=cancelLogin;
  $('adminFloor').addEventListener('change',refreshAdmin);$('adminSearch').addEventListener('input',refreshAdmin);
  $('adminExport').onclick=exportEmployees;$('downloadTemplate').onclick=()=>{if(adminOpen)downloadWorkbook([],'employees_template.xlsx')};
  $('importEmployees').onclick=()=>$('xlsxFile').click();$('xlsxFile').addEventListener('change',e=>importFile(e.target.files[0]));
  $('cancelImport').onclick=()=>{cancelImport();adminMessage('Импорт отменён.')};
- $('applyImport').onclick=()=>{if(!adminOpen||!pendingImport||pendingImport.errors.length||!pendingImport.read)return;const r=pendingImport;try{setEmployees(r.records);cancelImport();adminMessage('Импорт выполнен. Добавлено: '+r.added+', обновлено: '+r.updated+'. Выгрузите XLSX для сохранения.')}catch(err){adminMessage(err.message)}};
+ $('applyImport').onclick=()=>{if(!adminOpen||RG_MAGNET_CONFIG.enabled||!pendingImport||pendingImport.errors.length||!pendingImport.read)return;const r=pendingImport;try{setEmployees(r.records);cancelImport();adminMessage('Импорт выполнен. Добавлено: '+r.added+', обновлено: '+r.updated+'. Выгрузите XLSX для сохранения.')}catch(err){adminMessage(err.message)}};
  $('addEmployee').onclick=()=>editEmployee(null);$('cancelEdit').onclick=cancelEdit;
  $('adminEdit').addEventListener('submit',e=>{e.preventDefault();saveEdit()});
  $('chooseSeat').onclick=()=>{if(!adminOpen)return;$('mapPanel').hidden=false;assigningSeat=true;$('chooseSeatHint').textContent='Выберите свободный стол на схеме ниже.';$('frame').scrollIntoView({block:'center',behavior:'smooth'})};
@@ -1465,6 +1495,7 @@ function renderLocalFloor(m){
   desk.setAttribute('data-seat-code',p.code);desk.setAttribute('tabindex','0');desk.setAttribute('role','button');desk.setAttribute('aria-label','Рабочее место '+p.code);el('title',{},desk).textContent=p.code;
   seats.push({desk,code,x:p.x,y:p.y,id:p.id,zoneId:p.roomId||groupZones.get(p.groupId)||null});
  }
+ renderPrintStations(m);
 }
 function loadLocalFloor(m){
  m=validateFloorModel(JSON.parse(JSON.stringify(m)));
@@ -1533,12 +1564,13 @@ function setReportType(type){
  $('reportSeatFields').hidden=type!=='seat';$('reportStaffFields').hidden=type!=='staff';$('reportStatus').textContent='';
 }
 function openReport(){
+ if(RG_MAGNET_CONFIG.enabled&&!reportAdapter){message('Корпоративная очередь обращений пока не подключена.');return;}
  $('reportMode').textContent=reportModeText();$('reportStatus').textContent='';if(!$('reportDialog').open)$('reportDialog').showModal();setReportType(reportType);
 }
 function closeReport(){if(!reportBusy&&$('reportDialog').open)$('reportDialog').close()}
 function makeReportId(){return globalThis.crypto?.randomUUID?.()||('report-'+Date.now()+'-'+Math.random().toString(36).slice(2))}
 async function submitReport(){
- if(reportBusy)return false;
+ if(reportBusy||RG_MAGNET_CONFIG.enabled&&!reportAdapter)return false;
  const comment=reportText($(reportType==='seat'?'reportSeatComment':'reportStaffComment').value,2000);
  if(!comment){$('reportStatus').textContent='Добавьте комментарий.';$(reportType==='seat'?'reportSeatComment':'reportStaffComment').focus();return false}
  const payload={id:reportPendingId||makeReportId(),type:reportType,comment,contact:reportText($('reportContact').value,160),wrongCode:reportType==='seat'?reportText($('reportWrong').value,64):'',rightCode:reportType==='seat'?reportText($('reportRight').value,64):'',seatCode:reportType==='staff'?reportText($('reportStaffCode').value,64):''};
@@ -1619,7 +1651,7 @@ function toggleExpanded(force){
 $('full').onclick=()=>toggleExpanded();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reportDialog').open)toggleExpanded(false)});
 renderQuickPeople();
-const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else{profile=null;targetCode=null;selectedCode=null;cardOpen=false;$('employeeSearch').value='';render();updateQuickSelection()}}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else{$('employeeSearch').value='';render();updateQuickSelection()}
+const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(RG_MAGNET_CONFIG.enabled?[]:demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else{profile=null;targetCode=null;selectedCode=null;cardOpen=false;$('employeeSearch').value='';render();updateQuickSelection()}}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else{$('employeeSearch').value='';render();updateQuickSelection()}
 
 (function editorBoot(){
  const clone=o=>JSON.parse(JSON.stringify(o)), $e=id=>document.getElementById('ed-'+id);
@@ -2258,6 +2290,89 @@ const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED
  setInterval(()=>{if(!document.hidden&&enabled&&holidayFor(new Date())!==season)update()},60000);
  update()
 })();
+
+// RG Magnet integration. All endpoints are same-origin, authenticated server routes.
+function rgDemoRecords(){return demoEmployees.filter(p=>validMappedSeat(p.seat_code)).map(p=>({...p,employee_id:p.email}))}
+function rgUI(){
+ const active=rgState.mode==='live',stale=rgState.mode==='stale',demo=rgState.mode==='demo';
+ const notice=$('rgDataNotice');notice.hidden=active;
+ notice.textContent=demo?'Демонстрационный режим. На схеме отображаются тестовые сотрудники. Для отображения актуальных данных необходимо заполнить сведения о рабочих местах в 1С Магнит и подключить интеграцию.':stale?'Данные временно не обновляются. Отображается последняя успешно полученная информация.':rgState.mode==='loading'?'Загрузка кадровых данных…':'Кадровые данные недоступны. Рабочие места отображаются без сотрудников.';
+ $('rgConnectionState').textContent=rgState.busy?'Обновление…':active?'Подключено':stale?'Нет связи (данные сохранены в текущей вкладке)':!RG_MAGNET_CONFIG.enabled?'Не подключено':'Нет связи';
+ $('rgEndpoint').textContent=RG_MAGNET_CONFIG.base+'/employees';
+ for(const [id,key] of [['rgReceived','received'],['rgMapped','mapped'],['rgUnassigned','unassigned'],['rgErrors','errors']])$(id).textContent=rgState.stats?.[key]??'—';
+ $('rgLastSync').textContent='Последняя синхронизация: '+(rgState.last?new Date(rgState.last).toLocaleString('ru-RU'):'не выполнялась');
+ $('rgCheck').disabled=rgState.busy;$('rgRefresh').disabled=rgState.busy;
+ $('rgIntegrationMessage').textContent=rgState.error||(!RG_MAGNET_CONFIG.enabled?'Разработчику: настройте серверный API и включите RG_MAGNET_CONFIG.enabled.':'Кадровый реестр доступен только для чтения; изменения выполняются в 1С Магнит.');
+ $('toggleAdmin').hidden=RG_MAGNET_CONFIG.enabled?!rgState.isAdmin:new URLSearchParams(location.search).get('admin')!=='1'&&!adminOpen;
+ renderQuickPeople();
+}
+function rgClearIdentity(){
+ if(adminOpen)setAdmin(false);rgState.isAdmin=false;rgState.csrf='';rgState.userId='';rgState.history=[];rgState.hasSnapshot=false;rgState.last=null;rgState.stats=null;rgState.mode='unavailable';setEmployees([]);
+}
+async function rgRequest(path,method='GET'){
+ const u=new URL(RG_MAGNET_CONFIG.base+path,location.origin);if(u.origin!==location.origin||!/^https?:$/.test(location.protocol))throw Error('API должен быть размещён на том же корпоративном сервере.');
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+ try{const response=await fetch(u,{method,credentials:'same-origin',cache:'no-store',redirect:'error',signal:controller.signal,headers:{Accept:'application/json',...(method==='POST'?{'Content-Type':'application/json','X-CSRF-Token':rgState.csrf}:{})},...(method==='POST'?{body:'{}'}:{})});
+ if(!response.ok){const e=Error('HTTP '+response.status);e.status=response.status;throw e}
+ return await response.json()}finally{clearTimeout(timer)}
+}
+function rgNormalize(payload){
+ if(!payload||!Array.isArray(payload.employees)||typeof payload.updated_at!=='string'||!Number.isFinite(Date.parse(payload.updated_at)))throw Error('Некорректный формат ответа API.');
+ const ids=new Set(),emails=new Set(),counts=new Map(),rows=[];let errors=0,unassigned=0;
+ for(const p of payload.employees){
+  if(!p||typeof p.employee_id!=='string'||!p.employee_id.trim()||typeof p.is_active!=='boolean')throw Error('В API отсутствует идентификатор или статус сотрудника.');
+  if(!p.is_active||p.visibility==='hidden')continue;
+  const employee_id=p.employee_id.trim(),email=normalizeEmail(p.email),full_name=String(p.full_name??'').trim();
+  if(!full_name||!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||ids.has(employee_id)||emails.has(email))throw Error('Некорректная или повторная запись сотрудника.');
+  ids.add(employee_id);emails.add(email);
+  const visibility=visibilityValue(p.visibility),raw=String(p.seat_code??'').trim();let seat_code=visibility==='full'?normalizeCode(raw):'',location_floor=null;
+  if(visibility==='floor'&&p.location_floor!==null&&p.location_floor!==undefined){const f=Number(p.location_floor);if(Number.isInteger(f)&&allFloors.includes(f))location_floor=f}
+  if(visibility==='full'&&raw&&(!seat_code||!validMappedSeat(seat_code))){seat_code='';errors++}else if(visibility==='full'&&!raw)unassigned++;
+  if(seat_code)counts.set(seat_code,(counts.get(seat_code)||0)+1);
+  rows.push({employee_id,email,full_name,seat_code,location_floor,visibility,position:String(p.position??''),department:String(p.department??''),directorate:String(p.directorate??''),phone:String(p.phone??''),birthday:String(p.birthday??'')});
+ }
+ for(const p of rows)if(p.seat_code&&counts.get(p.seat_code)>1){p.seat_code='';errors++}
+ return {rows,stats:{received:rows.length,mapped:rows.filter(p=>p.seat_code).length,unassigned,errors},updated_at:payload.updated_at}
+}
+async function rgRefresh(manual=false){
+ if(rgState.busy)return false;
+ if(!RG_MAGNET_CONFIG.enabled){rgState.error='Интеграция ещё не настроена на сервере.';rgUI();return false}
+ if(!$('ed-bar').hidden){rgState.error='Завершите редактирование планировки перед обновлением.';rgUI();return false}
+ rgState.busy=true;rgState.error='';rgUI();let confirmed=false;
+ try{
+  const session=await rgRequest('/session');
+  if(!session||typeof session.user_id!=='string'||!session.user_id.trim()||typeof session.is_admin!=='boolean')throw Error('Некорректный ответ проверки доступа.');
+  if(session.user_id!==rgState.userId||session.is_admin!==rgState.isAdmin){
+   rgClearIdentity();rgState.userId=session.user_id;try{const h=JSON.parse(sessionStorage.getItem(rgHistoryKey())||'[]');if(Array.isArray(h))rgState.history=h.filter(x=>typeof x==='string').slice(0,10)}catch{}
+  }
+  rgState.isAdmin=session.is_admin;rgState.csrf=typeof session.csrf_token==='string'?session.csrf_token:'';confirmed=true;
+  if(manual&&(!rgState.isAdmin||!rgState.csrf))throw Error('Ручное обновление требует прав администратора и CSRF-токен.');
+  const result=rgNormalize(await rgRequest(manual?'/refresh':'/employees',manual?'POST':'GET'));
+  const selected=profile?.employee_id;rgState.mode='live';setEmployees(result.rows);rgState.hasSnapshot=true;rgState.stats=result.stats;rgState.last=result.updated_at;
+  rgState.history=rgState.history.filter(id=>result.rows.some(p=>p.employee_id===id));rgSaveHistory();
+  if(selected){const p=employees.find(x=>x.employee_id===selected);if(p)selectEmployee(p)}
+  return true;
+ }catch(e){
+  if(!confirmed||e.status===401||e.status===403){rgClearIdentity();if(confirmed&&e.status===403)rgState.error='Доступ запрещён сервером.'}
+  else if(rgState.hasSnapshot)rgState.mode='stale';
+  else if(RG_MAGNET_CONFIG.demoFallback){rgState.mode='demo';setEmployees(rgDemoRecords())}
+  else{rgState.mode='unavailable';setEmployees([])}
+  rgState.error=rgState.error||('Не удалось получить данные: '+(e.status?'HTTP '+e.status:e.name==='AbortError'?'превышено время ожидания':e.message||'ошибка подключения'));
+  return false;
+ }finally{rgState.busy=false;rgUI()}
+}
+$('rgIntegrationOpen').onclick=()=>{if(!adminOpen)return;const p=$('rgIntegrationPanel');p.hidden=!p.hidden;$('rgIntegrationOpen').setAttribute('aria-expanded',String(!p.hidden));rgUI()};
+$('rgClearRecent').onclick=()=>{rgState.history=[];rgSaveHistory();renderQuickPeople()};
+$('rgCheck').onclick=()=>{if(adminOpen)rgRefresh(false)};
+$('rgRefresh').onclick=()=>{if(adminOpen)rgRefresh(true)};
+if(RG_MAGNET_CONFIG.enabled){
+ for(const id of ['importEmployees','addEmployee','applyImport','employeeFile','adminExport','exportEmployees','loadFloorModel','unloadFloorModel','saveLocalHtml'])$(id).disabled=true;
+ $('adminPanel').querySelector('.admin-note').textContent='Рабочий режим: кадровые данные поступают из 1С Магнит. Изменения реестра выполняются на стороне кадровой системы. Локальные изменения планировки не являются серверным сохранением.';
+ // Do not expose demo login or real data through the local file import.
+ $('adminLogin').hidden=true;
+ rgRefresh(false);setInterval(()=>rgRefresh(false),RG_MAGNET_CONFIG.intervalMs);
+}
+rgUI();
 </script>
 </body>
 </html>
