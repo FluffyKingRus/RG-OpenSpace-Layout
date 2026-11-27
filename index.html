@@ -158,6 +158,7 @@ body.map-expanded{overflow:hidden}
 .report-inbox{display:grid;gap:8px;padding:12px;border:1px solid #dce4ee;border-radius:10px;background:#f9fbfd}.report-inbox-tools label{font-size:12px;color:#52677f}.reports-list{display:grid;gap:8px}.report-item{display:grid;gap:7px;padding:10px;border:1px solid #e1e7ef;border-radius:8px;background:#fff;font-size:12px;overflow-wrap:anywhere}.report-item-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#173357}.report-item p{margin:0;white-space:pre-wrap;line-height:1.45}.report-item .admin-note{margin:0}.report-item .admin-actions{justify-content:flex-end}
 @media(max-width:480px){.report-dialog{padding:12px}.report-tabs .control{font-size:11px}.report-field-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}.report-field-grid input{padding:9px 6px;font-size:16px}.report-field-grid label{font-size:11px}}
 .report-contact{margin-top:12px}.profile-preview{min-width:0}.quick-people .quick-person{flex-shrink:0}
+.editor-bar{border:1px solid #d5e0eb;border-radius:12px;padding:10px;margin-bottom:8px;background:#f6f9fc;display:grid;gap:8px}.editor-bar[hidden],.editor-bar [hidden]{display:none!important}.editor-head,.editor-tools,.editor-props,.editor-props>div{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.editor-head{font-size:14px}.editor-head span{font-size:12px;color:#52677d}.editor-spacer{flex:1}.editor-tools .control[aria-pressed=true]{background:#e2efff;border-color:#2073d4;color:#0757bd}.editor-props{border-top:1px solid #d5e0eb;padding-top:7px;font-size:12px}.editor-props input{border:1px solid #b8c8d9;border-radius:5px;padding:5px;max-width:125px}.editor-props input[type=number]{width:65px}.editor-active{cursor:crosshair;touch-action:none}.editor-active [data-editor-id]{pointer-events:all!important;cursor:move}.editor-active .editor-picked{filter:drop-shadow(0 0 1.6px #006bff) drop-shadow(0 0 1px #006bff)}.editor-active .editor-picked .desk,.editor-active .editor-picked .room-table,.editor-active .editor-picked .room-chair{stroke:#0670f4!important;stroke-width:1.2!important}.editor-active .editor-room-picked>.local-room-floor{stroke:#0670f4;stroke-width:2}.editor-active .zone-highlight{pointer-events:none}.editor-tools label{font-size:12px;white-space:nowrap} 
 </style>
 </head>
 <body>
@@ -201,13 +202,18 @@ body.map-expanded{overflow:hidden}
 <details class="secretary-editor" id="secretaryEditor"><summary>Номера мест секретарей</summary>
 <p class="admin-note">Выберите объект, чтобы указать код рабочего места секретаря или приёмной. Изменения действуют в текущей вкладке; постоянное сохранение — в будущем редакторе планировки.</p>
 <div class="admin-actions"><select id="secretarySelect" class="admin-select" aria-label="Место секретаря"></select><input id="secretaryCode" class="admin-search" type="text" placeholder="Код рабочего места" aria-label="Код места секретаря"><button class="control" id="secretarySave" type="button">Сохранить код</button></div></details>
-<div class="admin-actions"><button class="control" type="button" disabled>Редактор планировок · Скоро</button><button class="control" type="button" disabled>Резервные копии · Скоро</button></div>
+<div class="admin-actions"><button class="control admin-primary" id="ed-open" type="button">Редактировать объекты</button><button class="control" type="button" disabled>Редактировать стены · Скоро</button><button class="control" type="button" disabled>Резервные копии · Скоро</button></div>
 </section>
 <section class="panel" id="mapPanel" aria-label="Схема этажа">
 <h1 class="module-title">Схема размещения</h1>
 <div class="layout">
 <nav class="floors" id="floors" aria-label="Выбор этажа"></nav>
 <div class="map-column">
+<div id="ed-bar" class="editor-bar" hidden>
+<div class="editor-head"><strong>Редактирование объектов</strong><span id="ed-floor"></span><span class="editor-spacer"></span><button class="control" id="ed-cancel">Отмена</button><button class="control admin-primary" id="ed-save">Сохранить</button></div>
+<div class="editor-tools"><button class="control" id="ed-select">Выбор</button><button class="control" id="ed-pan">Карта</button><button class="control" id="ed-add">＋ Добавить</button><select class="admin-select" id="ed-catalog" aria-label="Тип объекта" hidden></select><button class="control" id="ed-room">Кабинет</button><button class="control" id="ed-copy">Копия</button><button class="control" id="ed-rotate">↻ 90°</button><button class="control" id="ed-mirror">Отразить</button><button class="control" id="ed-group">Группа</button><button class="control" id="ed-ungroup">Разгруппировать</button><button class="control" id="ed-alignX">Выровнять X</button><button class="control" id="ed-alignY">Выровнять Y</button><button class="control" id="ed-remove">Удалить</button><button class="control" id="ed-undo">↶ Отменить</button><button class="control" id="ed-redo">↷ Повторить</button><label><input id="ed-snap" type="checkbox" checked> Сетка</label></div>
+<div id="ed-props" class="editor-props" hidden><div id="ed-numberRow"><label>Номер <input id="ed-number" maxlength="24"></label><button class="control" id="ed-numberSave">Применить</button></div><div id="ed-nameRow"><label>Название <input id="ed-name" maxlength="100"></label><button class="control" id="ed-nameSave">Применить</button></div><span id="ed-employee"></span><div id="ed-geo"><label>X <input id="ed-x" type="number" step="0.1"></label><label>Y <input id="ed-y" type="number" step="0.1"></label><label>Угол <input id="ed-angle" type="number" step="0.1"></label><label>Ширина <input id="ed-w" type="number" step="0.1"></label><label>Глубина <input id="ed-h" type="number" step="0.1"></label><button class="control" id="ed-geoSave">Применить</button></div></div>
+<div id="ed-status" role="status" class="admin-note"></div></div>
 <div class="map-stage" id="mapStage" data-side="right">
 <div class="frame" id="frame">
 <svg id="map" class="map" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 500" role="img" aria-label="Условная схема офиса">
@@ -235,7 +241,7 @@ body.map-expanded{overflow:hidden}
 </aside>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.1.1 · сборка №30</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.2.0 · сборка №31 (тест)</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
@@ -1482,6 +1488,137 @@ $('full').onclick=()=>toggleExpanded();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reportDialog').open)toggleExpanded(false)});
 renderQuickPeople();
 const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED_LOCAL_MODEL){try{loadLocalFloor(EMBEDDED_LOCAL_MODEL);$('unloadFloorModel').hidden=true;$('loadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;setEmployees(demoEmployees.filter(p=>validMappedSeat(p.seat_code)));if(initialEmail)showEmployee(initialEmail);else if(employees.length)selectEmployee(employees[0]);else render()}catch(err){render();message(err.message)}}else if(initialEmail){render();showEmployee(initialEmail)}else selectEmployee(employees[0]);
+
+(function editorBoot(){
+ const clone=o=>JSON.parse(JSON.stringify(o)), $e=id=>document.getElementById('ed-'+id);
+ let open=false, ids=new Set(), roomId=null, mode='select', drag=null, space=false, start=null, undo=[], redo=[], activeFloor=null;
+ const model=()=>modelForFloor(floor);
+ const catalog={desk:'Рабочее место',corner:'Угловое рабочее место',block:'Блок на 4 места',table:'Стол переговорный',chair:'Стул',sofa:'Диван',cabinet:'Шкаф',drawer:'Тумба',plant:'Растение',printer:'Принтер',partition:'Перегородка'};
+ const size={table:[24,12],chair:[6,6],sofa:[22,8],cabinet:[18,6],drawer:[6,6],partition:[20,1.5]};
+ function entries(m=model()){
+  if(!m)return [];
+  return [...m.desks.map(o=>({id:o.id,o,k:'desk'})),...(m.secretaries||[]).map(o=>({id:o.id,o,k:'secretary'})),...(m.printStations||[]).map(o=>({id:o.id,o,k:'printer'})),...(m.editorFurniture||[]).map(o=>({id:o.id,o,k:o.kind})),...m.plants.map((p,i)=>({id:'plant:'+i,k:'plant',o:p}))];
+ }
+ function node(e){return [...drawing.querySelectorAll('[data-editor-id]')].find(n=>n.getAttribute('data-editor-id')===e.id)}
+ function pos(e){return Array.isArray(e.o)?{x:e.o[0],y:e.o[1]}:e.o}
+ function setPos(e,x,y){if(Array.isArray(e.o)){e.o[0]=x;e.o[1]=y}else{e.o.x=x;e.o.y=y}}
+ function selection(){return entries().filter(e=>ids.has(e.id))}
+ function snapshot(){return {floor,model:clone(model()),employees:clone(employees),ids:[...ids],roomId}}
+ function clearHistory(){undo=[];redo=[];ids.clear();roomId=null;activeFloor=floor}
+ function restore(v){localModels.set(v.floor,clone(v.model));if(localTemplate?.floor===v.floor)localTemplate=localModels.get(v.floor);employees=clone(v.employees);ids=new Set(v.ids);roomId=v.roomId;selectedCode=null;targetCode=null;profile=null;cardOpen=false;redraw()}
+ function redraw(){renderedFloor=null;render(false);renderQuickPeople();clearResults();if(adminOpen)refreshAdmin();paint()}
+ function status(t){$e('status').textContent=t||''}
+ function inOutline(x,y,m=model()){
+  let hit=false;for(let i=0,j=m.outline.length-1;i<m.outline.length;j=i++){const a=m.outline[i],b=m.outline[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])hit=!hit}return hit;
+ }
+ function check(m){
+  validateFloorModel(m);
+  const a=m.editorFurniture||[];if(a.length>600)throw Error('Слишком много объектов.');
+  const used=new Set([...m.desks,...(m.secretaries||[]),...(m.printStations||[]),...m.rooms].map(o=>o.id));
+  for(const o of a){if(!size[o.kind]||used.has(o.id)||![o.x,o.y,o.angle,o.w,o.h].every(Number.isFinite)||o.x<0||o.x>1080||o.y<0||o.y>500||o.w<1||o.w>100||o.h<1||o.h>100)throw Error('Некорректный объект мебели.');used.add(o.id)}
+ }
+ function act(fn){if(!open||!adminOpen||!model())return;const old=snapshot();try{fn();check(model());undo.push(old);if(undo.length>60)undo.shift();redo=[];redraw();status('Изменения в текущей вкладке.')}catch(err){restore(old);status(err.message)}}
+ function history(back){const from=back?undo:redo,to=back?redo:undo;if(!from.length)return;to.push(snapshot());restore(from.pop());status(back?'Действие отменено.':'Действие повторено.')}
+ const originalRenderFloor=renderLocalFloor;
+ renderLocalFloor=function(m){
+  originalRenderFloor(m);
+  for(const n of drawing.querySelectorAll('[data-seat-id],[data-secretary-id],[data-print-id]'))n.setAttribute('data-editor-id',n.dataset.seatId||n.dataset.secretaryId||n.dataset.printId);
+  const plants=[...drawing.children].filter(n=>n.tagName.toLowerCase()==='g'&&n.querySelector(':scope > .plant-pot'));
+  plants.forEach((n,i)=>{if(i<m.plants.length)n.setAttribute('data-editor-id','plant:'+i)});
+  for(const o of m.editorFurniture||[]){
+   const g=el('g',{'data-editor-id':o.id,transform:'translate('+o.x+' '+o.y+') rotate('+o.angle+')'});
+   rect(-o.w/2,-o.h/2,o.w,o.h,o.kind==='chair'?'room-chair':o.kind==='table'?'room-table':'desk',g);
+   if(o.kind==='sofa'){rect(-o.w/2+1,-o.h/2+1,o.w-2,2,'room-chair',g);rect(-o.w/2+1,0,o.w/2-1,o.h/2-1,'room-chair',g);rect(0,0,o.w/2-1,o.h/2-1,'room-chair',g)}
+   if(o.kind==='cabinet'||o.kind==='drawer')el('line',{x1:0,x2:0,y1:-o.h/2,y2:o.h/2,stroke:'#8092a1','stroke-width':.5},g);
+   if(o.kind==='table')for(const x of [-o.w/3,0,o.w/3])for(const y of [-o.h/2-3,o.h/2+3])rect(x-2,y-2,4,4,'room-chair',g);
+   el('title',{},g).textContent=catalog[o.kind];
+  }
+ };
+ const baseRender=render;
+ render=function(reset=true){baseRender(reset);if(open){if(activeFloor!==floor)clearHistory();paint()}};
+ function paint(){
+  if(!open)return;
+  svg.classList.add('editor-active');
+  for(const n of drawing.querySelectorAll('[data-editor-id]'))n.classList.toggle('editor-picked',ids.has(n.getAttribute('data-editor-id')));
+  for(const n of drawing.querySelectorAll('[data-room-id]'))n.classList.toggle('editor-room-picked',n.dataset.roomId===roomId);
+  const sel=selection(),r=model()?.rooms.find(o=>o.id===roomId),e=sel.length===1?sel[0]:null,p=e&&pos(e);
+  $e('floor').textContent=floor+' этаж · '+(r?'Помещение':`Выбрано: ${sel.length}`);
+  $e('props').hidden=!e&&!r;
+  $e('numberRow').hidden=!(r||e&&(e.k==='desk'||e.k==='secretary'));
+  $e('number').value=r?(r.roomCode||r.number||''):(e?.o.code||'');
+  $e('nameRow').hidden=!r;$e('name').value=r?.name||'';
+  $e('geo').hidden=!e;
+  for(const k of ['x','y','angle','w','h']){$e(k).value=p&&Number.isFinite(p[k])?Math.round(p[k]*100)/100:'';$e(k).disabled=!p||!Number.isFinite(p[k])}
+  $e('employee').textContent=e?.o.code?(findPerson(e.o.code)?.full_name||'Свободное место'):'';
+  for(const k of ['copy','rotate','remove','group','ungroup','alignX','alignY','mirror'])$e(k).disabled=!sel.length;
+  $e('undo').disabled=!undo.length;$e('redo').disabled=!redo.length;
+  for(const k of ['select','pan','room','add'])$e(k).setAttribute('aria-pressed',String(mode===k));
+  $e('catalog').hidden=mode!=='add';
+ }
+ function setMode(m){mode=m;roomId=null;if(m!=='select')ids.clear();paint();status(m==='add'?'Выберите тип и нажмите на схему.':m==='room'?'Нажмите на помещение для изменения номера и названия.':'')}
+ function begin(){if(!adminOpen||!model()){adminMessage('Для этого этажа нет редактируемой модели.');return}if(open)return;
+  start={models:new Map([...localModels].map(([f,m])=>[f,clone(m)])),employees:clone(employees),templateFloor:localTemplate?.floor};open=true;clearHistory();mode='select';cancelEdit();selectedCode=null;targetCode=null;profile=null;cardOpen=false;closeSeatNote();$('adminPanel').hidden=true;$('mapPanel').hidden=false;$e('bar').hidden=false;redraw();$('mapPanel').scrollIntoView({block:'start'});invalidateViewport();status('Выделяйте объекты рамкой или Ctrl + ЛКМ.');
+ }
+ function finish(save){if(!open)return;if(!save&& !confirm('Отменить все изменения этой сессии редактора?'))return;
+  open=false;drag=null;space=false;ids.clear();roomId=null;svg.classList.remove('editor-active');$e('bar').hidden=true;
+  if(!save&&start){localModels=start.models;localTemplate=localModels.get(start.templateFloor)||null;employees=start.employees}
+  start=null;clearHistory();$('adminPanel').hidden=!adminOpen;redraw();invalidateViewport();if(adminOpen)adminMessage(save?'Планировка обновлена в текущей вкладке. После перезагрузки изменения исчезнут.':'Изменения редактора отменены.');
+ }
+ const baseAdmin=setAdmin;setAdmin=function(value){if(!value&&open){finish(true)}baseAdmin(value)};
+ function idNew(){return 'ed-'+(globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+'-'+Math.random().toString(36).slice(2))}
+ function freeCode(m){for(let i=1;i<=999;i++){const c=normalizeCode(floor+'.'+i);if(!m.desks.some(o=>o.code===c)&&!(m.secretaries||[]).some(o=>o.code===c)&&!m.rooms.some(o=>o.number===c||o.roomCode===c)&&!findPerson(c))return c}throw Error('Нет свободных номеров.')}
+ function addAt(x,y){act(()=>{const m=model(),k=$e('catalog').value;ids.clear();roomId=null;
+  function desk(xx,yy,chair=1){if(!inOutline(xx,yy))throw Error('Объект вне контура здания.');const o={id:idNew(),x:xx,y:yy,w:16,h:8,angle:0,kind:'desk',chair,code:freeCode(m)};m.desks.push(o);ids.add(o.id)}
+  if(k==='desk')desk(x,y);
+  else if(k==='block'){for(const dx of [-8,8])for(const dy of [-4,4])desk(x+dx,y+dy,dy>0?1:-1)}
+  else {if(!inOutline(x,y))throw Error('Объект вне контура здания.');
+   if(k==='corner'){const o={id:idNew(),x,y,angle:0,size:16,shape:'corner',code:freeCode(m)};(m.secretaries??=[]).push(o);ids.add(o.id)}
+   else if(k==='plant'){m.plants.push([x,y]);ids.add('plant:'+(m.plants.length-1))}
+   else if(k==='printer'){const o={id:idNew(),x,y};(m.printStations??=[]).push(o);ids.add(o.id)}
+   else {const [w,h]=size[k],o={id:idNew(),kind:k,x,y,w,h,angle:0};(m.editorFurniture??=[]).push(o);ids.add(o.id)}
+  }mode='select';
+ })}
+ function toggle(id,multi){const a=entries().find(e=>e.id===id);if(!a)return;roomId=null;const group=a.o.editorGroup?entries().filter(e=>e.o.editorGroup===a.o.editorGroup).map(e=>e.id):[id];if(!multi)ids.clear();const remove=multi&&group.every(x=>ids.has(x));for(const x of group)remove?ids.delete(x):ids.add(x)}
+ function bounds(sel){const p=sel.map(pos);return {x:(Math.min(...p.map(a=>a.x))+Math.max(...p.map(a=>a.x)))/2,y:(Math.min(...p.map(a=>a.y))+Math.max(...p.map(a=>a.y)))/2}}
+ function moveSel(dx,dy){const sel=selection();for(const e of sel){const p=pos(e),x=p.x+dx,y=p.y+dy;if(!inOutline(x,y))throw Error('Объект вне контура здания.');setPos(e,x,y)}}
+ function rotateSel(){act(()=>{const sel=selection(),c=bounds(sel);for(const e of sel){const p=pos(e),x=c.x-(p.y-c.y),y=c.y+(p.x-c.x);if(!inOutline(x,y))throw Error('Объект вне контура здания.');setPos(e,x,y);if(Number.isFinite(p.angle))p.angle=(p.angle+90)%360}})}
+ function copySel(){act(()=>{const m=model(),sel=selection(),newIds=new Set(),groups=new Map();for(const e of sel){const p=pos(e);if(!inOutline(p.x+8,p.y+8))throw Error('Копия вне контура здания.');if(e.k==='plant'){m.plants.push([p.x+8,p.y+8]);newIds.add('plant:'+(m.plants.length-1));continue}const o=clone(e.o);o.id=idNew();o.x+=8;o.y+=8;if(o.editorGroup){if(!groups.has(o.editorGroup))groups.set(o.editorGroup,idNew());o.editorGroup=groups.get(o.editorGroup)}if(e.k==='desk'){o.kind='desk';delete o.roomId;delete o.groupId;o.code=freeCode(m);m.desks.push(o)}else if(e.k==='secretary'){delete o.roomId;delete o.adjacentOffice;o.code=freeCode(m);(m.secretaries??=[]).push(o)}else if(e.k==='printer')(m.printStations??=[]).push(o);else(m.editorFurniture??=[]).push(o);newIds.add(o.id)}ids=newIds})}
+ function deleteSel(){const sel=selection();if(!sel.length)return;if(sel.some(e=>e.o.code&&findPerson(e.o.code))){status('Сначала освободите занятые места в реестре сотрудников.');return}if(!confirm('Удалить выбранные объекты ('+sel.length+')?'))return;act(()=>{const m=model();for(const k of ['desks','secretaries','printStations','editorFurniture'])if(m[k])m[k]=m[k].filter(o=>!ids.has(o.id));m.plants=m.plants.filter((p,i)=>!ids.has('plant:'+i));for(const z of m.zones||[])z.groups=z.groups.filter(g=>m.desks.some(d=>d.groupId===g));if(m.zones)m.zones=m.zones.filter(z=>z.groups.length);ids.clear()})}
+ function rename(old,next){if(old&&old!==next){if(findPerson(next)&&findPerson(next)!==findPerson(old))throw Error('Номер занят сотрудником.');for(const p of employees)if(p.seat_code===old){p.seat_code=next;p.seat_code_source=next}}}
+ function changeNumber(){act(()=>{const m=model(),r=m.rooms.find(o=>o.id===roomId),e=selection()[0],raw=$e('number').value.trim(),v=normalizeCode(raw);if(!v||seatFloor(v)!==floor)throw Error('Введите корректный номер текущего этажа.');const d=r?m.desks.find(o=>o.roomId===r.id):e?.o;const linked=r||(d?.roomId?m.rooms.find(o=>o.id===d.roomId):null);if(linked&&v.split('.').length!==3&&linked.number)throw Error('Номер кабинета должен иметь формат этаж.зона.номер.');if(m.desks.some(o=>o!==d&&o.code===v)||(m.secretaries||[]).some(o=>o!==d&&o.code===v)||m.rooms.some(o=>o!==linked&&(o.number===v||o.roomCode===v)))throw Error('Номер уже используется.');if(d){rename(d.code,v);d.code=v}if(linked){if(linked.number||d)linked.number=v;if(linked.roomCode||!linked.number)linked.roomCode=v}})}
+ function changeGeometry(){act(()=>{const e=selection()[0];if(!e)return;const p=pos(e),x=Number($e('x').value),y=Number($e('y').value);if(!inOutline(x,y))throw Error('Объект вне контура здания.');setPos(e,x,y);for(const k of ['angle','w','h'])if(Number.isFinite(p[k]))p[k]=Number($e(k).value)})}
+ function point(e){const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(drawing.getScreenCTM().inverse());return {x:p.x,y:p.y}}
+ function intercept(e){e.stopImmediatePropagation();if(e.cancelable)e.preventDefault()}
+ function boxOf(e){return node(e)?.getBoundingClientRect()}
+ function frameRect(a,b){let n=drawing.querySelector('#ed-selection-box');if(!n)n=el('rect',{id:'ed-selection-box',fill:'#2379e8','fill-opacity':.14,stroke:'#2379e8','stroke-width':1,'vector-effect':'non-scaling-stroke','pointer-events':'none'});for(const [k,v] of Object.entries({x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),width:Math.abs(a.x-b.x),height:Math.abs(a.y-b.y)}))n.setAttribute(k,v)}
+ svg.addEventListener('pointerdown',e=>{if(!open)return;intercept(e);if(drag||!model())return;const p=point(e),id=e.target.closest('[data-editor-id]')?.getAttribute('data-editor-id'),rid=e.target.closest('[data-room-id]')?.dataset.roomId;
+  if(e.button===1||space||mode==='pan'){drag={kind:'pan',id:e.pointerId,lastX:e.clientX,lastY:e.clientY}}
+  else if(e.button!==0)return;
+  else if(mode==='add'){addAt(p.x,p.y);return}
+  else if(mode==='room'){roomId=rid||null;ids.clear();paint();return}
+  else if(id){if(e.ctrlKey||e.metaKey){toggle(id,true);paint();return}if(!ids.has(id))toggle(id,false);roomId=null;paint();drag={kind:'move',id:e.pointerId,p,screenX:e.clientX,screenY:e.clientY,targets:selection().map(e=>({n:node(e),t:node(e)?.getAttribute('transform')||''}))}}
+  else {if(!e.ctrlKey&&!e.metaKey)ids.clear();roomId=null;paint();drag={kind:'box',id:e.pointerId,p,screenX:e.clientX,screenY:e.clientY,base:new Set(ids)}}
+  svg.setPointerCapture(e.pointerId);
+ },true);
+ svg.addEventListener('pointermove',e=>{if(!open)return;intercept(e);if(!drag||drag.id!==e.pointerId)return;const p=point(e);if(drag.kind==='pan'){panBy(e.clientX-drag.lastX,e.clientY-drag.lastY);drag.lastX=e.clientX;drag.lastY=e.clientY;queuePaint();return}
+  if(drag.kind==='box'){frameRect(drag.p,p);return}
+  const dx=p.x-drag.p.x,dy=p.y-drag.p.y;for(const t of drag.targets)if(t.n)t.n.setAttribute('transform','translate('+dx+' '+dy+') '+t.t);
+ },true);
+ function stopDrag(e,cancel){if(!open)return;intercept(e);if(!drag||drag.id!==e.pointerId)return;const d=drag;drag=null;drawing.querySelector('#ed-selection-box')?.remove();if(d.kind==='move')for(const t of d.targets)if(t.n)t.n.setAttribute('transform',t.t);if(cancel)return;
+  if(d.kind==='box'){const l=Math.min(d.screenX,e.clientX),r=Math.max(d.screenX,e.clientX),t=Math.min(d.screenY,e.clientY),b=Math.max(d.screenY,e.clientY);ids=d.base;if(r-l>3||b-t>3)for(const obj of entries()){const q=boxOf(obj);if(q&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b){ids.add(obj.id);if(obj.o.editorGroup)for(const member of entries())if(member.o.editorGroup===obj.o.editorGroup)ids.add(member.id)}}paint()}
+  if(d.kind==='move'&&Math.hypot(e.clientX-d.screenX,e.clientY-d.screenY)>3){const p=point(e);let dx=p.x-d.p.x,dy=p.y-d.p.y;if($e('snap').checked){dx=Math.round(dx/2)*2;dy=Math.round(dy/2)*2}act(()=>moveSel(dx,dy))}
+ }
+ svg.addEventListener('pointerup',e=>stopDrag(e,false),true);svg.addEventListener('pointercancel',e=>stopDrag(e,true),true);
+ for(const type of ['touchstart','touchmove','touchend','touchcancel'])svg.addEventListener(type,e=>{if(open)intercept(e)},{capture:true,passive:false});
+ document.addEventListener('keydown',e=>{if(!open||!adminOpen||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.target.isContentEditable)return;const k=e.key.toLowerCase(),ctrl=e.ctrlKey||e.metaKey;
+  if(k===' '){space=true;intercept(e);return}if(k==='escape'){intercept(e);ids.clear();roomId=null;setMode('select');return}
+  if(ctrl&&['a','d','g','z','y'].includes(k)){intercept(e);if(k==='a'){ids=new Set(entries().map(o=>o.id));roomId=null;paint()}if(k==='d')copySel();if(k==='g')$e(e.shiftKey?'ungroup':'group').click();if(k==='z')history(!e.shiftKey);if(k==='y')history(false);return}
+  if(k==='delete'){intercept(e);deleteSel()}if(['arrowup','arrowdown','arrowleft','arrowright'].includes(k)&&ids.size){intercept(e);const n=e.shiftKey?10:1;act(()=>moveSel(k==='arrowleft'?-n:k==='arrowright'?n:0,k==='arrowup'?-n:k==='arrowdown'?n:0))}
+ },true);document.addEventListener('keyup',e=>{if(e.key===' ')space=false});window.addEventListener('blur',()=>space=false);
+ for(const k of ['select','pan','room','add'])$e(k).onclick=()=>setMode(k);
+ for(const [k,fn] of Object.entries({open:begin,save:()=>finish(true),cancel:()=>finish(false),undo:()=>history(true),redo:()=>history(false),rotate:rotateSel,copy:copySel,remove:deleteSel,group:()=>act(()=>{const sel=selection();if(sel.some(e=>Array.isArray(e.o)))throw Error('Растения пока нельзя объединять в постоянную группу.');const group=idNew();for(const e of sel)e.o.editorGroup=group}),ungroup:()=>act(()=>{for(const e of selection())delete e.o.editorGroup}),alignX:()=>act(()=>{const sel=selection(),c=bounds(sel);for(const e of sel){const p=pos(e);if(!inOutline(c.x,p.y))throw Error('Объект вне контура.');setPos(e,c.x,p.y)}}),alignY:()=>act(()=>{const sel=selection(),c=bounds(sel);for(const e of sel){const p=pos(e);if(!inOutline(p.x,c.y))throw Error('Объект вне контура.');setPos(e,p.x,c.y)}}),mirror:()=>act(()=>{const sel=selection(),c=bounds(sel);for(const e of sel){const p=pos(e),x=2*c.x-p.x;if(!inOutline(x,p.y))throw Error('Объект вне контура.');setPos(e,x,p.y);if(Number.isFinite(p.angle))p.angle=-p.angle;if(e.k==='secretary')p.mirror=!p.mirror}}),numberSave:changeNumber,nameSave:()=>act(()=>{const r=model().rooms.find(o=>o.id===roomId);if(r){const n=$e('name').value.trim();if(!n||n.length>100)throw Error('Название от 1 до 100 символов.');r.name=n}}),geoSave:changeGeometry}))$e(k).onclick=fn;
+ for(const [k,t] of Object.entries(catalog)){const o=document.createElement('option');o.value=k;o.textContent=t;$e('catalog').append(o)}
+})();
 </script>
 </body>
 </html>
