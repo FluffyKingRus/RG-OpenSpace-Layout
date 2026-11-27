@@ -160,6 +160,7 @@ body.map-expanded{overflow:hidden}
 .report-contact{margin-top:12px}.profile-preview{min-width:0}.quick-people .quick-person{flex-shrink:0}
 .editor-bar{border:1px solid #d5e0eb;border-radius:12px;padding:10px;margin-bottom:8px;background:#f6f9fc;display:grid;gap:8px}.editor-bar[hidden],.editor-bar [hidden]{display:none!important}.editor-head,.editor-tools,.editor-props,.editor-props>div{display:flex;flex-wrap:wrap;align-items:center;gap:7px}.editor-head{font-size:14px}.editor-head span{font-size:12px;color:#52677d}.editor-spacer{flex:1}.editor-tools .control[aria-pressed=true]{background:#e2efff;border-color:#2073d4;color:#0757bd}.editor-props{border-top:1px solid #d5e0eb;padding-top:7px;font-size:12px}.editor-props input{border:1px solid #b8c8d9;border-radius:5px;padding:5px;max-width:125px}.editor-props input[type=number]{width:65px}.editor-active{cursor:crosshair;touch-action:none}.editor-active [data-editor-id]{pointer-events:all!important;cursor:move}.editor-active .editor-picked{filter:drop-shadow(0 0 1.6px #006bff) drop-shadow(0 0 1px #006bff)}.editor-active .editor-picked .desk,.editor-active .editor-picked .room-table,.editor-active .editor-picked .room-chair{stroke:#0670f4!important;stroke-width:1.2!important}.editor-active .editor-room-picked>.local-room-floor{stroke:#0670f4;stroke-width:2}.editor-active .zone-highlight{pointer-events:none}.editor-tools label{font-size:12px;white-space:nowrap} 
 .wall-edit-active [data-editor-id]{pointer-events:none!important;cursor:default}.wall-edit-active [data-wall-handle]{cursor:crosshair;pointer-events:all}.editor-props select{max-width:145px}.editor-tools input[type=number]{border:1px solid #b8c8d9;border-radius:4px;padding:4px}.wall-edit-active .editor-picked{filter:none}
+.office-people,.office-people *{pointer-events:none!important}.office-person{pointer-events:none}.office-people[visibility="hidden"]{display:none}.editor-active .office-people,.wall-edit-active .office-people{display:none!important}
 </style>
 </head>
 <body>
@@ -244,11 +245,12 @@ body.map-expanded{overflow:hidden}
 </aside>
 </div>
 <div class="toolbar"><div class="actions"><button class="control zoom-button" id="minus" aria-label="Уменьшить">−</button><span class="number" id="zoom">100%</span><button class="control zoom-button" id="plus" aria-label="Увеличить">+</button><button class="control" id="reset">⛶ Весь этаж</button><button class="control" id="focus" disabled title="Вернуть исходный этаж, крыло и выделение">↶ К исходному сотруднику</button><button class="control" id="full">Открыть во весь экран</button><button class="control" id="reportOpen" type="button">Сообщить об ошибке</button></div><div class="floor-meta"><strong class="floor-title" id="floorTitle"></strong><details class="floor-departments" id="floorDepartments"><summary>Подразделения</summary><div id="floorDepartmentList" class="floor-department-list"></div></details></div></div>
-<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.2.1 · сборка №32 (тест)</span></div>
+<div class="foot"><span>Два пальца — масштаб · один палец — перемещение</span><span>Условная схема · v0.2.1 · сборка №33 (тест)</span></div>
 </div>
 <aside class="side-controls" aria-label="Настройки карты">
 <button class="side-button" id="flip" aria-pressed="false" title="Повернуть карту на 180 градусов"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6l3 3M21 4v5h-5M21 12a9 9 0 0 1-15 6l-3-3M3 20v-5h5"/></svg><span>180°</span></button>
 <label class="codes-toggle"><input type="checkbox" id="showCodes" checked><span>Показывать<br>коды мест</span></label>
+<label class="codes-toggle" id="officeAnimationToggle" title="Условные декоративные персонажи, не реальные сотрудники"><input type="checkbox" id="officeAnimation" checked><span>Анимация<br>офиса</span></label>
 </aside>
 </div>
 </section>
@@ -1701,6 +1703,168 @@ const initialEmail=new URLSearchParams(location.search).get('email');if(EMBEDDED
  $e('dapply').onclick=()=>act(()=>{if(!wsel)return;const m=model(),at=Number($e('dat').value)/100,width=Number($e('dwidth').value),swing=Number($e('dswing').value),double=$e('ddouble').value==='1';if(at<0||at>1||width<2||width>30)throw Error('Некорректные параметры двери.');if(wsel.kind==='door'){const d=doors(m)[wsel.i];Object.assign(d,{at,width,swing,double});const seg=segment(m.walls[d.wall]);if(doors(m).some(v=>v!==d&&v.wall===d.wall&&Math.abs(v.at-at)*seg.len<(v.width+width)/2))throw Error('Двери пересекаются.')}else if(wsel.kind==='roomdoor'){const r=m.rooms.find(o=>o.id===wsel.i);r.doorAt=at;r.editorDoor={width,swing,double}}});
  try{let d=EMBEDDED_EDITOR_STATE;try{const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&(!d||saved.stamp>d.stamp))d=saved}catch{}if(d)loadDraft(d)}catch(err){message('Локальная планировка не загружена: '+err.message)}
 
+})();
+(function officeAnimationBoot(){
+ const toggle=$('officeAnimation'),panel=$('mapPanel'),pref='rg-office-animation-v1',reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ const outfits=[
+  {female:false,coffee:true,shirt:'#53718d',pants:'#35495b',hair:'#503e30',skin:'#e3b18d'},
+  {female:false,coffee:true,shirt:'#a5b8c2',pants:'#4d5965',hair:'#765237',skin:'#c58f6e'},
+  {female:false,coffee:false,shirt:'#e8edf0',pants:'#354958',hair:'#352e2b',skin:'#e6b994'},
+  {female:false,coffee:false,shirt:'#687f67',pants:'#414d47',hair:'#a2794b',skin:'#d3a27e'},
+  {female:true,coffee:true,shirt:'#ba8590',pants:'#5b4b5a',hair:'#684535',skin:'#e7ba97'},
+  {female:true,coffee:true,shirt:'#b9a17c',pants:'#625b52',hair:'#3b302b',skin:'#c99070'},
+  {female:true,coffee:false,shirt:'#7d9bb4',pants:'#344d69',hair:'#ac784b',skin:'#edc4a4'},
+  {female:true,coffee:false,shirt:'#947da8',pants:'#574962',hair:'#664335',skin:'#d9a586'}
+ ];
+ let layer=null,people=[],frame=0,pending=0,last=0,clock=0,failedModel=null,failedFloor=null;
+ try{const v=localStorage.getItem(pref);toggle.checked=v===null?!reduced.matches:v==='1'}catch{toggle.checked=!reduced.matches}
+ function editing(){return svg.classList.contains('editor-active')||svg.classList.contains('wall-edit-active')||!$('ed-bar').hidden}
+ function allowed(){return toggle.checked&&!document.hidden&&!panel.hidden&&!editing()&&active(floor)&&svg.style.visibility!=='hidden'&&!!modelForFloor(floor)}
+ function stop(){if(frame)cancelAnimationFrame(frame);frame=0;last=0;if(layer)layer.setAttribute('visibility','hidden')}
+ function queue(){if(pending)return;pending=requestAnimationFrame(()=>{pending=0;sync()})}
+ function sync(){
+  toggle.disabled=editing()||!active(floor)||!modelForFloor(floor);
+  if(!allowed()){stop();return}
+  if(!layer||layer.parentNode!==drawing){
+   stop();people=[];layer=null;
+   const m=modelForFloor(floor);if(failedModel===m&&failedFloor===floor)return;
+   try{build(m)}catch(err){failedModel=m;failedFloor=floor;console.warn('Office animation unavailable:',err);return}
+  }
+  if(!people.length)return;
+  layer.setAttribute('visibility','visible');if(!frame){last=0;frame=requestAnimationFrame(tick)}
+ }
+ function tick(t){
+  frame=0;if(!allowed()||!layer||layer.parentNode!==drawing){stop();queue();return}
+  if(!last){last=t;frame=requestAnimationFrame(tick);return}
+  if(t-last<32){frame=requestAnimationFrame(tick);return}
+  clock+=Math.min(.1,(t-last)/1000);last=t;
+  for(const p of people)pose(p,clock);
+  frame=requestAnimationFrame(tick);
+ }
+ function shape(tag,attrs,parent){return el(tag,attrs,parent)}
+ function character(style,index,parent){
+  const g=shape('g',{class:'office-person','data-person-id':index+1,'data-accessory':style.coffee?'coffee':'papers','data-character':style.female?'female':'male'},parent);
+  shape('ellipse',{cx:-.1,cy:.4,rx:3.4,ry:2.8,fill:'#26394a',opacity:.12},g);
+  const feet=[];
+  for(const side of [-1,1])feet.push(shape('ellipse',{cx:-2.3,cy:side*1.05,rx:1.55,ry:.72,fill:style.pants,stroke:'#35404d','stroke-width':.18},g));
+  if(style.female)shape('path',{d:'M-2.2 -1.65 Q-1 -2.35 1.15 -1.55 L1.15 1.55 Q-1 2.35 -2.2 1.65Z',fill:style.shirt,stroke:'#54616d','stroke-width':.18},g);
+  else shape('rect',{x:-2.15,y:-1.85,width:3.55,height:3.7,rx:1.15,fill:style.shirt,stroke:'#54616d','stroke-width':.18},g);
+  const arms=[];
+  for(const side of [-1,1]){
+   const arm=shape('g',{},g);arms.push(arm);
+   shape('path',{d:`M.15 ${side*1.45} Q-.05 ${side*2.05} 1.1 ${side*2.2}`,fill:'none',stroke:style.shirt,'stroke-width':.88,'stroke-linecap':'round'},arm);
+   shape('circle',{cx:1.25,cy:side*2.2,r:.43,fill:style.skin},arm)
+  }
+  if(style.female){shape('ellipse',{cx:.75,cy:0,rx:2,ry:1.55,fill:style.hair},g);if(index%2===0)shape('ellipse',{cx:-1.12,cy:.65,rx:1.15,ry:.9,fill:style.hair},g);else shape('circle',{cx:-.85,cy:0,r:.83,fill:style.hair},g)}
+  shape('circle',{cx:1.35,cy:0,r:1.3,fill:style.skin,stroke:'#80634e','stroke-width':.16},g);
+  shape('path',{d:'M1.5 -1.3 Q-.45 -1.55 .02 0 Q.03 1.35 1.5 1.3 L.96 .66 L.96 -.66Z',fill:style.hair},g);
+  const carry=shape('g',{transform:'translate(1.7 2.25)'},g);
+  if(style.coffee){
+   shape('circle',{r:.89,fill:'#fff8eb',stroke:'#9d8061','stroke-width':.25},carry);
+   shape('circle',{r:.55,fill:'#946442'},carry);shape('path',{d:'M-.5 -.18 Q0 -.5 .43 -.15',stroke:'#d7b18b','stroke-width':.15,fill:'none'},carry)
+  }else{
+   shape('rect',{x:-1.06,y:-.74,width:2.15,height:1.55,rx:.12,fill:'#d6e0e6',stroke:'#8193a3','stroke-width':.18,transform:'rotate(-10)'},carry);
+   shape('rect',{x:-.86,y:-.72,width:2.02,height:1.45,rx:.1,fill:'#fff',stroke:'#a1b0bd','stroke-width':.18},carry);
+   for(const y of [-.35,.03,.38])shape('line',{x1:-.5,x2:.68,y1:y,y2:y,stroke:'#9eafbf','stroke-width':.14},carry)
+  }
+  return {g,feet,arms};
+ }
+ // Navigation is rasterized once per rebuilt floor. Animation never searches for a route.
+ function navigation(m){
+  const step=3,w=Math.ceil(1080/step),h=Math.ceil(500/step),N=w*h,blocked=new Uint8Array(N),zone=new Uint8Array(N),component=new Int32Array(N);
+  const X=i=>(i%w+.5)*step,Y=i=>(Math.floor(i/w)+.5)*step,cell=(x,y)=>Math.max(0,Math.min(h-1,Math.floor(y/step)))*w+Math.max(0,Math.min(w-1,Math.floor(x/step)));
+  function inside(x,y,poly){let v=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])v=!v}return v}
+  function region(x1,y1,x2,y2,fn){const left=Math.max(0,Math.floor(x1/step)),right=Math.min(w-1,Math.floor(x2/step)),top=Math.max(0,Math.floor(y1/step)),bottom=Math.min(h-1,Math.floor(y2/step));for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){const i=y*w+x;fn(i,X(i),Y(i))}}
+  function disk(x,y,r){region(x-r,y-r,x+r,y+r,(i,a,b)=>{if((a-x)**2+(b-y)**2<=r*r)blocked[i]=1})}
+  function edge(a,b,r){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;region(Math.min(a[0],b[0])-r,Math.min(a[1],b[1])-r,Math.max(a[0],b[0])+r,Math.max(a[1],b[1])+r,(i,x,y)=>{const t=l?Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/l)):0;if((x-a[0]-t*dx)**2+(y-a[1]-t*dy)**2<=r*r)blocked[i]=1})}
+  for(let i=0;i<N;i++)if(!inside(X(i),Y(i),m.outline))blocked[i]=1;
+  for(let i=0;i<m.outline.length;i++)edge(m.outline[i],m.outline[(i+1)%m.outline.length],5);
+  for(const room of m.rooms){
+   const poly=roomOutline(room),kind=room.type==='food'?2:room.type==='meeting'?3:1,protect=['stairs','lifts','wc'].includes(room.type);
+   region(room.x,room.y,room.x+room.w,room.y+room.h,(i,x,y)=>{if(inside(x,y,poly)){zone[i]=kind;if(protect)blocked[i]=1}})
+  }
+  // The actual SVG wall geometry includes door cutouts, diagonal walls and the latest editor changes.
+  const transform=drawing.getCTM()?.inverse();if(!transform)throw Error('Map geometry is hidden');
+  for(const n of drawing.querySelectorAll('.local-wall,.group-wall')){
+   try{const mat=transform.multiply(n.getCTM()),len=n.getTotalLength(),r=(parseFloat(getComputedStyle(n).strokeWidth)||2)/2+2.35,count=Math.max(1,Math.ceil(len/1.5));for(let j=0;j<=count;j++){const q=n.getPointAtLength(len*j/count),p=new DOMPoint(q.x,q.y).matrixTransform(mat);disk(p.x,p.y,r)}}catch{}
+  }
+  // Furniture is rasterized from the same shapes that are actually painted, including cabinet furnishings.
+  for(const n of drawing.querySelectorAll('.desk,.chair,.room-table,.room-chair,.fixture,.divider,.plant-pot,.print-machine,[data-turnstile-row]')){
+   try{const b=n.getBBox(),mat=transform.multiply(n.getCTM());if(!b.width||!b.height)continue;
+    const poly=[[b.x,b.y],[b.x+b.width,b.y],[b.x+b.width,b.y+b.height],[b.x,b.y+b.height]].map(([x,y])=>{const p=new DOMPoint(x,y).matrixTransform(mat);return [p.x,p.y]});
+    const xs=poly.map(p=>p[0]),ys=poly.map(p=>p[1]);region(Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys),(i,x,y)=>{if(inside(x,y,poly))blocked[i]=1});
+    for(let i=0;i<4;i++)edge(poly[i],poly[(i+1)%4],2.65);
+   }catch{}
+  }
+  const queue=new Int32Array(N),groups=[null];let groupId=0;
+  function neighbors(i,fn){const x=i%w;if(x>0)fn(i-1);if(x<w-1)fn(i+1);if(i>=w)fn(i-w);if(i<N-w)fn(i+w)}
+  for(let i=0;i<N;i++){
+   if(blocked[i]||component[i])continue;
+   const g={id:++groupId,all:[],corridor:[],food:[],meeting:[]};groups.push(g);let a=0,b=0;queue[b++]=i;component[i]=g.id;
+   while(a<b){const v=queue[a++];g.all.push(v);if(zone[v]===0)g.corridor.push(v);else if(zone[v]===2)g.food.push(v);else if(zone[v]===3)g.meeting.push(v);neighbors(v,u=>{if(!blocked[u]&&!component[u]){component[u]=g.id;queue[b++]=u}})}
+  }
+  function route(from,to){
+   if(component[from]!==component[to])return null;
+   const prev=new Int32Array(N);prev.fill(-1);let a=0,b=0;queue[b++]=from;prev[from]=from;
+   while(a<b&&prev[to]===-1){const v=queue[a++];neighbors(v,u=>{if(!blocked[u]&&prev[u]===-1){prev[u]=v;queue[b++]=u}})}
+   if(prev[to]===-1)return null;const p=[];for(let v=to;;v=prev[v]){p.push(v);if(v===from)break}p.reverse();
+   const simple=[];let direction=0;for(let i=0;i<p.length;i++){const next=p[i+1]===undefined?0:p[i+1]-p[i];if(i===0||next!==direction||i===p.length-1)simple.push([X(p[i]),Y(p[i])]);direction=next}
+   return simple;
+  }
+  return {groups:groups.slice(1).filter(g=>g.all.length>=15).sort((a,b)=>b.all.length-a.all.length),X,Y,cell,route}
+ }
+ function build(m){
+  const n=navigation(m),groups=n.groups;
+  if(!groups.length){failedModel=m;failedFloor=floor;return}
+  layer=el('g',{class:'office-people','aria-hidden':'true','pointer-events':'none',visibility:'hidden'});
+  clock=0;const used=[],pick=(arr,score)=>{let best=null,v=-Infinity;for(let i=0;i<arr.length;i++){const c=arr[i],s=score(c,i);if(s>v){v=s;best=c}}return best};
+  const dist=(a,b)=>Math.hypot(n.X(a)-n.X(b),n.Y(a)-n.Y(b));
+  const separate=c=>used.length?Math.min(...used.map(u=>dist(c,u))):100;
+  const maxArea=groups[0].all.length;
+  const usable=groups.filter(g=>g.all.length>=Math.min(120,maxArea*.15));
+  const coffeeGroups=groups.filter(g=>g.food.length>=8);
+  const meetingGroups=groups.filter(g=>g.meeting.length>=12&&g.corridor.length>=15);
+  for(let i=0;i<outfits.length;i++){
+   const style=outfits[i],foodTrip=style.coffee&&(i===1||i===5)&&coffeeGroups.length>0,meetingTrip=!style.coffee&&i===7&&meetingGroups.length>0,printTrip=!style.coffee&&i===3&&!!m.printStations?.length;
+   const preferred=foodTrip?coffeeGroups:meetingTrip?meetingGroups:usable.length?usable:groups;
+   const side=i%4<2?-1:1;
+   let g=preferred[i%preferred.length]||groups[0];
+   if(!foodTrip&&!meetingTrip){g=preferred.reduce((best,q)=>{const score=a=>Math.log(a.all.length+1)+(a.corridor.some(c=>(n.X(c)<m.wingBoundary)===(side<0))?.65:0);return score(q)>score(best)?q:best},g)}
+   const corridor=g.corridor.length>15?g.corridor:g.all;
+   let from=pick(corridor,c=>separate(c)*1.5+((n.X(c)<m.wingBoundary)===(side<0)?35:0)+(Math.sin(c*12.9898+i*78.233)*.5+.5)*22);
+   if(from===null)continue;
+   let targets=foodTrip?g.food:meetingTrip?g.meeting:corridor;
+   if(printTrip){const pr=m.printStations[i%m.printStations.length];const near=corridor.filter(c=>Math.hypot(n.X(c)-pr.x,n.Y(c)-pr.y)<22);if(near.length)targets=near}
+   let to=pick(targets,c=>Math.min(dist(c,from),i===6?230:120)+Math.sin(c*3.13+i*19)*12);
+   if(to===from||to===null)to=pick(g.all,c=>dist(c,from));
+   let path=n.route(from,to);if(!path||path.length<2)continue;
+   // Back-and-forth with separate dwell times, distinct starts and speeds.
+   const lengths=[0];for(let j=1;j<path.length;j++)lengths.push(lengths[j-1]+Math.hypot(path[j][0]-path[j-1][0],path[j][1]-path[j-1][1]));
+   const total=lengths[lengths.length-1];if(total<stepSafe())continue;
+   used.push(from);
+   const person=character(style,i,layer);
+   const speed=7.4+i*.49,pause1=.6+(i%3)*.65,pause2=foodTrip?2.3:meetingTrip?1.8:1+(i%3)*.45;
+   const cycle=2*total/speed+pause1+pause2;
+   people.push({...person,path,lengths,total,speed,pause1,pause2,cycle,offset:cycle*(.055+i*.117),phase:i*.72});
+  }
+  function stepSafe(){return 3}
+  for(const p of people)pose(p,0)
+ }
+ function pose(p,t){
+  const walk=p.total/p.speed,period=(t+p.offset)%p.cycle;let d,dir=1,moving=true;
+  if(period<walk)d=period*p.speed;else if(period<walk+p.pause2){d=p.total;moving=false}else if(period<walk+p.pause2+walk){d=p.total-(period-walk-p.pause2)*p.speed;dir=-1}else{d=0;dir=-1;moving=false}
+  let lo=1,hi=p.lengths.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(p.lengths[mid]<d)lo=mid+1;else hi=mid}
+  const a=p.path[lo-1],b=p.path[lo],len=p.lengths[lo]-p.lengths[lo-1],u=len?Math.max(0,Math.min(1,(d-p.lengths[lo-1])/len)):0,x=a[0]+(b[0]-a[0])*u,y=a[1]+(b[1]-a[1])*u,angle=Math.atan2((b[1]-a[1])*dir,(b[0]-a[0])*dir)*180/Math.PI;
+  const stride=moving?Math.sin(t*12+p.phase)*.85:0;
+  p.g.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${angle.toFixed(1)})`);
+  p.feet[0].setAttribute('cx',(-2.3+stride).toFixed(2));p.feet[1].setAttribute('cx',(-2.3-stride).toFixed(2));
+  p.arms[0].setAttribute('transform',`translate(${(stride*.45).toFixed(2)} 0)`);
+ }
+ const baseRender=render;render=function(reset=true){const v=baseRender(reset);if(!layer||layer.parentNode!==drawing){failedModel=null;failedFloor=null}queue();return v};
+ toggle.addEventListener('change',()=>{try{localStorage.setItem(pref,toggle.checked?'1':'0')}catch{}if(!toggle.checked)stop();else queue()});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else queue()});
+ const watch=new MutationObserver(()=>{if(!allowed())stop();queue()});watch.observe(svg,{attributes:true,attributeFilter:['class']});watch.observe(panel,{attributes:true,attributeFilter:['hidden']});watch.observe($('ed-bar'),{attributes:true,attributeFilter:['hidden']});
+ queue()
 })();
 </script>
 </body>
