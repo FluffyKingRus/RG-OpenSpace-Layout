@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Расположение рабочего места — 0.1.1 · сборка №30</title>
+<title>Расположение рабочего места — 0.3.8 · сборка №52</title>
 <style>
 :root{font-family:Arial,system-ui,sans-serif;color:#172f50;background:white;font-size:14px;--blue:#0757bd;--line:#e1e7ef}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;margin:0;overflow-x:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #6aa8ef;outline-offset:2px}
@@ -290,7 +290,7 @@ body.map-expanded{overflow:hidden}
 </div>
 <details class="floor-departments" id="floorDepartments"><summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3"/></svg><span class="department-heading">Структурные подразделения<span id="floorDepartmentCaption" class="department-caption"></span></span><strong id="departmentFloor" class="department-floor"></strong><svg class="department-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary><div id="floorDepartmentList" class="floor-department-list"></div></details>
 </section>
-<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false" hidden>⚙ Администратор</button><span>0.3.7 · Сборка №51 (тест)</span></footer>
+<footer class="foot site-footer"><button class="control report-footer-button" id="reportOpen" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H4l2.2-4.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M12.5 7.5v4.5m0 3.2h.01"/></svg>Сообщить об ошибке</button><button class="control" id="toggleAdmin" type="button" aria-expanded="false" hidden>⚙ Администратор</button><span>0.3.8 · Сборка №52 (тест)</span></footer>
 </main>
 <dialog id="reportDialog" class="report-dialog" aria-labelledby="reportTitle">
 <div class="report-head"><h2 id="reportTitle">Сообщить об ошибке</h2><button class="control" id="reportCancel" type="button" aria-label="Закрыть">×</button></div>
@@ -318,8 +318,11 @@ const EMBEDDED_HOLIDAY_MODE = false;
 const SOURCE_HTML='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
 const svg=$('map'),drawing=$('drawing');
 const BASE={x:0,y:0,w:1080,h:500};
-let view={...BASE},floor=6,renderedFloor=null;
 const allFloors=[13,12,11,10,9,8,7,6,5,4,3,2,1,-1];
+const LAST_FLOOR_KEY='rg-layout-last-floor-v1';
+function readLastFloor(){try{const raw=localStorage.getItem(LAST_FLOOR_KEY);if(raw!==null&&raw.trim()!==''){const f=Number(raw);if(allFloors.includes(f))return f}}catch{}return 6}
+function rememberFloor(f){if(!allFloors.includes(f))return;try{if(localStorage.getItem(LAST_FLOOR_KEY)!==String(f))localStorage.setItem(LAST_FLOOR_KEY,String(f))}catch{}}
+let view={...BASE},floor=readLastFloor(),renderedFloor=null;
 let seats=[],zoneRefs=new Map(),flipped=false,selectedCode=null,targetCode=null,cardOpen=false,profile=null;
 const demoEmployees=[
  {
@@ -753,7 +756,7 @@ function departmentKey(v){return String(v??'').normalize('NFKC').toLocaleLowerCa
 function departmentCounts(f,records,canSee,exists){const counts=new Map();for(const p of records){if(!p.seat_code||seatFloor(p.seat_code)!==f||!exists(p.seat_code)||!canSee(p))continue;const key=departmentKey(p.department);if(key)counts.set(key,(counts.get(key)||0)+1)}return counts}
 function departmentPlural(n){const k=n%10,h=n%100;return n+' '+(k===1&&h!==11?'подразделение':k>=2&&k<=4&&(h<12||h>14)?'подразделения':'подразделений')}
 function renderFloorDepartments(){const root=$('floorDepartmentList'),details=$('floorDepartments'),entries=floorDepartmentsData[floor]||[];details.hidden=!entries.length;$('departmentFloor').textContent=floor+' этаж';$('floorDepartmentCaption').textContent=departmentPlural(entries.length);if(!entries.length){root.replaceChildren();details.open=false;delete details.dataset.key;return}const counts=departmentCounts(floor,employees,p=>adminOpen||['full','floor'].includes(visibleLevel(p)),validMappedSeat),values=entries.map(name=>counts.get(departmentKey(name))||0),key=JSON.stringify([floor,values]);if(details.dataset.key===key)return;details.dataset.key=key;root.replaceChildren();const ul=document.createElement('ul');for(const [i,name] of entries.entries()){const li=document.createElement('li'),label=document.createElement('span'),count=document.createElement('span');label.textContent=name;count.className='department-count';count.textContent=values[i];count.setAttribute('aria-label','Сотрудников: '+values[i]);li.append(label,count);ul.append(li)}root.append(ul)}
-function render(resetView=true){localModel=modelForFloor(floor);const rebuild=renderedFloor!==floor;if(rebuild){equipmentHide();drawing.replaceChildren();seats=[];zoneRefs.clear();}$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж';$('floorTitle').setAttribute('title',localModel?.typicalCopy?'Типовая копия шестого этажа':localModel?.outlineOnly?'Условная компоновка':'');renderFloorDepartments();document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','flip'])$(id).disabled=!active(floor);$('full').disabled=false;if(rebuild){if(active(floor)){if(localModel&&floor===localModel.floor){renderLocalFloor(localModel)}else{if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}}renderedFloor=floor;applyOrientation()}$('showCodes').disabled=!active(floor);syncCodes();paintSelection();showCard();if(resetView)fit()}
+function render(resetView=true){localModel=modelForFloor(floor);const rebuild=renderedFloor!==floor;if(rebuild){equipmentHide();drawing.replaceChildren();seats=[];zoneRefs.clear();}$('soon').hidden=active(floor);svg.style.visibility=active(floor)?'visible':'hidden';$('floorTitle').textContent=floor+' этаж';$('floorTitle').setAttribute('title',localModel?.typicalCopy?'Типовая копия шестого этажа':localModel?.outlineOnly?'Условная компоновка':'');renderFloorDepartments();document.querySelectorAll('.floor').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.floor)===floor)));for(const id of ['minus','plus','reset','flip'])$(id).disabled=!active(floor);$('full').disabled=false;if(rebuild){if(active(floor)){if(localModel&&floor===localModel.floor){renderLocalFloor(localModel)}else{if(floor>=4&&floor<=9)standard();else special(floor);assignCodes()}}renderedFloor=floor;applyOrientation()}$('showCodes').disabled=!active(floor);syncCodes();paintSelection();showCard();if(resetView)fit();if(active(floor))rememberFloor(floor)}
 // Camera math is independent of DOM layout. Read viewport dimensions once per gesture.
 let screenBox=null,screenDirty=true,paintFrame=null,lastViewKey='',lastZoom='';
 function invalidateViewport(){screenDirty=true;queuePaint()}
@@ -1018,12 +1021,12 @@ function setAdmin(open){
  adminOpen=open;$('adminPanel').hidden=!open;$('exportEmployees').hidden=true;$('localTools').hidden=!(open&&location.protocol==='file');$('toggleAdmin').setAttribute('aria-expanded',String(open));
  $('toggleAdmin').textContent=open?'Выйти из админки':'⚙ Администратор';
  clearResults();renderQuickPeople();renderFloorDepartments();
- if(open){refreshAdmin();refreshReports();if(profile)selectEmployee(profile);else paintSelection();$('adminPanel').scrollIntoView({block:'start'})}
+ if(open){refreshAdmin();refreshReports();paintSelection();showCard();$('adminPanel').scrollIntoView({block:'start'})}
  else{
   setEmployeeEditor(false);clearReportAdmin();cancelEdit();cancelImport();$('adminRows').replaceChildren();$('adminSearch').value='';$('adminMessage').textContent='';$('importSummary').textContent='';$('importErrors').replaceChildren();for(const input of Object.values(adminInputs))input.value='';
   for(const id of ['statTotal','statOccupied','statFree','statRate','adminExtra'])$(id).textContent='';$('statBar').style.width='0';
-  const p=profile;targetCode=null;selectedCode=null;cardOpen=false;profile=null;message('');$('employeeSearch').value='';$('mapPanel').hidden=false;floor=6;render();
-  if(p&&visibleLevel(p)!=='hidden')selectEmployee(p);else{showCard();updateQuickSelection()}
+  const p=profile;targetCode=null;selectedCode=null;cardOpen=false;profile=null;message('');$('employeeSearch').value='';$('mapPanel').hidden=false;render();
+  if(p&&visibleLevel(p)!=='hidden'&&(!p.seat_code||seatFloor(p.seat_code)===floor)&&(p.location_floor==null||p.location_floor===floor))selectEmployee(p);else{showCard();updateQuickSelection()}
  }
  invalidateViewport();
 }
@@ -1628,12 +1631,12 @@ function loadLocalFloor(m){
   if(m.individualFloors!==undefined){if(!Array.isArray(m.individualFloors)||m.individualFloors.length>13)throw Error('Некорректный набор индивидуальных этажей.');const used=new Set();for(const individual of m.individualFloors){if(!individual||!(m.typicalFloors.includes(individual.floor)||[-1,1,2,11,12,13].includes(individual.floor))||individual.floor===m.floor||used.has(individual.floor))throw Error('Некорректный индивидуальный этаж.');used.add(individual.floor);next.set(individual.floor,validateFloorModel(individual))}}
  }
  if(!localTemplate)backupEmployees=employees.map(p=>({...p}));
- localTemplate=m;localModels=next;localModel=m;renderedFloor=null;floor=m.floor;setEmployees([]);render();
+ localTemplate=m;localModels=next;localModel=m;renderedFloor=null;floor=next.has(floor)?floor:m.floor;setEmployees([]);render();
  $('unloadFloorModel').hidden=false;$('saveLocalHtml').hidden=false;
  message(next.size>1?'Планировки этажей загружены.':'Локальная планировка: '+m.desks.length+' мест. Номера предварительные; тестовые назначения отключены.');
 }
 function unloadLocalFloor(){
- localModel=null;localTemplate=null;localModels=new Map();renderedFloor=null;const restore=backupEmployees||[];backupEmployees=null;setEmployees(restore);floor=6;render();$('unloadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;if(employees.length)selectEmployee(employees[0]);
+ localModel=null;localTemplate=null;localModels=new Map();renderedFloor=null;const restore=backupEmployees||[];backupEmployees=null;setEmployees(restore);if(!active(floor))floor=6;render();$('unloadFloorModel').hidden=true;$('saveLocalHtml').hidden=true;
 }
 $('loadFloorModel').onclick=()=>$('floorModelFile').click();
 $('floorModelFile').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>2*1024*1024)throw Error('Файл слишком большой.');const model=JSON.parse(await file.text());if(!localTemplate&&employees.some(p=>!demoEmployees.some(d=>d.email===p.email))&&!confirm('Текущий реестр будет временно заменён пустым. Продолжить?'))return;loadLocalFloor(model)}catch(err){message('Планировка не загружена: '+err.message)}finally{e.target.value=''}});
